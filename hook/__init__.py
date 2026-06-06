@@ -1,0 +1,1 @@
+# AI Hook package initialization
