@@ -1,4 +1,4 @@
-# iqm.summary.md (통합 품질 분석 및 종합 지표 도메인 요약)
+# context-iqm-summary.md (통합 품질 분석 및 종합 지표 도메인 요약)
 
 이 시스템에서 'IQM(Integrated Quality Management) 및 IQM Plus'는 경영진 및 품질 책임자가 전사의 핵심 품질 현황을 한눈에 조망할 수 있는 **최상위 요약 지표 및 의사결정 대시보드**를 제공하는 최고 민감 영역입니다.
 

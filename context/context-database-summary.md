@@ -1,4 +1,4 @@
-# Database Context Summary
+# context-database-summary.md (다중 데이터베이스 커넥션 관리 요약)
 
 Databricks(빅데이터 분석), Oracle(생산/품질), SQLite(메모리/운영) 간의 다중 DB 연결 안전성을 보장하고 커넥션 누수를 방지하기 위한 핵심 규격 지침입니다.
 

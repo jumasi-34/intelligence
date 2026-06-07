@@ -6,9 +6,9 @@ AI 하네스 문서는 역할을 분리해 컨텍스트 폭주를 막습니다.
 | :--- | :--- | :--- |
 | `intelligence/context-common.md` | 모든 에이전트 공통 안전 원칙 | 짧게 유지, 정책 중심 |
 | `intelligence/agent/AGENT_MANIFEST.md` | 에이전트 라우팅과 PR 게이트 | 라우팅 표와 정책만 유지 (SSOT 단일화) |
-| `intelligence/context/*.summary.md` | 도메인 핵심 지식 | 1~2 화면 분량 |
-| `intelligence/context/*.checklist.md` | 검증 항목 | 체크 가능한 항목 중심 |
-| `intelligence/context/reverse_sync_prevention.md` | 누적 실패/재발방지 로그 | append-only 로그로 분리 |
+| `intelligence/context/context-*.summary.md` | 도메인 핵심 지식 | 1~2 화면 분량 |
+| `intelligence/context/context-*.checklist.md` | 검증 항목 | 체크 가능한 항목 중심 |
+| `intelligence/context/context-reverse-sync-prevention.md` | 누적 실패/재발방지 로그 | append-only 로그로 분리 |
 | `intelligence/context/context-preprocessing-boundary.md` | 서비스 vs 시각화 전처리 경계 정의 가이드 | 아키텍처 및 샌드박스 경계 수칙 |
 | `intelligence/evals/golden_tasks.yaml` | 벤치마크 태스크 | 측정 가능한 task/metric만 유지 |
 
@@ -19,7 +19,7 @@ AI 하네스 문서는 역할을 분리해 컨텍스트 폭주를 막습니다.
 
 - `context-common.md`는 공통 정책만 남기고 세부 도메인 설명은 summary/checklist로 이동합니다.
 - `AGENT_MANIFEST.md`는 라우팅, PR gate, merge policy만 담당합니다.
-- `reverse_sync_prevention.md`는 누적 로그로 유지하고 에이전트 기본 컨텍스트에는 직접 포함하지 않습니다.
+- `context-reverse-sync-prevention.md`는 누적 로그로 유지하고 에이전트 기본 컨텍스트에는 직접 포함하지 않습니다.
 
 ---
 

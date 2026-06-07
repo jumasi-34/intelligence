@@ -41,7 +41,7 @@
         "cut",
         "build"
       ],
-      "description": "Quality Result System (실시간 품질 실적 대시보드)"
+      "description": "Quality Report System (품질 작업일지 관리 시스템) "
     }
   }
 }

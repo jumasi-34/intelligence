@@ -1,4 +1,4 @@
-# security.summary.md (AI 하네스 보안 요약)
+# context-security-summary.md (AI 하네스 보안 요약)
 
 이 문서는 AI 에이전트가 코드, 로그, PR, run archive를 생성할 때 반드시 지켜야 하는 보안 기준입니다.
 

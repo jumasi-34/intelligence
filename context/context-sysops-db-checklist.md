@@ -1,4 +1,4 @@
-# sysops-db.checklist.md (SQLite 세션 및 운영 로그 도메인 안전 체크리스트)
+# context-sysops-db-checklist.md (SQLite 세션 및 운영 로그 도메인 안전 체크리스트)
 
 이 체크리스트는 SysOps 및 SQLite 로그 제어 모듈 관련 파일(`core/db/sqlite_utils.py`, `sqlite_management_page.py` 등)의 인프라 개선 및 쿼리 수정 시, 전수 정합성을 확보하기 위한 **보안성 체크리스트**입니다.
 

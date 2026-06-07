@@ -1,4 +1,4 @@
-# Auth Context Summary
+# context-auth-summary.md (인증 및 사용자 권한 도메인 요약)
 
 인사번호 인증, 사용자 권한 및 Streamlit 세션 타임아웃을 안전하게 제어하기 위한 보안 필수 불변 수칙과 가이드라인입니다.
 

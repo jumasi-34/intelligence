@@ -1,4 +1,4 @@
-# iqm.checklist.md (통합 품질 분석 도메인 운영 안전 체크리스트)
+# context-iqm-checklist.md (통합 품질 분석 도메인 운영 안전 체크리스트)
 
 이 체크리스트는 IQM 및 IQM Plus 도메인 관련 파일(`service/iqm_df.py`, `queries/q_iqm_plus.py` 등)의 신규 피처 추가나 수정 작업이 수행될 때, 배포 전 에이전트 및 시니어 엔지니어가 반드시 자가 검증해야 하는 **안전성 진단 체크리스트**입니다.
 

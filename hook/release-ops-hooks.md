@@ -22,7 +22,7 @@
    (2) incident_triage_hook  ──>  SQLite log.db 에러 수집 및 'Suspect Diff' 자동 추적
               │
               ▼
-   (3) recent_diff_analyzer ──>  에러 추적과 최근 ai/runs/ 내 patch 코드 연관성 분석
+    (3) recent_diff_analyzer ──>  에러 추적과 최근 intelligence/runs/ 내 patch 코드 연관성 분석
               │
               ▼
    (4) rollback_generator   ──>  안전 롤백 체크리스트(rollback_checklist.md) 자동 빌드
@@ -54,16 +54,16 @@ AI 에이전트가 운영 시스템과 실시간 훅에 개입할 때 유발할 
 - **동작**: 에러 Traceback 로그를 파싱하여 결함 함수명(예: `calculate_yield_rate`)을 도출합니다.
 
 ### 3) 최근 Diff 연관 분석 훅 (`recent_diff_analyzer`)
-- **목적**: 트리아지 훅에서 추출된 에러 함수명과 최근 24시간 동안 `ai/runs/` 디렉터리에 기입된 에이전트들의 `diff.patch` 변경 소스 파일들을 전수 비교합니다.
+- **목적**: 트리아지 훅에서 추출된 에러 함수명과 최근 24시간 동안 `intelligence/runs/` 디렉터리에 기입된 에이전트들의 `diff.patch` 변경 소스 파일들을 전수 비교합니다.
 - **동작**: 에러 유발 시점에 가장 인접하여 수정이 일어난 변경 코드를 "장애 원인 유발 후보(Suspect Patch)"로 격리 지정해 줍니다.
 
 ### 4) 롤백 체크리스트 자동 생성기 (`rollback_generator`)
-- **목적**: 분석 완료된 Suspect Patch를 복구하기 위한 단계별 복구 시나리오 마크다운 가이드([rollback_checklist.md])를 자동 조립하여 어드민 메일 및 `ai/runs/`에 축적합니다.
+- **목적**: 분석 완료된 Suspect Patch를 복구하기 위한 단계별 복구 시나리오 마크다운 가이드([rollback_checklist.md])를 자동 조립하여 어드민 메일 및 `intelligence/runs/`에 축적합니다.
 - **출력 템플릿**:
   ```markdown
   ###  Incident Rollback Checklist (Run ID: run_xxx)
   - [ ] 1. 대상 위험 변경점 확인: `modified/service/iqm_df.py`
-  - [ ] 2. 롤백 실행 명령어: `git apply -R ai/runs/run_xxx/diff.patch`
+  - [ ] 2. 롤백 실행 명령어: `git apply -R intelligence/runs/run_xxx/diff.patch`
   - [ ] 3. 복구 후 영향성: SQLite 임시 세션 락의 수동 정제가 요구됨.
   ```
 
@@ -81,7 +81,7 @@ import subprocess
 class ReleaseOpsHooks:
     """배포 후 정적 진단 및 런타임 에러 캡처 시 최근 패치 연관성을 추적하는 읽기 전용 운영 훅 클래스입니다."""
 
-    def __init__(self, run_archive_dir: str = "ai/runs"):
+    def __init__(self, run_archive_dir: str = "intelligence/runs"):
         self.archive_dir = run_archive_dir
 
     def run_smoke_test(self, port: int = 8501) -> bool:
@@ -99,7 +99,7 @@ class ReleaseOpsHooks:
         return False
 
     def triage_incident(self, traceback_err: str) -> dict:
-        """장애 Traceback 인입 시 최근 24시간 내 ai/runs/ 패치들 중 연관 변경 파일을 격리 매핑합니다."""
+        """장애 Traceback 인입 시 최근 24시간 내 intelligence/runs/ 패치들 중 연관 변경 파일을 격리 매핑합니다."""
         analysis_report = {
             "status": "No suspicious diff found",
             "suspect_run_id": None,
@@ -116,7 +116,7 @@ class ReleaseOpsHooks:
         if not suspect_file_clue:
             return analysis_report
 
-        # 2. ai/runs/* 아래의 최근 diff.patch 전수 검색
+        # 2. intelligence/runs/* 아래의 최근 diff.patch 전수 검색
         runs_list = sorted(glob.glob(f"{self.archive_dir}/run_*"), reverse=True)
         for run_path in runs_list:
             diff_patch_path = f"{run_path}/diff.patch"

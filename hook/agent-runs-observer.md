@@ -76,8 +76,8 @@ class AgentRunsObserver:
         # 2. context-manifest.yaml 생성 (가상 YAML 구조)
         with open(f"{self.run_dir}/context-manifest.yaml", "w", encoding="utf-8") as f:
             f.write(f"run_id: {self.run_id}\n")
-            f.write(f"base_standards: ai/context/coding-standards.md\n")
-            f.write(f"domain_context: ai/context/{self.domain}.summary.md\n")
+            f.write(f"base_standards: intelligence/context/context-coding-standards.md\n")
+            f.write(f"domain_context: intelligence/context/context-{self.domain}-summary.md\n")
 
     def after_agent_run(self, success: bool, diff_content: str):
         """에이전트 수정 완료 후, diff 패치와 로컬 `make verify` 테스트 로그를 수집 보관합니다."""

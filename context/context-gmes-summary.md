@@ -1,4 +1,4 @@
-# gmes.summary.md (제조 공정 및 생산 품질 분석 도메인 요약)
+# context-gmes-summary.md (제조 공정 및 생산 품질 분석 도메인 요약)
 
 이 시스템에서 'GMES'는 글로벌 공장 현장의 설비 가동 실적, 생산 수량, 공정 품질 및 불합격 이력을 상세 트래킹하는 **제조 실행 품질 정보 허브**입니다. 공정 최전선에서 들어오는 실시간성 대량의 로우 데이터를 핸들링하며, 가공 및 연산의 고속화와 예외 처리가 매우 민감하게 작용하는 영역입니다.
 
@@ -14,10 +14,10 @@
 ---
 
 ## 2. 민감 소스 파일 (Sensitive Files)
-- `queries/gmes_query.py` (공장 공정 불합격 이력, 생산 수량, 가동 실적 쿼리 조립)
-- `service/gmes_df.py` (생산량 집계, 공정 불량률 계산 및 0분모 방어 처리 핵심 서비스)
-- `pages/_60_workplace/product_audit_plots.py` (제조 공정 오딧 및 실적 대비 불량 추이 분포 차트)
-- `pages/_60_workplace/quality_metrics_plots.py` (품질 세부 공정 계측 분포 및 이상 분포 분석 차트)
+- `app/queries/gmes_query.py` (공장 공정 불합격 이력, 생산 수량, 가동 실적 쿼리 조립)
+- `app/service/gmes_df.py` (생산량 집계, 공정 불량률 계산 및 0분모 방어 처리 핵심 서비스)
+- `app/pages/_60_workplace/product_audit_plots.py` (제조 공정 오딧 및 실적 대비 불량 추이 분포 차트)
+- `app/pages/_60_workplace/quality_metrics_plots.py` (품질 세부 공정 계측 분포 및 이상 분포 분석 차트)
 
 ---
 
@@ -35,4 +35,4 @@
 ---
 
 ## 5. 필수 연계 하네스 (Required Harness Chain)
-- 이 도메인의 데이터 정합성과 안정성을 검증하기 위해 반드시 [gmes.checklist.md](file:///home/jumasi/workstation/ai/context/gmes.checklist.md) 의 안전성 자가진단 항목들을 거친 뒤, [qa-test-writer.md](file:///home/jumasi/workstation/ai/agent/qa-test-writer.md) 에이전트를 통해 완전한 검증 테스트 코드를 빌드하고 배포 전 품질 게이트를 통과해야 합니다.
+- 이 도메인의 데이터 정합성과 안정성을 검증하기 위해 반드시 [context-gmes-checklist.md](file:///home/jumasi/workstation/intelligence/context/context-gmes-checklist.md) 의 안전성 자가진단 항목들을 거친 뒤, [qa-test-writer.md](file:///home/jumasi/workstation/intelligence/agent/qa-test-writer.md) 에이전트를 통해 완전한 검증 테스트 코드를 빌드하고 배포 전 품질 게이트를 통과해야 합니다.

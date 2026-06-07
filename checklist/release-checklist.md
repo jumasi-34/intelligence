@@ -49,4 +49,4 @@
 ---
 
 ## 4. 릴리즈 가드 에이전트 협업 수칙 (Ops Release Guard Collaboration)
-- 본 릴리즈 체크리스트의 모든 관문과 검증 프로세스는 배포 시 [ops-release-guard.md](file:///home/jumasi/workstation/ai/agent/ops-release-guard.md) 에이전트가 가동되어 위배 사항을 상시 감시하고 제어해야 합니다. 릴리즈 가드는 체크리스트 전수 충족 여부를 확인한 후 최종 Sign-off 아티팩트를 발행합니다.
+- 본 릴리즈 체크리스트의 모든 관문과 검증 프로세스는 배포 시 [ops-release-guard.md](file:///home/jumasi/workstation/intelligence/agent/ops-release-guard.md) 에이전트가 가동되어 위배 사항을 상시 감시하고 제어해야 합니다. 릴리즈 가드는 체크리스트 전수 충족 여부를 확인한 후 최종 Sign-off 아티팩트를 발행합니다.

@@ -1,4 +1,4 @@
-# cqms.summary.md (고객 품질 및 필드 클레임 분석 도메인 요약)
+# context-cqms-summary.md (고객 품질 및 필드 클레임 분석 도메인 요약)
 
 이 시스템에서 'CQMS'는 고객사에서 발생한 실제 품질 결함 정보와 부적합 클레임 데이터를 정밀 트래킹하는 **고객 품질 정보 허브**입니다. 필드 데이터의 통계적 정합성과 트렌드 변화율을 계산하며, 고객 컴플레인 해결의 핵심 단초를 제시하는 영역입니다.
 
@@ -14,10 +14,10 @@
 ---
 
 ## 2. 민감 소스 파일 (Sensitive Files)
-- `queries/cqms_query.py` (고객 컴플레인 원시 정보 및 클레임 내역 조회 쿼리 빌더)
-- `service/cqms_df.py` (CQMS 데이터 전처리, 날짜 포맷 강제 변환 및 비률 연산 서비스)
-- `pages/_30_monitoring/weekly_cqms_monitor_page.py` (주간 품질 모니터링 메인 대시보드 화면)
-- `pages/_30_monitoring/weekly_cqms_monitor_plots.py` (컴플레인 트렌드 분석 및 상한/하한 관리선 투영 차트)
+- `app/queries/cqms_query.py` (고객 컴플레인 원시 정보 및 클레임 내역 조회 쿼리 빌더)
+- `app/service/cqms_df.py` (CQMS 데이터 전처리, 날짜 포맷 강제 변환 및 비률 연산 서비스)
+- `app/pages/_30_monitoring/weekly_cqms_monitor_page.py` (주간 품질 모니터링 메인 대시보드 화면)
+- `app/pages/_30_monitoring/weekly_cqms_monitor_plots.py` (컴플레인 트렌드 분석 및 상한/하한 관리선 투영 차트)
 
 ---
 
@@ -35,4 +35,4 @@
 ---
 
 ## 5. 필수 연계 하네스 (Required Harness Chain)
-- 이 도메인의 데이터 정합성과 안정성을 검증하기 위해 반드시 [cqms.checklist.md](file:///home/jumasi/workstation/ai/context/cqms.checklist.md) 의 안전성 자가진단 항목들을 거친 뒤, [qa-test-writer.md](file:///home/jumasi/workstation/ai/agent/qa-test-writer.md) 에이전트를 통해 완전한 검증 테스트 코드를 빌드하고 배포 전 품질 게이트를 통과해야 합니다.
+- 이 도메인의 데이터 정합성과 안정성을 검증하기 위해 반드시 [context-cqms-checklist.md](file:///home/jumasi/workstation/intelligence/context/context-cqms-checklist.md) 의 안전성 자가진단 항목들을 거친 뒤, [qa-test-writer.md](file:///home/jumasi/workstation/intelligence/agent/qa-test-writer.md) 에이전트를 통해 완전한 검증 테스트 코드를 빌드하고 배포 전 품질 게이트를 통과해야 합니다.

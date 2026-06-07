@@ -6,7 +6,7 @@
 
 ## 1. 검증 도구 개요 (`verify_code.py`)
 
-기존 프로덕션 코드를 보호하고, 신규 생성하는 AI 확장 레이어(`ai/`)나 독립 테스트 하네스(`tests/`) 소스 코드에 잠재적인 `SyntaxError`, `IndentationError` 등이 포함되지 않았는지 점검하기 위해 **표준 라이브러리 기반 정적 분석 스크립트**를 도입했습니다.
+기존 프로덕션 코드를 보호하고, 신규 생성하는 인텔리전스 에이전트 레이어(`intelligence/`)나 독립 테스트 하네스(`tests/`) 소스 코드에 잠재적인 `SyntaxError`, `IndentationError` 등이 포함되지 않았는지 점검하기 위해 **표준 라이브러리 기반 정적 분석 스크립트**를 도입했습니다.
 
 - **위치**: [tests/verify_code.py](file:///home/jumasi/workstation/tests/verify_code.py)
 - **핵심 아키텍처**:
@@ -21,21 +21,21 @@
 모든 명령어는 가상환경 파이썬 인터프리터 경로(`/home/jumasi/miniconda3/envs/goeq/bin/python`) 및 루트 디렉터리를 포함한 `PYTHONPATH` 설정을 필요로 합니다.
 
 ### 1) 프로젝트 전체 파이썬 파일 일괄 검증 (Full Verification)
-프로젝트 전체(제외 폴더 제외)의 110여 개가 넘는 모든 파이썬 파일을 1초 안에 탐색하여 무결성을 진단합니다.
+프로젝트 전체(제외 폴더 제외)의 모든 파이썬 파일을 신속하게 탐색하여 무결성을 진단합니다.
 ```bash
 PYTHONPATH=/home/jumasi/workstation /home/jumasi/miniconda3/envs/goeq/bin/python tests/verify_code.py
 ```
 
-### 2) 신규 AI 폴더만 집중 검증 (Targeted Verification)
-우리가 새로 개발하고 있는 `ai/` 디렉터리 내부 파일들만 타겟 지정해 신속하게 검사합니다.
+### 2) 신규 인텔리전스 폴더만 집중 검증 (Targeted Verification)
+우리가 새로 개발하고 있는 `intelligence/` 디렉터리 내부 파일들만 타겟 지정해 신속하게 검사합니다.
 ```bash
-PYTHONPATH=/home/jumasi/workstation /home/jumasi/miniconda3/envs/goeq/bin/python tests/verify_code.py ai/
+PYTHONPATH=/home/jumasi/workstation /home/jumasi/miniconda3/envs/goeq/bin/python tests/verify_code.py intelligence/
 ```
 
 ### 3) 특정 소스 파일 1개만 정밀 단독 검증 (Single File Verification)
 지정된 파일 1개만 정밀 검사합니다.
 ```bash
-PYTHONPATH=/home/jumasi/workstation /home/jumasi/miniconda3/envs/goeq/bin/python tests/verify_code.py service/cqms_df.py
+PYTHONPATH=/home/jumasi/workstation /home/jumasi/miniconda3/envs/goeq/bin/python tests/verify_code.py app/service/cqms_df.py
 ```
 
 ---
@@ -58,5 +58,5 @@ PYTHONPATH=/home/jumasi/workstation /home/jumasi/miniconda3/envs/goeq/bin/python
   가상환경에 `mypy`가 필요하다면 가상환경 pip로 설치한 뒤, 아래와 같이 특정 폴더를 검사합니다.
   ```bash
   /home/jumasi/miniconda3/envs/goeq/bin/python -m pip install mypy
-  /home/jumasi/miniconda3/envs/goeq/bin/python -m mypy ai/
+  /home/jumasi/miniconda3/envs/goeq/bin/python -m mypy intelligence/
   ```

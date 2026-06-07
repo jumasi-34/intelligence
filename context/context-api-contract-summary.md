@@ -1,4 +1,4 @@
-# API Contract Context Summary
+# context-api-contract-summary.md (API 계약 요약 및 아키텍처 정합성 지침)
 
 UI(pages), 서비스(service), 쿼리(queries) 세 레이어 간의 유기적인 데이터 전달 정합성을 유지하고 하위 호환성 붕괴를 예방하기 위한 인터페이스 연동 규약입니다.
 
