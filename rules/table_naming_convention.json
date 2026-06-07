@@ -1,0 +1,36 @@
+{
+  "naming_structure": "{system}_{domain}_{contents}",
+  "systems": {
+    "cqms": {
+      "allowed_domains": [
+        "4m",
+        "qi",
+        "audit",
+        "doc",
+        "iqm",
+        "row",
+        "attach"
+      ],
+      "description": "Customer Quality Management System (고객 품질 관리 시스템)"
+    },
+    "gmes": {
+      "allowed_domains": [
+        "prod",
+        "scrap",
+        "ncf",
+        "spec",
+        "barcode"
+      ],
+      "description": "Global Manufacturing Execution System (글로벌 제조 실행 시스템)"
+    },
+    "common": {
+      "allowed_domains": [
+        "master",
+        "standard",
+        "volume",
+        "report"
+      ],
+      "description": "공통 마스터 및 전사 공용 데이터군"
+    }
+  }
+}

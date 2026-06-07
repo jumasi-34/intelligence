@@ -29,6 +29,7 @@
 | :--- | :--- | :--- |
 | **메타데이터 사전 자산** | `intelligence/context/context-metadata-*.md` | - 도메인별(CQMS, GMES, HOPE 등) 테이블 컬럼 스펙과 파이썬 코드 변수 간 1:1 매핑 사전 영속 보관 |
 | **비즈니스 상수 및 표준** | `intelligence/rules/L2-naming-convention.md`<br>`intelligence/rules/L2-business-constants.md` | - 에이전트가 검증 시 정답지로 활용하는 핵심 규칙 가이드라인 (Read-Only) |
+| **네이밍 룰 설정 메타데이터** | `intelligence/rules/table_naming_convention.json` | - 테이블 변수 네이밍 컨벤션 규칙 및 `{system}_{domain}_{contents}` 공식의 허용 도메인 목록 |
 | **파라미터 검증** | `app/core/params/parameters.py` | - 입력 제어 필터 클래스의 접미사(`*Params`) 및 속성명 정합성 검사 |
 | **코드베이스 검역** | `app/queries/*_query.py`<br>`app/service/*_df.py`<br>`app/pages/*_page.py`<br>`app/pages/*_plots.py` | - 빌더들이 생산한 파일명, 함수명, 내부 데이터프레임(`_df`) 및 대소문자 컬럼명의 표준 정합성 검사 |
 
@@ -56,6 +57,12 @@
 ### Rule 3: 비즈니스 상수 정합 게이트 (Business Constants Alignment Gate)
 - `L2-business-constants.md`에 등재된 핵심 비즈니스 정보(예: 특정 공장에 종속된 사업부 코드 맵핑 등)가 실제 코드 내에서 변조되어 하드코딩되거나, 오용되는지 감시합니다.
 - 쿼리 조건 결합(`QueryFilter`) 상에 전달되는 인자명이 파라미터 클래스 속성명과 동일한지 일대일 검사합니다.
+
+### Rule 4: 테이블 변수 네이밍 표준 수호 (JSON 기반 검증)
+- **명명 공식 적용**: `app/core/query/query_database.py` 등에 선언된 테이블명 변수명은 반드시 `{system}_{domain}_{contents}` 소문자 스네이크 공식을 따라야 합니다.
+  - 예: 기존 `change_main` ➔ `cqms_4m_main` (시스템: `cqms`, 도메인: `4m`, contents: `main`)
+- **허용 도메인 통제**: `intelligence/rules/table_naming_convention.json` 파일에 지정된 `allowed_domains` 내의 값들만 도메인 부위에 들어올 수 있습니다. (예: `cqms`에선 `4m`, `qi`, `audit`, `doc`, `iqm`, `row`, `attach`만 허용)
+- **일탈 모니터링**: 빌더 에이전트가 신규 테이블 변수를 추가하거나 기존 변수명을 변경할 때, 이 공식과 허용 도메인을 일치시키지 않으면 예외 없이 경고를 리포트하고 수정을 가이드합니다.
 
 ---
 

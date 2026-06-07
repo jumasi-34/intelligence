@@ -93,8 +93,8 @@
 * **표준 규칙**: 대문자 스네이크 케이스(`UPPER_SNAKE_CASE`)를 강제 준수합니다.
 * **비즈니스 상수 (`core/constants/`)**: JSON 맵핑 상수를 파이썬으로 바인딩할 때 무조건 대문자를 적용합니다.
   * 예: `PLANT_TO_OEQG`, `NEW_BUSINESS_DICT`, `ISSUE_AREA`
-* **테이블 경로 상수 (`core/query/query_database.py`)**: Databricks 및 Oracle 테이블 명세 상수를 정의할 때 대문자를 사용합니다.
-  * 예: `DatabricksTables.CQMS_MAIN_TABLE`
+* **테이블 경로 변수 (`core/query/query_database.py`)**: Databricks 및 Oracle 테이블 경로 지정 변수는 소문자 스네이크 케이스(`snake_case`) 및 `{시스템}_{도메인}_{contents}` 공식을 준수합니다.
+  * 예: `DatabricksTables.cqms_4m_main`
 
 ---
 
