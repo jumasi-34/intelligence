@@ -2,17 +2,21 @@
 
 이 매니페스트는 프로젝트에 정의된 핵심 개발 에이전트들의 구동 트리거(Trigger), 역할(Role), 필수 참고 맥락(Required Context), 행위 한계(Allowed/Forbidden Actions), 그리고 검증 게이트(Verification)를 일원화하여 조망하고 라우팅하는 중앙 관리 매니페스트입니다.
 
+> [!IMPORTANT]
+> 본 매니페스트는 `intelligence/agent/AGENT_MANIFEST.md` 단 한 곳에만 존재하며, 프로젝트 내 모든 에이전트 위계, 라우팅 및 통제 규칙의 **단일 진실 공급원(SSOT)**으로 동작합니다. 중복 관리를 피하기 위해 다른 경로(예: `intelligence/rules/` 등)에 임의로 복제하지 마십시오.
+
 ---
 
 ## 1. 에이전트 라우팅 및 표준 매니페스트 (Central Routing Table)
 
-현재 프로젝트는 복잡한 다중 에이전트 체계를 철폐하고, **역할의 명확한 분리와 아키텍처 결집**을 실현하기 위해 단 3개의 정예 전문 개발 에이전트로 단일화하여 운영됩니다.
+현재 프로젝트는 **최상위 기획 및 조율 전담 에이전트(Planner Agent)**, **실제 구현을 수행하는 빌더 에이전트(Builder Agent)** 2종, 그리고 **사전 탐색적 분석을 제공하는 서브에이전트(Sub-Agent)** 체계로 위계를 명확히 구분하여 운영됩니다.
 
 | Trigger | Agent | Required Context | Allowed Actions | Forbidden Actions | Verification | Output |
 | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
-| **SQL 쿼리 설계 및<br>데이터 전처리 개발** | `dev-query-preprocessor` | `rule-architecture.md`<br>`context-common.md` | - `app/queries/` 내에 쿼리 함수 생성 및 수정<br>- `app/service/` 내에 데이터 전처리, 정제 및 `@st.cache_data` 부착 개발 | - `app/pages/` 내의 UI 파일이나 시각화(`_plots.py`) 직접 수정 금지<br>- 화면 컨트롤러 설계 개입 금지 | - `make verify` 구문/린트 검사<br>- Pandas 예외처리 및 방어 연산 검증 | `app/queries/*_query.py`<br>`app/service/*_df.py` |
-| **Streamlit 화면 빌딩<br>및 Plotly 시각화** | `dev-page-plot-builder` | `rule-architecture.md`<br>`context-common.md` | - `app/pages/` 내에 Streamlit 레이아웃 구성 및 세션 상태 관리<br>- `app/pages/` 내에 프리미엄 Plotly Figure(`*_plots.py`) 설계 및 화면 배치<br>- `app/core/page/config_pages.py`에 네비게이션 매핑 및 자동 등록 | - `app/queries/` 및 `app/service/` 모듈 직접 수정 금지<br>- UI 레이어 내에서 직접 DB 쿼리 실행 또는 대규모 원천 가공 연산 수행 금지 | - 3-Layer 정합성 대조<br>- 차트 렌더링 검사<br>- 네비게이션 정상 등록 확인 | `app/pages/*_page.py`<br>`app/pages/*_plots.py`<br>`app/core/page/config_pages.py` |
-| **신규 테이블 등록 시<br>사전 브리핑 및 EDA** | `dev-table-eda-analyst` | `rule-architecture.md`<br>`context-common.md` | - 본격 개발 착수 전, 사용자 및 개발 에이전트를 위한 충분하고 정교한 테이블 사전 브리핑 지원<br>- 데이터베이스의 Read-Only 메타데이터 및 통계 정보 수집<br>- `intelligence/context/` 내에 테이블의 비즈니스 현실 및 수치 특성을 융합한 EDA 가이드북 생성 및 영속 보존 | - **프로덕션 개발 코드(`.py`) 직접 작성 및 수정 금지** (No-Mutation Policy 준수)<br>- `INSERT`, `UPDATE`, `DELETE`, `DROP` 등 데이터 변조/변경 및 파괴적 쿼리 실행 금지<br>- 대용량 풀 스캔 쿼리 전송 금지 | - DDL/DML 쿼리 유무 검사 (Read-Only 여부)<br>- 보고서 산출물 내 결측치, 비즈니스 맥락 분석 유효성 대조 | `intelligence/context/context-eda-*.md`<br>`tests/eda_test_*.py` |
+| **사용자 요구사항 수집 및<br>PRD 설계 및 관리<br>[기획 에이전트]** | `planner-orchestrator`<br>*(Planner Agent)* | `L2-architecture.md`<br>`context-common.md`<br>`prd-template.md` | - 신규 페이지 요구사항 분석 및 PRD 초안 작성<br>- 사용자와 피드백 루프를 통한 PRD 완성<br>- 기존 페이지 리팩토링 시 기존 PRD 조회 및 업데이트/신규 생성<br>- 빌더 에이전트들이 참조할 수 있도록 `intelligence/prd/`에 배포 | - 프로덕션 소스 코드(`.py`) 직접 개발 및 수정 금지 (No-Code Modification Policy)<br>- DB 쿼리 실행 또는 비즈니스 로직 작성 금지 | - `prd-template.md` 포맷 정합성 준수 검증<br>- 빌더들이 참조 가능한 3-Layer 매핑 설계 완성 여부 확인 | `intelligence/prd/prd-*.md` |
+| **SQL 쿼리 설계 및<br>데이터 전처리 개발<br>[빌더 에이전트]** | `builder-query-preprocessor`<br>*(Builder Agent)* | `L2-architecture.md`<br>`context-common.md`<br>`prd-*.md` | - `app/queries/` 내에 쿼리 함수 생성 및 수정<br>- `app/service/` 내에 데이터 전처리, 정제 및 `@st.cache_data` 부착 개발 | - `app/pages/` 내의 UI 파일이나 시각화(`_plots.py`) 직접 수정 금지<br>- 화면 컨트롤러 설계 개입 금지 | - `make verify` 구문/린트 검사<br>- Pandas 예외처리 및 방어 연산 검증 | `app/queries/*_query.py`<br>`app/service/*_df.py` |
+| **Streamlit 화면 빌딩<br>및 Plotly 시각화<br>[빌더 에이전트]** | `builder-page-plot-builder`<br>*(Builder Agent)* | `L2-architecture.md`<br>`context-common.md`<br>`prd-*.md` | - `app/pages/` 내에 Streamlit 레이아웃 구성 및 세션 상태 관리<br>- `app/pages/` 내에 프리미엄 Plotly Figure(`*_plots.py`) 설계 및 화면 배치<br>- `app/core/page/config_pages.py`에 네비게이션 매핑 및 자동 등록 | - `app/queries/` 및 `app/service/` 모듈 직접 수정 금지<br>- UI 레이어 내에서 직접 DB 쿼리 실행 또는 대규모 원천 가공 연산 수행 금지 | - 3-Layer 정합성 대조<br>- 차트 렌더링 검사<br>- 네비게이션 정상 등록 확인 | `app/pages/*_page.py`<br>`app/pages/*_plots.py`<br>`app/core/page/config_pages.py` |
+| **신규 테이블 등록 시<br>사전 브리핑 및 EDA<br>[분석가 서브에이전트]** | `analyst-table-eda`<br>*(Sub-Agent)* | `L2-architecture.md`<br>`context-common.md` | - 본격 개발 착수 전, 사용자 및 개발 에이전트를 위한 충분하고 정교한 테이블 사전 브리핑 지원<br>- 데이터베이스의 Read-Only 메타데이터 및 통계 정보 수집<br>- `intelligence/context/` 내에 테이블의 비즈니스 현실 및 수치 특성을 융합한 EDA 가이드북 생성 및 영속 보존 | - **프로덕션 개발 코드(`.py`) 직접 작성 및 수정 금지** (No-Mutation Policy 준수)<br>- `INSERT`, `UPDATE`, `DELETE`, `DROP` 등 데이터 변조/변경 및 파괴적 쿼리 실행 금지<br>- 대용량 풀 스캔 쿼리 전송 금지 | - DDL/DML 쿼리 유무 검사 (Read-Only 여부)<br>- 보고서 산출물 내 결측치, 비즈니스 맥락 분석 유효성 대조 | `intelligence/context/context-eda-*.md`<br>`tests/eda_test_*.py` |
 
 ---
 
