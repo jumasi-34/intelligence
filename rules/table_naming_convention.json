@@ -4,7 +4,7 @@
     "cqms": {
       "allowed_domains": [
         "4m",
-        "qi",
+        "quality",
         "audit",
         "doc",
         "iqm",
@@ -15,22 +15,33 @@
     },
     "gmes": {
       "allowed_domains": [
-        "prod",
-        "scrap",
-        "ncf",
         "spec",
-        "barcode"
+        "mes",
+        "prd",
+        "barcode",
+        "mach",
+        "build",
+        "rr",
+        "uf",
+        "ncf",
+        "rpa"
       ],
       "description": "Global Manufacturing Execution System (글로벌 제조 실행 시스템)"
     },
-    "common": {
+    "plm": {
       "allowed_domains": [
-        "master",
-        "standard",
-        "volume",
-        "report"
+        "spec"
       ],
-      "description": "공통 마스터 및 전사 공용 데이터군"
+      "description": "Product Lifecycle Management (연구소 설계 및 사양 정보)"
+    },
+    "qrs": {
+      "allowed_domains": [
+        "ext",
+        "cal",
+        "cut",
+        "build"
+      ],
+      "description": "Quality Result System (실시간 품질 실적 대시보드)"
     }
   }
 }

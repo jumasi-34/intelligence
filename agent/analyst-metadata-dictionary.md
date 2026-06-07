@@ -61,7 +61,7 @@
 ### Rule 4: 테이블 변수 네이밍 표준 수호 (JSON 기반 검증)
 - **명명 공식 적용**: `app/core/query/query_database.py` 등에 선언된 테이블명 변수명은 반드시 `{system}_{domain}_{contents}` 소문자 스네이크 공식을 따라야 합니다.
   - 예: 기존 `change_main` ➔ `cqms_4m_main` (시스템: `cqms`, 도메인: `4m`, contents: `main`)
-- **허용 도메인 통제**: `intelligence/rules/table_naming_convention.json` 파일에 지정된 `allowed_domains` 내의 값들만 도메인 부위에 들어올 수 있습니다. (예: `cqms`에선 `4m`, `qi`, `audit`, `doc`, `iqm`, `row`, `attach`만 허용)
+- **허용 도메인 통제**: `intelligence/rules/table_naming_convention.json` 파일에 지정된 `allowed_domains` 내의 값들만 도메인 부위에 들어올 수 있습니다. (예: `cqms`에선 `4m`, `quality`, `audit`, `doc`, `iqm`, `row`, `attach`만 허용)
 - **일탈 모니터링**: 빌더 에이전트가 신규 테이블 변수를 추가하거나 기존 변수명을 변경할 때, 이 공식과 허용 도메인을 일치시키지 않으면 예외 없이 경고를 리포트하고 수정을 가이드합니다.
 
 ---
