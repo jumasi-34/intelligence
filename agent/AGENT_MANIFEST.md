@@ -9,7 +9,7 @@
 
 ## 1. 에이전트 라우팅 및 표준 매니페스트 (Central Routing Table)
 
-현재 프로젝트는 **최상위 기획 및 조율 전담 에이전트(Planner Agent)**, **실제 구현을 수행하는 빌더 에이전트(Builder Agent)** 2종, 그리고 **사전 탐색적 분석을 제공하는 서브에이전트(Sub-Agent)** 체계로 위계를 명확히 구분하여 운영됩니다.
+현재 프로젝트는 **최상위 기획 및 조율 전담 에이전트(Planner Agent)**, **실제 구현을 수행하는 빌더 에이전트(Builder Agent)** 2종, 그리고 **사전 데이터 분석 및 표준 명명 거버넌스를 지원하는 서브에이전트(Sub-Agent)** 2종 체계로 위계를 명확히 구분하여 운영됩니다.
 
 | Trigger | Agent | Required Context | Allowed Actions | Forbidden Actions | Verification | Output |
 | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
@@ -17,6 +17,7 @@
 | **SQL 쿼리 설계 및<br>데이터 전처리 개발<br>[빌더 에이전트]** | `builder-query-preprocessor`<br>*(Builder Agent)* | `L2-architecture.md`<br>`context-common.md`<br>`prd-*.md` | - `app/queries/` 내에 쿼리 함수 생성 및 수정<br>- `app/service/` 내에 데이터 전처리, 정제 및 `@st.cache_data` 부착 개발 | - `app/pages/` 내의 UI 파일이나 시각화(`_plots.py`) 직접 수정 금지<br>- 화면 컨트롤러 설계 개입 금지 | - `make verify` 구문/린트 검사<br>- Pandas 예외처리 및 방어 연산 검증 | `app/queries/*_query.py`<br>`app/service/*_df.py` |
 | **Streamlit 화면 빌딩<br>및 Plotly 시각화<br>[빌더 에이전트]** | `builder-page-plot-builder`<br>*(Builder Agent)* | `L2-architecture.md`<br>`context-common.md`<br>`prd-*.md` | - `app/pages/` 내에 Streamlit 레이아웃 구성 및 세션 상태 관리<br>- `app/pages/` 내에 프리미엄 Plotly Figure(`*_plots.py`) 설계 및 화면 배치<br>- `app/core/page/config_pages.py`에 네비게이션 매핑 및 자동 등록 | - `app/queries/` 및 `app/service/` 모듈 직접 수정 금지<br>- UI 레이어 내에서 직접 DB 쿼리 실행 또는 대규모 원천 가공 연산 수행 금지 | - 3-Layer 정합성 대조<br>- 차트 렌더링 검사<br>- 네비게이션 정상 등록 확인 | `app/pages/*_page.py`<br>`app/pages/*_plots.py`<br>`app/core/page/config_pages.py` |
 | **신규 테이블 등록 시<br>사전 브리핑 및 EDA<br>[분석가 서브에이전트]** | `analyst-table-eda`<br>*(Sub-Agent)* | `L2-architecture.md`<br>`context-common.md` | - 본격 개발 착수 전, 사용자 및 개발 에이전트를 위한 충분하고 정교한 테이블 사전 브리핑 지원<br>- 데이터베이스의 Read-Only 메타데이터 및 통계 정보 수집<br>- `intelligence/context/` 내에 테이블의 비즈니스 현실 및 수치 특성을 융합한 EDA 가이드북 생성 및 영속 보존 | - **프로덕션 개발 코드(`.py`) 직접 작성 및 수정 금지** (No-Mutation Policy 준수)<br>- `INSERT`, `UPDATE`, `DELETE`, `DROP` 등 데이터 변조/변경 및 파괴적 쿼리 실행 금지<br>- 대용량 풀 스캔 쿼리 전송 금지 | - DDL/DML 쿼리 유무 검사 (Read-Only 여부)<br>- 보고서 산출물 내 결측치, 비즈니스 맥락 분석 유효성 대조 | `intelligence/context/context-eda-*.md`<br>`tests/eda_test_*.py` |
+| **코드 명명 정합성 검사 및<br>스키마-코드 사전 관리<br>[사전/사후 검역 서브에이전트]** | `analyst-metadata-dictionary`<br>*(Sub-Agent)* | `L2-naming-convention.md`<br>`L2-business-constants.md`<br>`context-common.md` | - 파일, 함수, 변수가 3-Layer 명명 규정을 지키는지 검증<br>- 데이터베이스 컬럼(`UPPER_SNAKE`)과 소스 변수(`snake`) 매핑 사전 구축<br>- 비즈니스 상수 정렬 검증 | - **프로덕션 소스 코드(`.py`) 직접 생성 및 임의 변경 엄격 금지** (No-Mutation Policy)<br>- DB 파괴적 명령 실행 금지 | - 명명 규정 위반 탐지 리포트 무결성<br>- 스키마-코드 1:1 컬럼 정합성 대조 | `intelligence/context/context-metadata-*.md` |
 
 ---
 
