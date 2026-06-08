@@ -15,7 +15,6 @@ Databricks(빅데이터 분석), Oracle(생산/품질), SQLite(메모리/운영)
 
 ## 2. 민감 소스 파일 (Sensitive files)
 - `core/db/client.py` (모든 데이터베이스 연결 및 쿼리 실행 추상화 모듈)
-- `core/operate/db_client.py` (데이터베이스 클라이언트 인출용 Re-export Bridge)
 - `core/query/query_database.py` (Databricks 테이블 고정 카탈로그 경로 관리 상수)
 
 ---

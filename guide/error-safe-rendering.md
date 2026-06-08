@@ -131,7 +131,7 @@ from datetime import datetime
 import streamlit as st
 import plotly.graph_objects as go
 
-from core.operate.db_client import get_client
+from core.db.client import get_client
 from core.plot.viz_plotly_design import get_default_layout_config
 
 # 시스템 파일 로그 핸들러

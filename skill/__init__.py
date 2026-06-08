@@ -1,1 +1,0 @@
-# AI Skill package initialization

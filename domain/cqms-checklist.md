@@ -1,4 +1,4 @@
-# context-cqms-checklist.md (고객 품질 및 필드 클레임 도메인 안전 체크리스트)
+# cqms-checklist.md (고객 품질 및 필드 클레임 도메인 안전 체크리스트)
 
 이 체크리스트는 CQMS 도메인 관련 파일(`service/cqms_df.py`, `queries/cqms_query.py` 등)의 기능 개선 및 버그 수정 작업이 수행될 때, 머지 및 배포 전 반드시 충족해야 하는 **안전성 자가진단표**입니다.
 
@@ -25,4 +25,4 @@
 ---
 
 ## 4. 테스트 하네스 검증 연계 (Test Harness Verification)
-- 본 체크리스트에서 규정하는 데이터 변환, 마스킹 보안 및 UCL/LCL 통계 한계선 정합성 조건은 [qa-test-writer.md](file:///home/jumasi/workstation/intelligence/agent/qa-test-writer.md) 에이전트가 `tests/test_cqms_regression.py` 등의 완전한 인메모리 회귀/골든 테스트 코드를 생성하여 자동으로 보증해야 합니다.
+- 본 체크리스트에서 규정하는 데이터 변환, 마스킹 보안 및 UCL/LCL 통계 한계선 정합성 조건은 테스트 하네스 검증 도구(예: `tests/test_layer_boundary.py` 등) 및 개별 인메모리 회귀/골든 테스트 코드를 구성하여 빌드 전 오류가 발생하지 않음을 자동으로 보증해야 합니다.

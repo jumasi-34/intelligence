@@ -1,4 +1,4 @@
-# context-testing.md (테스트 격리 격벽 및 공통 테스트 맥락 설계서)
+# testing.md (테스트 격리 격벽 및 공통 테스트 맥락 설계서)
 
 이 문서는 AI 에이전트(`Test Writer Agent` 등)가 안전하게 테스트 코드를 설계 및 기동하고, 원천 데이터베이스의 통신 오버헤드 없이 인메모리 상에서 격리 테스트를 수행할 수 있도록 지원하는 **공통 테스트 템플릿 및 스키마 맥락(Context)**입니다.
 
@@ -29,7 +29,7 @@ from service.cqms_df import preprocessing_qi_general_rawdata
 
 class TestCQMSPreprocessingRegression(unittest.TestCase):
 
-    @patch("core.operate.db_client.get_client")
+    @patch("core.db.client.get_client")
     def test_golden_path_qi_preprocessing(self, mock_get_client):
         """CQMS 품질 이슈 가공 로직에 대한 골든 시나리오 테스트"""
 

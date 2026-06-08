@@ -14,7 +14,7 @@
 | :--- | :--- | :--- | :--- | :--- |
 | **UI 메인** | Streamlit 화면 구성 및 입력 필터 제어 | `*_page.py` | `cqms_dashboard_page.py` | `cqms_dashboard.py` (접미사 누락) |
 | **UI 시각화** | Plotly 차트 드로잉 및 Hover 포맷팅 | `*_plots.py` | `cqms_dashboard_plots.py` | `cqms_chart.py` (일관성 없음) |
-| **Service** | Pandas 전처리, 비즈니스 계산 및 캐싱 | `*_df.py` 또는 `df_*.py` | `cqms_df.py` | `cqms_service.py` (접미사 불일치) |
+| **Service** | Pandas 전처리, 비즈니스 계산 및 캐싱 | `*_df.py` | `cqms_df.py` | `cqms_service.py` (접미사 불일치) |
 | **Query** | SQL 문자열 조립 및 반환 | `*_query.py` 또는 `q_*.py` | `cqms_query.py`, `q_iqm_plus.py`| `cqms_sql.py` (접미사 불일치) |
 
 ### ② 공통 코어 및 유틸 파일 (`app/core/`)
@@ -29,7 +29,7 @@
   * L3 (구현 및 레이어): `L3-query.md`, `L3-service.md`, `L3-dashboard.md`, `L3-plot.md`
 * **도메인·인프라·가이드 리소스 (`intelligence/{domain,infra,guide}/`)**: 성격에 맞춰 하위 폴더로 분류 배정하며, 불필요한 `context-` 접두사는 완전히 폐기하여 깔끔하고 투명하게 명명합니다.
   * 예: `infra/queries-specification.md`, `infra/service-specification.md`, `guide/preprocessing-boundary.md`
-  * [안티패턴] `app/` 실 소스 디렉터리 내부에 독립적인 `CONTEXT.md`를 단독 생성하거나, `intelligence/` 아래에 분류되지 않은 모호한 폴더를 임의로 생성하는 행위는 금지됩니다.
+  * [안티패턴] `app/` 실 소스 디렉터리 내부에 독립적인 `CONTEXT.md`를 단독 생성하는 행위는 금지되며, `intelligence/` 아래에 분류되지 않은 모호한 폴더를 임의로 생성하는 행위 역시 원칙적으로 제한되나, 필요 시 요청자의 명시적 승인을 거친 하위 폴더 생성은 예외적으로 허용합니다.
 
 ### ④ Streamlit 페이지 폴더 (`app/pages/`)
 * **메뉴 순서 제어**: 폴더 정렬 및 메뉴 구성을 위해 반드시 언더바와 번호 접두사를 붙여 정의합니다.

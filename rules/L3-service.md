@@ -6,21 +6,18 @@
 
 ## 1. 서비스 레이어의 핵심 역할 및 위치
 - **위치**: `app/service/` 아래에 배치
-- **파일명**: `df_*.py` 또는 `*_df.py` 명명 규칙 준수
+- **파일명**: `*_df.py` 명명 규칙 준수
 - **책임**: DB 클라이언트를 통해 조회된 원시 데이터프레임(Raw DataFrame)을 비즈니스 로직, 데이터 타입 복구, 결측치 대체, 통계/그룹 집계 연산 등을 거쳐 뷰 레이어에 적합한 Pandas DataFrame으로 정제하여 반환합니다.
 
 ---
 
-## 2. 서비스 레이어의 3대 금지 규칙 (Strict Guardrails)
-1. **UI 라이브러리 임포트 절대 금지 (No UI Library)**:
-   - 서비스 파일 내부에서는 `plotly`, `matplotlib`, `streamlit` 등의 시각화/UI 패키지를 절대 임포트할 수 없습니다.
-   - 차트 객체(`go.Figure`, `plt.Figure` 등)를 생성하거나 반환해서는 안 됩니다.
-   - [안티패턴] `import streamlit as st`, `import plotly.express as px`
-2. **Inplace Mutation 금지 (No Inplace)**:
+## 2. 금지 규칙 (Strict Guardrails)
+> [!IMPORTANT]
+> 레이어 간 상호 작용 및 고수준 의존성 격벽 제약 조건은 단일 진실 공급원(SSOT)인 **[L2-architecture.md](file:///home/jumasi/workstation/intelligence/rules/L2-architecture.md)**의 규칙을 엄격히 준수합니다.
+
+1. **Inplace Mutation 금지 (No Inplace)**:
    - 데이터프레임 가공 시 `inplace=True` 옵션 사용을 금지하며, 원본 데이터의 불변성을 유지하고 사이드 이펙트를 원천 차단합니다.
    - [안티패턴] `df.dropna(inplace=True)` -> `df = df.dropna()`
-3. **역방향 의존성 금지 (No Reverse Dependencies)**:
-   - 서비스 레이어는 UI 레이어(`app/pages/`)에 속한 모듈을 절대 임포트할 수 없습니다.
 
 ---
 

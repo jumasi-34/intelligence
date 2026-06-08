@@ -1,4 +1,4 @@
-# context-gmes-checklist.md (제조 공정 및 생산 품질 도메인 안전 체크리스트)
+# gmes-checklist.md (제조 공정 및 생산 품질 도메인 안전 체크리스트)
 
 이 체크리스트는 GMES 제조 공정 도메인 관련 파일(`service/gmes_df.py`, `queries/gmes_query.py` 등)의 개발 및 패치 시, 변경 사항을 실 배포 브랜치에 머지하기 전에 전수 충족해야 하는 **오퍼레이션 진단 리스트**입니다.
 
@@ -25,4 +25,4 @@
 ---
 
 ## 4. 테스트 하네스 검증 연계 (Test Harness Verification)
-- 본 체크리스트에서 규정하는 0분모 방어, 공장 격리 바인딩 및 Outlier Threshold 시각화 조건은 [qa-test-writer.md](file:///home/jumasi/workstation/intelligence/agent/qa-test-writer.md) 에이전트가 `tests/test_gmes_regression.py` 등의 완전한 인메모리 회귀/골든 테스트 코드를 생성하여 자동으로 보증해야 합니다.
+- 본 체크리스트에서 규정하는 0분모 방어, 공장 격리 바인딩 및 Outlier Threshold 시각화 조건은 테스트 하네스 검증 도구(예: `tests/test_layer_boundary.py` 등) 및 개별 인메모리 회귀/골든 테스트 코드를 구성하여 빌드 전 오류가 발생하지 않음을 자동으로 보증해야 합니다.

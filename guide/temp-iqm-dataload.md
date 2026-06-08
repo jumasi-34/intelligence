@@ -10,7 +10,7 @@
 
 ## 1. 데이터 흐름 아키텍처 (Architecture Diagram)
 
-### 📊 시각화 Mermaid 아키텍처 다이어그램
+### [시각화] Mermaid 아키텍처 다이어그램
 
 ```mermaid
 graph TD
@@ -53,7 +53,7 @@ graph TD
     end
 ```
 
-### 📋 텍스트 기반 구조도 (ASCII Flowchart)
+### [구조도] 텍스트 기반 구조도 (ASCII Flowchart)
 ```text
 [원천 데이터 수집 및 적재 라이프사이클]
 

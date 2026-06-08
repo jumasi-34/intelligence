@@ -32,7 +32,6 @@ core/
 │   ├── mailer.py
 │   └── sqlite_utils.py             # SQLite DML(INSERT/UPDATE/DELETE) · DDL(CREATE/ALTER/DROP)
 ├── operate/                        # re-export bridge → db/
-│   ├── db_client.py                # → db/client.py
 │   └── send_mail.py                # → db/mailer.py
 ├── utils/                          # 범용 유틸리티
 │   ├── datetime.py                 # 날짜 헬퍼 (get_year_start_end 등)
@@ -58,12 +57,10 @@ core/
 
 모든 DB 연결의 진입점. `.execute(query) → pd.DataFrame`.
 
-실제 구현은 `core/db/client.py`에 있으며, `core/operate/db_client.py`는 하위 호환용 re-export bridge다.
+실제 구현은 `core/db/client.py`에 있으며, 기존의 하위 호환용 레거시 브릿지(`core/operate/db_client.py`)는 완전히 제거되었습니다.
 
 ```python
-from core.operate.db_client import get_client  # 기존 import 경로 (계속 유효)
-# 또는
-from core.db.client import get_client           # 새 import 경로
+from app.core.db.client import get_client           # 단일 진실 공급원(SSOT) 임포트 경로
 
 get_client("databricks")           # Databricks SQL (주 분석 데이터)
 get_client("oracle_bi")            # Oracle BI DB

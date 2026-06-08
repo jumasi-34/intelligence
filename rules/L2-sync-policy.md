@@ -90,11 +90,11 @@ flowchart LR
 
 ## 4. 예외 상황 및 핵심 금지 제약 (Forbidden Practices)
 
-### 🚨 [CRITICAL] 역방향 rsync 직접 실행 금지
+### [CRITICAL] 역방향 rsync 직접 실행 금지
 * `local.assets/`에 대해 서버에서 파일을 Pull 해오거나 (`rsync`로 서버 ➔ 로컬 실행), `local.data/`에 대해 로컬에서 서버로 Push 해버리는 명령어(`rsync`로 로컬 ➔ 서버 실행)는 **데이터 정합성을 깨뜨리고 실데이터를 유실시킬 수 있으므로 절대 엄금**합니다.
 * 동기화 수행 시 반드시 검증된 스크립트(`automation/sync_local_assets.sh`, `automation/sync_local_data.sh`) 또는 매핑된 단축 명령어(`make push-assets`, `make pull-data`)만 활용하여 예기치 못한 인적 실수를 방지합니다.
 
-### ⚠️ `.gitignore` 등록 및 형상 관리 격리
+### [주의] `.gitignore` 등록 및 형상 관리 격리
 * `local.assets/` 및 `local.data/` 폴더 하위의 모든 내용은 Git의 추적 대상에서 영구 격리되어야 합니다.
 * 단, 빈 폴더 구조를 유지하기 위해 필요한 최소한의 `.gitkeep` 파일 생성을 제외하고는 어떠한 바이너리나 대용량 파일도 Git 리포지토리에 업로드해서는 안 됩니다.
 

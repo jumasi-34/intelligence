@@ -11,14 +11,14 @@
 
 ---
 
-## 2. 플롯 레이어의 3대 금지 규칙 (Strict Guardrails)
-1. **Streamlit 레이아웃 요소 호출 절대 금지 (No Streamlit Layout in Plots)**:
-   - `*_plots.py` 내부에서는 `st.write`, `st.columns`, `st.sidebar`, `st.metric` 등 화면 레이아웃 및 UI 요소를 렌더링하는 함수를 절대 호출할 수 없습니다.
-   - 오직 순수 시각화 차트 객체(`go.Figure`, `plt.Figure` 등)만을 생성하여 컨트롤러(`*_page.py`)로 전달하는 것에만 책임을 한정합니다.
+## 2. 금지 규칙 (Strict Guardrails)
+> [!IMPORTANT]
+> 레이어 간 상호 작용 및 고수준 의존성 격벽 제약 조건은 단일 진실 공급원(SSOT)인 **[L2-architecture.md](file:///home/jumasi/workstation/intelligence/rules/L2-architecture.md)**의 규칙을 엄격히 준수합니다.
+
+1. **Streamlit 레이아웃 요소 호출 금지 (No Streamlit Layout in Plots)**:
+   - `*_plots.py` 내부에서는 `st.write`, `st.columns`, `st.sidebar`, `st.metric` 등 화면 레이아웃 및 UI 요소를 렌더링하는 함수를 절대 호출할 수 없습니다. 오직 순수 시각화 차트 객체만을 생성하여 반환해야 합니다.
 2. **비즈니스 가공 금지 (No Business Logic)**:
    - 플롯 파일 내부에서 데이터 원본 필터링, 복잡한 통계 수식 적용, 결측값 전처리 등 비즈니스 서비스 레이어의 역할을 침범하지 않습니다.
-3. **독립 임포트 차단 (No Direct Service Import)**:
-   - `*_plots.py` 내부에서 직접 서비스 모듈(`df_*.py`)을 임포트하지 않습니다. 데이터프레임은 오직 호출자인 `*_page.py` 컨트롤러로부터 매개변수로 전달받아야 합니다.
 
 ---
 
@@ -30,6 +30,7 @@
    - 반드시 `app/core/common_design_parameter.py` 또는 `viz_plotly_design` 테마 컬러 변수를 가져와 바인딩함으로써 프로젝트 전반의 고급스럽고 일관된 룩앤필(Premium Look & Feel)을 보장해야 합니다.
 3. **인터렉티브 호버 옵션 최적화**:
    - 정적 이미지 차트가 아닌, 사용자 마우스 오버 시 풍부하고 직관적인 데이터를 제공하도록 `hover_data` 혹은 `hovertemplate` 옵션을 미려하게 커스텀 구성합니다.
+   - 이때 가독성과 유지보수 편의성을 수호하기 위해 호버(Tooltip) 템플릿 명세는 외부 공통 설정을 참조하지 않고, 개별 시각화 함수 내에 직접 하드코딩(f-string 및 HTML 태그 사용)하여 명시적으로 제어합니다.
 
 ---
 

@@ -1,4 +1,4 @@
-# context-qrs-checklist.md (부적합 대응 및 품질 협업 도메인 안전 체크리스트)
+# qrs-checklist.md (부적합 대응 및 품질 협업 도메인 안전 체크리스트)
 
 이 체크리스트는 QRS 도메인 관련 파일(`service/qrs_df.py`, `queries/qrs_query.py` 등)의 개발이나 워크플로우 로직 패치 시, 머지 전 완벽히 합치되어야 하는 **안전성 오퍼레이션 진단표**입니다.
 

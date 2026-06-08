@@ -1,4 +1,4 @@
-# context-alert-mail-checklist.md (알람 및 메일 자동화 배치 도메인 안전 체크리스트)
+# alert-mail-checklist.md (알람 및 메일 자동화 배치 도메인 안전 체크리스트)
 
 이 체크리스트는 알람 및 자동 메일링 관련 파일(`core/db/mailer.py`, `automation/automail_cqms_ongoing.py` 등)의 신규 기능 패치나 배치 구동 설정 수정 시, 운영 브랜치 배포 전 전수 합치되어야 하는 **안전성 진단 체크리스트**입니다.
 

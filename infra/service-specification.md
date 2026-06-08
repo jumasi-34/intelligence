@@ -110,7 +110,7 @@ elif vm == "monthly":
 ### 4) DB 클라이언트 호출
 
 ```python
-from core.operate.db_client import get_client
+from core.db.client import get_client
 
 df = get_client("databricks").execute(query)
 df = get_client("oracle_bi").execute(query)

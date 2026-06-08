@@ -81,8 +81,8 @@ flowchart LR
 
 ---
 
-### Rule 4. 호버 명세 단일화 (Centralized Hover Specifications)
-복잡한 HTML 호버 문자열을 함수 내에 하드코딩하지 않고, `core/plot/viz_config.py`의 `HOVER_TEMPLATES` 상수에 키를 등록한 뒤 참조하여 사용합니다.
+### Rule 4. 가독성을 위한 호버 인라인 직접 정의 (Inline Hover Customization)
+시각화 차트의 직관성과 가독성을 극대화하기 위해, 마우스 호버(Tooltip) 텍스트 포맷 및 HTML 템플릿은 외부 모듈에 분리하여 관리하지 않고 시각화 함수(`draw_*`) 내부에서 f-string 및 HTML 태그를 결합하여 직접 정의하고 하드코딩하여 사용합니다.
 
 ---
 
@@ -120,7 +120,6 @@ def draw_bad_chart(df):
 ```python
 import plotly.graph_objects as go
 from core.common_design_parameter import colors, font_sizes, create_plotly_font_dict
-from core.plot.viz_config import HOVER_TEMPLATES
 from core.plot.viz_plotly_design import get_default_trace_config, get_default_layout_config
 from core.plot.viz_helper import validate_chart_data, create_empty_chart
 
@@ -130,13 +129,19 @@ def draw_good_chart(df: pd.DataFrame) -> go.Figure:
         return create_empty_chart(title="Good Chart Case", height=300)
         
     # 2. 빌딩 1단계: 트레이스 명세 선언 (Trace Specifications)
-    # 중앙화된 colors 토큰 및 호버 템플릿만 사용하며 하드코딩을 원천 차단합니다.
+    # 가독성을 극대화하기 위해 호버 텍스트는 시각화 함수 내에 f-string 및 HTML로 직접 하드코딩합니다.
     trace_config = get_default_trace_config("bar")
+    df_plot = df.copy()
+    df_plot["hover_text"] = df_plot.apply(
+        lambda r: f"<b>이름</b>: {r['NAME']}<br><b>수량</b>: {r['VAL']:,} EA", axis=1
+    )
+    
     trace = go.Bar(
-        x=df["NAME"],
-        y=df["VAL"],
+        x=df_plot["NAME"],
+        y=df_plot["VAL"],
+        text=df_plot["hover_text"],
+        hovertemplate="%{text}<extra></extra>", # 인라인 직접 정의 적용
         marker=dict(color=colors.iqm_primary_500), # 브랜드 전용 테마 컬러 지정
-        hovertemplate=HOVER_TEMPLATES.get("default_ratio", "%{y}"), # 중앙 관리식 호버 적용
         **trace_config
     )
     

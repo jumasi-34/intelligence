@@ -12,7 +12,7 @@
 ## 필수 기준
 
 - DB 조회는 가능한 `service/` 레이어와 기존 파라미터 dataclass를 경유합니다.
-- 운영 DB 참조, 인증/권한, `.env`, `db_client.py`, `login_page.py` 변경은 High risk로 분류합니다.
+- 운영 DB 참조, 인증/권한, `.env`, `client.py`, `login_page.py` 변경은 High risk로 분류합니다.
 - High risk 변경은 `risk.md`에 사유를 남기고 PR 본문에서 사람 승인을 받아야 합니다.
 - AI-assisted PR은 `ai/runs/run_*` 아카이브와 `risk.md`의 Risk Level을 연결해야 합니다.
 

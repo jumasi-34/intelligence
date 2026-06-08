@@ -11,14 +11,14 @@
 
 ---
 
-## 2. 쿼리 레이어의 3대 금지 규칙 (Strict Guardrails)
-1. **DB 직접 실행 금지 (No DB Execute)**:
-   - 쿼리 파일 내에서 직접 데이터베이스 클라이언트를 임포트하여 `execute()`를 수행하지 않습니다.
-   - [안티패턴] `from app.core.operate.db_client import get_client`
-2. **타 레이어 임포트 금지 (No Reverse Dependencies)**:
-   - 쿼리 레이어는 UI 레이어(`app/pages/`)나 서비스 레이어(`app/service/`)의 모듈을 절대 임포트할 수 없습니다.
-3. **인라인 하드코딩 금지**:
-   - `WHERE` 조건절이나 테이블 경로 등을 하드코딩하지 않고, 공통 헬퍼와 중앙 상수를 통해 동적으로 바인딩해야 합니다.
+## 2. 금지 규칙 (Strict Guardrails)
+> [!IMPORTANT]
+> 레이어 간 상호 작용 및 고수준 의존성 격벽 제약 조건은 단일 진실 공급원(SSOT)인 **[L2-architecture.md](file:///home/jumasi/workstation/intelligence/rules/L2-architecture.md)**의 규칙을 엄격히 준수합니다.
+
+1. **SQL 실행 권한 제거**:
+   - 쿼리 레이어 내부에서 어떠한 형태든 직접 DB 연결을 성립하거나 실행 메서드를 가동해서는 안 됩니다.
+2. **인라인 하드코딩 금지**:
+   - WHERE 조건절이나 테이블 경로 등을 하드코딩하지 않고, 공통 헬퍼와 중앙 상수를 통해 동적으로 바인딩해야 합니다.
 
 ---
 
