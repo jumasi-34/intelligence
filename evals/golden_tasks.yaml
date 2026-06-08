@@ -34,11 +34,11 @@ tasks:
     agent: specialist-cqms-quality
     test: tests/golden/test_cqms_flow.py
     required_context:
-      - intelligence/context-common.md
-      - intelligence/context/context-architecture.md
-      - intelligence/context/context-testing.md
-      - intelligence/context/context-cqms-summary.md
-      - intelligence/context/context-cqms-checklist.md
+      - intelligence/guide/agent-common.md
+      - intelligence/guide/3layer-development-process.md
+      - intelligence/guide/testing.md
+      - intelligence/domain/cqms-summary.md
+      - intelligence/domain/cqms-checklist.md
     expected_artifacts:
       - task.md
       - context-manifest.yaml
@@ -52,11 +52,11 @@ tasks:
     agent: specialist-gmes-factory
     test: tests/golden/test_gmes_flow.py
     required_context:
-      - intelligence/context-common.md
-      - intelligence/context/context-architecture.md
-      - intelligence/context/context-testing.md
-      - intelligence/context/context-gmes-summary.md
-      - intelligence/context/context-gmes-checklist.md
+      - intelligence/guide/agent-common.md
+      - intelligence/guide/3layer-development-process.md
+      - intelligence/guide/testing.md
+      - intelligence/domain/gmes-summary.md
+      - intelligence/domain/gmes-checklist.md
     expected_artifacts:
       - task.md
       - context-manifest.yaml
@@ -70,11 +70,11 @@ tasks:
     agent: specialist-iqm-executive
     test: tests/golden/test_iqm_dashboard_flow.py
     required_context:
-      - intelligence/context-common.md
-      - intelligence/context/context-architecture.md
-      - intelligence/context/context-testing.md
-      - intelligence/context/context-iqm-summary.md
-      - intelligence/context/context-iqm-checklist.md
+      - intelligence/guide/agent-common.md
+      - intelligence/guide/3layer-development-process.md
+      - intelligence/guide/testing.md
+      - intelligence/domain/iqm-summary.md
+      - intelligence/domain/iqm-checklist.md
     expected_artifacts:
       - task.md
       - context-manifest.yaml
@@ -88,11 +88,11 @@ tasks:
     agent: specialist-qrs-action
     test: tests/golden/test_qrs_action_flow.py
     required_context:
-      - intelligence/context-common.md
-      - intelligence/context/context-architecture.md
-      - intelligence/context/context-testing.md
-      - intelligence/context/context-qrs-summary.md
-      - intelligence/context/context-qrs-checklist.md
+      - intelligence/guide/agent-common.md
+      - intelligence/guide/3layer-development-process.md
+      - intelligence/guide/testing.md
+      - intelligence/domain/qrs-summary.md
+      - intelligence/domain/qrs-checklist.md
     expected_artifacts:
       - task.md
       - context-manifest.yaml

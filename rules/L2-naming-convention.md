@@ -27,9 +27,9 @@
   * L1 (기본 및 안전): `L1-git.md`
   * L2 (설계 및 표준): `L2-architecture.md`, `L2-naming-convention.md`, `L2-business-constants.md`, `L2-context-readability.md`
   * L3 (구현 및 레이어): `L3-query.md`, `L3-service.md`, `L3-dashboard.md`, `L3-plot.md`
-* **맥락/컨텍스트 문서 (`intelligence/context/`)**: 반드시 `context-` 접두사를 붙여 에이전트 전용 컨텍스트 파일임을 명시합니다.
-  * 예: `context-queries.md`, `context-service.md`, `context-preprocessing-boundary.md`
-  * [안티패턴] `app/` 실 소스 디렉터리 내부에 독립적인 `CONTEXT.md`를 단독 생성 및 방치하는 행위는 엄격히 금지됩니다.
+* **도메인·인프라·가이드 리소스 (`intelligence/{domain,infra,guide}/`)**: 성격에 맞춰 하위 폴더로 분류 배정하며, 불필요한 `context-` 접두사는 완전히 폐기하여 깔끔하고 투명하게 명명합니다.
+  * 예: `infra/queries-specification.md`, `infra/service-specification.md`, `guide/preprocessing-boundary.md`
+  * [안티패턴] `app/` 실 소스 디렉터리 내부에 독립적인 `CONTEXT.md`를 단독 생성하거나, `intelligence/` 아래에 분류되지 않은 모호한 폴더를 임의로 생성하는 행위는 금지됩니다.
 
 ### ④ Streamlit 페이지 폴더 (`app/pages/`)
 * **메뉴 순서 제어**: 폴더 정렬 및 메뉴 구성을 위해 반드시 언더바와 번호 접두사를 붙여 정의합니다.

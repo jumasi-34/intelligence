@@ -95,6 +95,6 @@ def process_business_status(status_code):
 
 ## 4. 안전 정책 연동 (No-Mutation Policy Reminder)
 
-이 규칙 역시 `GEMINI.md` 및 `context-common.md`에 명시된 **[CRITICAL] 기존 소스 코드 변경 금지 및 차단 장치 (Safety Lock)**의 통제를 받습니다.
+이 규칙 역시 `GEMINI.md` 및 `guide/agent-common.md`에 명시된 **[CRITICAL] 기존 소스 코드 변경 금지 및 차단 장치 (Safety Lock)**의 통제를 받습니다.
 
 * 신규 비즈니스 상수를 등록하기 위해 `business_constants.json` 및 `business.py`를 실제로 수정해야 하는 상황에서도, **개발자(AI 에이전트)는 직접 코드를 변경하지 말고 변경 사안(Diff 제안)을 정리하여 사용자에게 먼저 리포트하고 명시적 승인을 득한 후 작업을 수행**하여야 합니다.
