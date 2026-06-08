@@ -85,6 +85,10 @@
 * **Pandas DataFrame 변수**: 명확히 DataFrame 타입임을 인지할 수 있도록 `_df` 접미사를 적극 적용합니다.
   * 예: `raw_df`, `filtered_df`, `summary_df`
   * [안티패턴] `data`, `df` 등 너무 축약되거나 의미를 알 수 없는 광범위한 명명은 권장하지 않습니다.
+* **SQLite 데이터베이스 로드 변수**: 로컬 SQLite 데이터베이스로부터 조회하여 저장하는 판다스 데이터프레임 변수는 데이터 원천을 명확히 식별하고 가독성을 수호하기 위해 `sqlite{물리DB명}_{도메인약어}_{CamelCase비즈니스명}` 공식을 사용합니다.
+  - 형식: `sqlite<물리DB명>_<도메인약어>_<CamelCase비즈니스명>`
+  - `ops.db` 로드 예시: `sqliteOps_iqm_devSpecList`, `sqliteOps_iqm_mcodeMapping`
+  - `staging.db` 로드 예시: `sqliteStaging_iqm_aggregateCum`, `sqliteStaging_iqm_specMaster`
 * **데이터프레임 내 컬럼명**:
   * 데이터베이스로부터 기인한 컬럼은 대문자 스네이크 케이스(`UPPER_SNAKE_CASE`)를 사용합니다. (예: `PLANT`, `OEQI`, `NCF_RATE`, `ISSUE_DATE`)
   * 임시 가공용 파이썬 루프 내 인덱스나 로컬 변수는 소문자 스네이크 케이스를 준수합니다.
