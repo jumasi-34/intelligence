@@ -83,23 +83,42 @@
 
 ## 5. 에이전트 협업 및 체이닝 (Agent Collaboration & Chaining)
 
+<!-- START_AGENT_CHAINING -->
 ```mermaid
 flowchart TD
-    Planner["Planner Orchestration Agent\n[최상위 기획 에이전트]"]
-    EDASubAgent["Table EDA Analyst\n[사전 분석 서브에이전트]"]
-    MetaSubAgent["Metadata Dictionary Analyst\n[네이밍/스키마 거버넌스 서브에이전트]"]
-    QueryPreBuilder["Query & Preprocessing Builder Agent\n[쿼리/전처리 빌더 에이전트]"]
-    PagePlotBuilder["Page & Plot Builder Agent\n[화면/시각화 빌더 에이전트]"]
-
-    EDASubAgent -.->|사전 데이터 탐색 리포트 제공| Planner
-    MetaSubAgent -.->|테이블 스키마 - 코드 매핑 사전 제공| Planner
-    MetaSubAgent -.->|코드 네이밍 & 스키마 오타 정적 검증| QueryPreBuilder
-    MetaSubAgent -.->|화면 세션 변수 & UI 네이밍 정적 검증| PagePlotBuilder
+    User["사용자 (Human User)"]
+    Planner["Planner Orchestration Agent<br>[최상위 기획 에이전트]"]
+    EDASubAgent["Table EDA Analyst<br>[사전 분석 서브에이전트]"]
+    QueryPreBuilder["Query & Preprocessing Builder Agent<br>[쿼리/전처리 빌더 에이전트]"]
+    PagePlotBuilder["Page & Plot Builder Agent<br>[화면/시각화 빌더 에이전트]"]
+    PRD["intelligence/prd/prd-*.md<br>(완성 및 확정된 PRD)"]
     
-    Planner -->|최종 PRD 기획 확정 배포| QueryPreBuilder
-    Planner -->|최종 PRD 기획 확정 배포| PagePlotBuilder
-    QueryPreBuilder -->|캐싱된 DataFrame 전달| PagePlotBuilder
+    %% 신규 추가된 리뷰 및 평가 체계
+    CodeReviewer["Code Reviewer Agent<br>[리뷰어 서브에이전트]"]
+    QualityEvaluator["Quality Evaluator Agent<br>[평가 서브에이전트]"]
+    Gateway["최종 배포 게이트<br>(수동 병합 승인)"]
+
+    User -->|"1. 개발 / 리팩토링 요구사항 전달"| Planner
+    EDASubAgent -.->|"2. 사전 데이터 분석 리포트 제공"| Planner
+    Planner <-->|"3. 초안 피드백 및 기획 소통"| User
+    Planner -->|"4. 최종 PRD 확정 및 배포"| PRD
+
+    PRD -->|"5. 데이터 가공 및 쿼리 구현 지침 제공"| QueryPreBuilder
+    PRD -->|"6. 화면 및 차트 시각화 구성 지침 제공"| PagePlotBuilder
+
+    QueryPreBuilder -->|"7. 서비스 모듈 데이터 공급"| PagePlotBuilder
+    
+    %% 리뷰 & 평가 파이프라인 체이닝
+    PagePlotBuilder & QueryPreBuilder -->|"8. 코드 초안 제출"| CodeReviewer
+    CodeReviewer -->|"9. 정적 피드백 & 리팩토링 가이드(Diff)"| QueryPreBuilder & PagePlotBuilder
+    
+    CodeReviewer -->|"10. 리뷰 정합성 검증 완료"| QualityEvaluator
+    QualityEvaluator -->|"11. 하네스 테스트 & 린트/PRD 정량 평가"| QualityEvaluator
+    
+    QualityEvaluator -->|"12. Pass (평가 통과)"| Gateway
+    QualityEvaluator -->|"12. Fail (재수정 요망)"| QueryPreBuilder & PagePlotBuilder
 ```
+<!-- END_AGENT_CHAINING -->
 
 1. **사전 매핑 스펙 배포**: 기획 에이전트가 요구사항 분석에 돌입하면, 본 에이전트는 원천 스키마와 코드의 맵핑 가이드를 선제 공급하여 기획서(PRD)의 데이터 설계 정밀도를 극한으로 끌어올립니다.
 2. **사후 정적 정합성 검역**: 빌더들이 코딩을 완료하여 풀 리퀘스트(PR)를 발행하거나 검증(`make verify`)을 구동할 때, 본 에이전트가 변수명/컬럼명의 일관성을 정적 감사하여 불일치에 의한 런타임 Crash를 철저히 차단합니다.

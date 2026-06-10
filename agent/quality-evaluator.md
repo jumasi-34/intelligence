@@ -87,10 +87,40 @@
 
 ## 5. 에이전트 협업 및 체이닝 (Agent Collaboration & Chaining)
 
+<!-- START_AGENT_CHAINING -->
 ```mermaid
 flowchart TD
-    Reviewer["Code Reviewer Agent<br>(정적 리뷰 가이드 제공)"] -->|"1. 아키텍처 검증 통과"| Evaluator["Quality Evaluator Agent<br>(하네스 구동 및 채점)"]
-    Evaluator -->|"2. Pass (합격) 완료"| Gateway["최종 배포 게이트<br>(수동 병합 승인)"]
-    Evaluator -->|"2. Fail (불합격) 통보"| Reviewer
+    User["사용자 (Human User)"]
+    Planner["Planner Orchestration Agent<br>[최상위 기획 에이전트]"]
+    EDASubAgent["Table EDA Analyst<br>[사전 분석 서브에이전트]"]
+    QueryPreBuilder["Query & Preprocessing Builder Agent<br>[쿼리/전처리 빌더 에이전트]"]
+    PagePlotBuilder["Page & Plot Builder Agent<br>[화면/시각화 빌더 에이전트]"]
+    PRD["intelligence/prd/prd-*.md<br>(완성 및 확정된 PRD)"]
+    
+    %% 신규 추가된 리뷰 및 평가 체계
+    CodeReviewer["Code Reviewer Agent<br>[리뷰어 서브에이전트]"]
+    QualityEvaluator["Quality Evaluator Agent<br>[평가 서브에이전트]"]
+    Gateway["최종 배포 게이트<br>(수동 병합 승인)"]
+
+    User -->|"1. 개발 / 리팩토링 요구사항 전달"| Planner
+    EDASubAgent -.->|"2. 사전 데이터 분석 리포트 제공"| Planner
+    Planner <-->|"3. 초안 피드백 및 기획 소통"| User
+    Planner -->|"4. 최종 PRD 확정 및 배포"| PRD
+
+    PRD -->|"5. 데이터 가공 및 쿼리 구현 지침 제공"| QueryPreBuilder
+    PRD -->|"6. 화면 및 차트 시각화 구성 지침 제공"| PagePlotBuilder
+
+    QueryPreBuilder -->|"7. 서비스 모듈 데이터 공급"| PagePlotBuilder
+    
+    %% 리뷰 & 평가 파이프라인 체이닝
+    PagePlotBuilder & QueryPreBuilder -->|"8. 코드 초안 제출"| CodeReviewer
+    CodeReviewer -->|"9. 정적 피드백 & 리팩토링 가이드(Diff)"| QueryPreBuilder & PagePlotBuilder
+    
+    CodeReviewer -->|"10. 리뷰 정합성 검증 완료"| QualityEvaluator
+    QualityEvaluator -->|"11. 하네스 테스트 & 린트/PRD 정량 평가"| QualityEvaluator
+    
+    QualityEvaluator -->|"12. Pass (평가 통과)"| Gateway
+    QualityEvaluator -->|"12. Fail (재수정 요망)"| QueryPreBuilder & PagePlotBuilder
 ```
+<!-- END_AGENT_CHAINING -->
 

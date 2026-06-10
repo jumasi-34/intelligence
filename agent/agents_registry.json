@@ -1,0 +1,187 @@
+{
+  "agents": {
+    "planner-orchestrator": {
+      "name": "Planner Orchestration Agent",
+      "category": "Planner Agent",
+      "trigger": "사용자 요구사항 수집 및<br>PRD 설계 및 관리<br>[기획 에이전트]",
+      "contexts": [
+        "L2-architecture.md",
+        "context-common.md",
+        "prd-template.md"
+      ],
+      "allowed": [
+        "신규 페이지 요구사항 분석 및 PRD 초안 작성",
+        "사용자와 피드백 루프를 통한 PRD 완성",
+        "기존 페이지 리팩토링 시 기존 PRD 조회 및 업데이트/신규 생성",
+        "빌더 에이전트들이 참조할 수 있도록 `intelligence/prd/`에 배포"
+      ],
+      "forbidden": [
+        "프로덕션 소스 코드(`.py`) 직접 개발 및 수정 금지 (No-Code Modification Policy)",
+        "DB 쿼리 실행 또는 비즈니스 로직 작성 금지"
+      ],
+      "outputs": [
+        "intelligence/prd/prd-*.md"
+      ],
+      "connections": [
+        "builder-query-preprocessor",
+        "builder-page-plot-builder"
+      ]
+    },
+    "builder-query-preprocessor": {
+      "name": "Query & Preprocessing Builder Agent",
+      "category": "Builder Agent",
+      "trigger": "SQL 쿼리 설계 및<br>데이터 전처리 개발<br>[빌더 에이전트]",
+      "contexts": [
+        "L2-architecture.md",
+        "context-common.md",
+        "prd-*.md"
+      ],
+      "allowed": [
+        "`app/queries/` 내에 쿼리 함수 생성 및 수정",
+        "`app/service/` 내에 데이터 전처리, 정제 및 `@st.cache_data` 부착 개발"
+      ],
+      "forbidden": [
+        "`app/pages/` 내의 UI 파일이나 시각화(`_plots.py`) 직접 수정 금지",
+        "화면 컨트롤러 설계 개입 금지"
+      ],
+      "outputs": [
+        "app/queries/*_query.py",
+        "app/service/*_df.py"
+      ],
+      "connections": [
+        "builder-page-plot-builder",
+        "builder-code-reviewer"
+      ]
+    },
+    "builder-page-plot-builder": {
+      "name": "Page & Plot Builder Agent",
+      "category": "Builder Agent",
+      "trigger": "Streamlit 화면 빌딩<br>및 Plotly 시각화<br>[빌더 에이전트]",
+      "contexts": [
+        "L2-architecture.md",
+        "context-common.md",
+        "prd-*.md"
+      ],
+      "allowed": [
+        "`app/pages/` 내에 Streamlit 레이아웃 구성 및 세션 상태 관리",
+        "`app/pages/` 내에 프리미엄 Plotly Figure(`*_plots.py`) 설계 및 화면 배치",
+        "`app/core/page/config_pages.py`에 네비게이션 매핑 및 자동 등록"
+      ],
+      "forbidden": [
+        "`app/queries/` 및 `app/service/` 모듈 직접 수정 금지",
+        "UI 레이어 내에서 직접 DB 쿼리 실행 또는 대규모 원천 가공 연산 수행 금지"
+      ],
+      "outputs": [
+        "app/pages/*_page.py",
+        "app/pages/*_plots.py",
+        "app/core/page/config_pages.py"
+      ],
+      "connections": [
+        "builder-code-reviewer"
+      ]
+    },
+    "analyst-table-eda": {
+      "name": "Table EDA Analyst",
+      "category": "Sub-Agent",
+      "trigger": "신규 테이블 등록 시<br>사전 브리핑 및 EDA<br>[분석가 서브에이전트]",
+      "contexts": [
+        "L2-architecture.md",
+        "context-common.md"
+      ],
+      "allowed": [
+        "본격 개발 착수 전, 사용자 및 개발 에이전트를 위한 충분하고 정교한 테이블 사전 브리핑 지원",
+        "데이터베이스의 Read-Only 메타데이터 및 통계 정보 수집",
+        "`intelligence/domain/` 내에 테이블의 비즈니스 현실 및 수치 특성을 융합한 EDA 가이드북 생성 및 영속 보존"
+      ],
+      "forbidden": [
+        "**프로덕션 개발 코드(`.py`) 직접 작성 및 수정 금지** (No-Mutation Policy 준수)",
+        "`INSERT`, `UPDATE`, `DELETE`, `DROP` 등 데이터 변조/변경 및 파괴적 쿼리 실행 금지",
+        "대용량 풀 스캔 쿼리 전송 금지"
+      ],
+      "outputs": [
+        "intelligence/domain/eda-*.md",
+        "tests/eda_test_*.py"
+      ],
+      "connections": [
+        "planner-orchestrator"
+      ]
+    },
+    "analyst-metadata-dictionary": {
+      "name": "Metadata Dictionary Analyst",
+      "category": "Sub-Agent",
+      "trigger": "코드 명명 정합성 검사 및<br>스키마-코드 사전 관리<br>[사전/사후 검역 서브에이전트]",
+      "contexts": [
+        "L2-naming-convention.md",
+        "L2-business-constants.md",
+        "context-common.md"
+      ],
+      "allowed": [
+        "파일, 함수, 변수가 3-Layer 명명 규정을 지키는지 검증",
+        "데이터베이스 컬럼(`UPPER_SNAKE`)과 소스 변수(`snake`) 매핑 사전 구축",
+        "비즈니스 상수 정렬 검증"
+      ],
+      "forbidden": [
+        "**프로덕션 소스 코드(`.py`) 직접 생성 및 임의 변경 엄격 금지** (No-Mutation Policy)",
+        "DB 파괴적 명령 실행 금지"
+      ],
+      "outputs": [
+        "intelligence/infra/metadata-dictionary-*.md"
+      ],
+      "connections": [
+        "planner-orchestrator",
+        "builder-query-preprocessor",
+        "builder-page-plot-builder"
+      ]
+    },
+    "builder-code-reviewer": {
+      "name": "Code Reviewer Agent",
+      "category": "Sub-Agent",
+      "trigger": "아키텍처 및 3-Layer<br>정적 코드 리뷰 수행<br>[리뷰어 서브에이전트]",
+      "contexts": [
+        "builder-code-reviewer.md",
+        "L2-architecture.md",
+        "L2-naming-convention.md"
+      ],
+      "allowed": [
+        "빌더가 완성한 파이썬 소스 코드 정적 정합성 및 잠재 버그 분석",
+        "아키텍처 규칙 위반 탐지 시 리팩토링 개선 가이드(Diff) 제안 생성"
+      ],
+      "forbidden": [
+        "**프로덕션 소스 코드(`.py`) 직접 수정 및 임의 변경 금지**",
+        "최종 Pass/Fail 합격 여부 독단 결정 금지 (의견 기술만 허용)"
+      ],
+      "outputs": [
+        "intelligence/verification/review-report-*.md"
+      ],
+      "connections": [
+        "quality-evaluator"
+      ]
+    },
+    "quality-evaluator": {
+      "name": "Quality Evaluator Agent",
+      "category": "Sub-Agent",
+      "trigger": "하네스 테스트 구동 및<br>품질 평점 채점 관리<br>[평가 서브에이전트]",
+      "contexts": [
+        "quality-evaluator.md",
+        "L2-architecture.md",
+        "prd-*.md"
+      ],
+      "allowed": [
+        "`tests/` 하위 테스트 케이스 자율 구동 및 감시",
+        "`make verify` 구문/린트 스코어 산출 및 요구사항 충족도 매핑 채점",
+        "게이트 합격/불합격(Pass/Fail) 판단 수립"
+      ],
+      "forbidden": [
+        "**프로덕션 소스 코드 및 테스트 코드 직접 수정 금지** (Audit-Only)",
+        "오류 발생 시 리팩토링 코드 직접 작성 금지 (리뷰어에게 에스컬레이션)"
+      ],
+      "outputs": [
+        "intelligence/evals/evaluation-scorecard-*.md"
+      ],
+      "connections": [
+        "builder-query-preprocessor",
+        "builder-page-plot-builder"
+      ]
+    }
+  }
+}

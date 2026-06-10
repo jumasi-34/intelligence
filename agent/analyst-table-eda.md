@@ -89,19 +89,42 @@ All new table EDA reports are generated as `intelligence/context/context-eda-<ta
 
 ## 5. 에이전트 협업 및 체이닝 (Agent Collaboration & Chaining)
 
+<!-- START_AGENT_CHAINING -->
 ```mermaid
 flowchart TD
-    Planner["Planner Orchestration Agent\n[최상위 기획 에이전트]"]
-    EDASubAgent["Table EDA Analyst\n[사전 분석 서브에이전트]"]
-    QueryPreBuilder["Query & Preprocessing Builder Agent\n[쿼리/전처리 빌더 에이전트]"]
-    PagePlotBuilder["Page & Plot Builder Agent\n[화면/시각화 빌더 에이전트]"]
+    User["사용자 (Human User)"]
+    Planner["Planner Orchestration Agent<br>[최상위 기획 에이전트]"]
+    EDASubAgent["Table EDA Analyst<br>[사전 분석 서브에이전트]"]
+    QueryPreBuilder["Query & Preprocessing Builder Agent<br>[쿼리/전처리 빌더 에이전트]"]
+    PagePlotBuilder["Page & Plot Builder Agent<br>[화면/시각화 빌더 에이전트]"]
+    PRD["intelligence/prd/prd-*.md<br>(완성 및 확정된 PRD)"]
+    
+    %% 신규 추가된 리뷰 및 평가 체계
+    CodeReviewer["Code Reviewer Agent<br>[리뷰어 서브에이전트]"]
+    QualityEvaluator["Quality Evaluator Agent<br>[평가 서브에이전트]"]
+    Gateway["최종 배포 게이트<br>(수동 병합 승인)"]
 
-    EDASubAgent -.->|사전 데이터 탐색 리포트 제공| Planner
-    Planner -->|최종 PRD 기획 확정 배포| QueryPreBuilder
-    Planner -->|최종 PRD 기획 확정 배포| PagePlotBuilder
-    QueryPreBuilder -->|캐싱된 DataFrame 전달| PagePlotBuilder
-    PagePlotBuilder -->|필요 데이터프레임 스키마 피드백| QueryPreBuilder
+    User -->|"1. 개발 / 리팩토링 요구사항 전달"| Planner
+    EDASubAgent -.->|"2. 사전 데이터 분석 리포트 제공"| Planner
+    Planner <-->|"3. 초안 피드백 및 기획 소통"| User
+    Planner -->|"4. 최종 PRD 확정 및 배포"| PRD
+
+    PRD -->|"5. 데이터 가공 및 쿼리 구현 지침 제공"| QueryPreBuilder
+    PRD -->|"6. 화면 및 차트 시각화 구성 지침 제공"| PagePlotBuilder
+
+    QueryPreBuilder -->|"7. 서비스 모듈 데이터 공급"| PagePlotBuilder
+    
+    %% 리뷰 & 평가 파이프라인 체이닝
+    PagePlotBuilder & QueryPreBuilder -->|"8. 코드 초안 제출"| CodeReviewer
+    CodeReviewer -->|"9. 정적 피드백 & 리팩토링 가이드(Diff)"| QueryPreBuilder & PagePlotBuilder
+    
+    CodeReviewer -->|"10. 리뷰 정합성 검증 완료"| QualityEvaluator
+    QualityEvaluator -->|"11. 하네스 테스트 & 린트/PRD 정량 평가"| QualityEvaluator
+    
+    QualityEvaluator -->|"12. Pass (평가 통과)"| Gateway
+    QualityEvaluator -->|"12. Fail (재수정 요망)"| QueryPreBuilder & PagePlotBuilder
 ```
+<!-- END_AGENT_CHAINING -->
 
 1. **설계 정밀도 혁신 및 지원**: 기획 에이전트와 구현 빌더 에이전트들은 개발에 착수하기 전, 본 서브에이전트가 공급한 테이블 분석 보고서(`context-eda-*.md`)를 정독하여 비정상 Null 값 처리 및 조인 무결성 등을 완벽하게 사전 대응합니다.
 2. **비즈니스 해상도 극대화**: 사용자는 본 서브에이전트가 제공하는 정성적 해설을 읽고 대시보드가 반영하는 실제 도메인의 제조 품질 현실을 완벽하게 인지할 수 있습니다.
