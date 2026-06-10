@@ -69,7 +69,8 @@
       ],
       "forbidden": [
         "`app/queries/` 및 `app/service/` 모듈 직접 수정 금지",
-        "UI 레이어 내에서 직접 DB 쿼리 실행 또는 대규모 원천 가공 연산 수행 금지"
+        "UI 레이어 내에서 직접 DB 쿼리 실행 또는 대규모 원천 가공 연산 수행 금지",
+        "UI 페이지, 탭, 텍스트, 버튼, 토스트, 주석 등 모든 소스 영역에서 일반 유니코드 이모지(Emoji)의 직접 사용 엄격 금지 (필요시 오직 Streamlit 기본 Google Material 아이콘 ':material/icon_name:'만 사용 가능)"
       ],
       "outputs": [
         "app/pages/*_page.py",
