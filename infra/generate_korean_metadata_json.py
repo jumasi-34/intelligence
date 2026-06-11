@@ -622,14 +622,27 @@ def build_markdown_report_from_integrated_json(metadata: dict) -> str:
         for var_name, info in sorted(cat_items.items()):
             md.append(f"#### 📑 `{var_name}` ({info['summary_ko']})")
             md.append(
-                "| ID (Column) | 물리 타입 (Type) | 별칭 추천 (Recommended Alias) | 대분류 (Category) | 매핑 상수 (Value Constants) |"
+                "| ID (Column) | 물리 타입 (Type) | 별칭 추천 (Recommended Alias) | 매핑 상수 (Value Constants) |"
             )
-            md.append("|---|---|---|---|---|")
+            md.append("|---|---|---|---|")
             for col_name, spec in info["columns_spec"].items():
                 constants_desc = f"{len(spec['value_constants'])}개 상수 항목 매핑" if spec["value_constants"] else "-"
-                md.append(
-                    f"| `{col_name}` | `{spec['type']}` | `{spec['recommended_alias']}` | {spec['category_type']} | {constants_desc} |"
-                )
+                md.append(f"| `{col_name}` | `{spec['type']}` | `{spec['recommended_alias']}` | {constants_desc} |")
+
+            # 테이블별 조건 상수가 명시된 경우 렌더링
+            if info.get("query_constants"):
+                md.append("")
+                md.append("👉 **테이블 단위 쿼리 조건문 상수 (Query Constants)**")
+                md.append("| 상수 키 (Constant Key) | 주요 매핑 예시 (Value Mappings) |")
+                md.append("|---|---|")
+                for const_k, const_v in info["query_constants"].items():
+                    if isinstance(const_v, dict):
+                        mapping_preview = ", ".join([f"`{k}`: {v}" for k, v in list(const_v.items())[:5]])
+                        if len(const_v) > 5:
+                            mapping_preview += " ..."
+                        md.append(f"| `{const_k}` | {mapping_preview} ({len(const_v)}개 항목) |")
+                    else:
+                        md.append(f"| `{const_k}` | `{str(const_v)}` |")
             md.append("")
         md.append("</details>")
         md.append("")
@@ -668,15 +681,30 @@ def build_markdown_report_from_integrated_json(metadata: dict) -> str:
         md.append("")
         for var_name, info in sorted(cat_items.items()):
             md.append(f"#### 📑 `{var_name}` ({info['summary_ko']})")
-            md.append("| 컬럼명 (Column) | 타입 (Type) | PK | Not Null | 기본값 (Default) | 추천 별칭 | 대분류 |")
-            md.append("|---|---|:---:|:---:|---|---|---|")
+            md.append("| 컬럼명 (Column) | 타입 (Type) | PK | Not Null | 기본값 (Default) | 추천 별칭 |")
+            md.append("|---|---|:---:|:---:|---|---|")
             for col_name, spec in info["columns_spec"].items():
                 pk_flag = "🔑" if spec.get("pk", False) else "-"
                 notnull_flag = "Y" if spec.get("notnull", False) else "-"
                 def_val = str(spec.get("default_value")) if spec.get("default_value") is not None else "-"
                 md.append(
-                    f"| `{col_name}` | `{spec['type']}` | {pk_flag} | {notnull_flag} | `{def_val}` | `{spec['recommended_alias']}` | {spec['category_type']} |"
+                    f"| `{col_name}` | `{spec['type']}` | {pk_flag} | {notnull_flag} | `{def_val}` | `{spec['recommended_alias']}` |"
                 )
+
+            # 테이블별 조건 상수가 명시된 경우 렌더링
+            if info.get("query_constants"):
+                md.append("")
+                md.append("👉 **테이블 단위 쿼리 조건문 상수 (Query Constants)**")
+                md.append("| 상수 키 (Constant Key) | 주요 매핑 예시 (Value Mappings) |")
+                md.append("|---|---|")
+                for const_k, const_v in info["query_constants"].items():
+                    if isinstance(const_v, dict):
+                        mapping_preview = ", ".join([f"`{k}`: {v}" for k, v in list(const_v.items())[:5]])
+                        if len(const_v) > 5:
+                            mapping_preview += " ..."
+                        md.append(f"| `{const_k}` | {mapping_preview} ({len(const_v)}개 항목) |")
+                    else:
+                        md.append(f"| `{const_k}` | `{str(const_v)}` |")
             md.append("")
         md.append("</details>")
         md.append("")
@@ -715,6 +743,7 @@ def generate_json():
             sqlite_cols_info = {col["name"]: col for col in get_sqlite_columns(sqlite_type, table_path)}
 
         columns_detail = {}
+        table_constants = {}
         for col in manual_info["columns"]:
             # 공통 컬럼 설정 검색
             col_meta: Dict[str, Any] = cast(
@@ -765,10 +794,12 @@ def generate_json():
                     # 리스트 타입의 경우 딕셔너리로 형변환
                     value_constants = {str(i): val for i, val in enumerate(raw_constants)}
 
+                # 테이블 레벨 조건문 상수로 수집
+                table_constants[constants_key] = value_constants
+
             columns_detail[col] = {
                 "type": col_type,
                 "recommended_alias": col_meta["alias"],
-                "category_type": col_meta["category"],
                 "value_constants": value_constants,
                 **extra_attrs,
             }
@@ -781,6 +812,7 @@ def generate_json():
             "is_used": details["is_used"],
             "referenced_in_queries": referenced_map.get(var_name, []),
             "columns_spec": columns_detail,
+            "query_constants": table_constants,
         }
 
     # 공통 쿼리 전역 상수를 특수 예약 노드 키에 결합
