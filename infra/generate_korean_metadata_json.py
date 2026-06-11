@@ -48,6 +48,14 @@ QUERY_CONSTANT_KEYS = [
     "INCLUDED_PGS_STS_LIST",
     "JDG_DICT",
     "SUB_TEAM_DICT",
+    "EV3_MATNR_LIST",
+    "EV3_ZREASON_IN",
+    "EV3_ZREASON_NOT_IN",
+    "EV3_SPEC_CD",
+    "NCF_EXCLUDED_DFT_QTY",
+    "NCF_SHIPPING_SCRAP_CODE",
+    "CQMS_NON_OFFICIAL_ISSUE_AREAS",
+    "CQMS_EXCLUDED_AUDIT_STATUS_LIST",
 ]
 
 # 비즈니스 상수 로드
@@ -818,6 +826,8 @@ def generate_json():
             value_constants = raw_constants
         elif isinstance(raw_constants, list):
             value_constants = {str(i): val for i, val in enumerate(raw_constants)}
+        else:
+            value_constants = {"value": raw_constants}
 
         collector_cols[const_key] = {
             "type": "VARCHAR",
