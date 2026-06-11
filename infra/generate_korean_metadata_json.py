@@ -497,29 +497,40 @@ def get_sqlite_columns(sqlite_type: str, table_name: str) -> list:
 
 
 def collect_query_references(parsed_tables: dict) -> dict:
-    """app/queries/ 내의 모든 SQL 조립 파일에서 각 테이블 상수/경로의 사용처를 실시간 추적합니다."""
-    query_dir = f"{workspace_dir}/app/queries"
-    if not os.path.exists(query_dir):
-        return {}
-
-    query_files = [f for f in os.listdir(query_dir) if f.endswith(".py")]
+    """app/ 내의 모든 파이썬 파일에서 각 테이블의 직접 참조 관계를 추적하여 파이썬 모듈명 형태로 반환합니다."""
+    app_dir = f"{workspace_dir}/app"
+    app_py = f"{workspace_dir}/app.py"
     file_contents = {}
-    for q_file in query_files:
-        path = os.path.join(query_dir, q_file)
+
+    if os.path.exists(app_py):
         try:
-            with open(path, "r", encoding="utf-8") as f:
-                file_contents[q_file] = f.read()
+            with open(app_py, "r", encoding="utf-8") as f:
+                file_contents["app"] = f.read()
         except Exception as e:
-            print(f"[MetadataGenerator] 쿼리 파일 {q_file} 읽기 실패: {e}")
+            print(f"[MetadataGenerator] app.py 읽기 실패: {e}")
+
+    for root, _, files in os.walk(app_dir):
+        for file in files:
+            if file.endswith(".py"):
+                full_path = os.path.join(root, file)
+                rel_path = os.path.relpath(full_path, workspace_dir)
+                module_name = rel_path.replace(".py", "").replace("/", ".").replace("\\", ".")
+                try:
+                    with open(full_path, "r", encoding="utf-8") as f:
+                        file_contents[module_name] = f.read()
+                except Exception as e:
+                    print(f"[MetadataGenerator] 파일 {full_path} 읽기 실패: {e}")
 
     referenced_map = {}
     for var_name, details in parsed_tables.items():
         table_path = details["table_path"]
         referenced = []
-        for q_file, content in file_contents.items():
+        for module_name, content in file_contents.items():
+            if "__init__" in module_name or "tests" in module_name:
+                continue
             if var_name in content or table_path in content:
-                referenced.append(q_file)
-        referenced_map[var_name] = sorted(referenced)
+                referenced.append(module_name)
+        referenced_map[var_name] = sorted(list(set(referenced)))
 
     return referenced_map
 
@@ -600,14 +611,14 @@ def build_markdown_report_from_integrated_json(metadata: dict) -> str:
         md.append(f"### 📁 분류: {cat}")
         md.append("")
         md.append(
-            "| 변수명 (Variable) | 한글 요약 (Description) | 실제 테이블 경로 (Table Path) | 사용 여부 | 주요 참조 쿼리 (Queries) |"
+            "| 변수명 (Variable) | 한글 요약 (Description) | 실제 테이블 경로 (Table Path) | 사용 여부 | 직접 참조 모듈 (Referenced Modules) |"
         )
         md.append("|---|---|---|:---:|---|")
 
         cat_items = {k: v for k, v in dbx_tables.items() if v["category"] == cat}
         for var_name, info in sorted(cat_items.items()):
             ref_summary = (
-                ", ".join([f"`{q}`" for q in info["referenced_in_queries"]]) if info["referenced_in_queries"] else "-"
+                ", ".join([f"`{q}`" for q in info["referenced_modules"]]) if info.get("referenced_modules") else "-"
             )
             used_status = "✅ 사용" if info["is_used"] else "❌ 미사용"
             md.append(
@@ -626,23 +637,14 @@ def build_markdown_report_from_integrated_json(metadata: dict) -> str:
             )
             md.append("|---|---|---|---|")
             for col_name, spec in info["columns_spec"].items():
-                constants_desc = f"{len(spec['value_constants'])}개 상수 항목 매핑" if spec["value_constants"] else "-"
+                col_qc = spec.get("query_constants", {})
+                if col_qc:
+                    const_k = list(col_qc.keys())[0]
+                    const_v = col_qc[const_k]
+                    constants_desc = f"`{const_k}` ({len(const_v)}개 항목 매핑)"
+                else:
+                    constants_desc = "-"
                 md.append(f"| `{col_name}` | `{spec['type']}` | `{spec['recommended_alias']}` | {constants_desc} |")
-
-            # 테이블별 조건 상수가 명시된 경우 렌더링
-            if info.get("query_constants"):
-                md.append("")
-                md.append("👉 **테이블 단위 쿼리 조건문 상수 (Query Constants)**")
-                md.append("| 상수 키 (Constant Key) | 주요 매핑 예시 (Value Mappings) |")
-                md.append("|---|---|")
-                for const_k, const_v in info["query_constants"].items():
-                    if isinstance(const_v, dict):
-                        mapping_preview = ", ".join([f"`{k}`: {v}" for k, v in list(const_v.items())[:5]])
-                        if len(const_v) > 5:
-                            mapping_preview += " ..."
-                        md.append(f"| `{const_k}` | {mapping_preview} ({len(const_v)}개 항목) |")
-                    else:
-                        md.append(f"| `{const_k}` | `{str(const_v)}` |")
             md.append("")
         md.append("</details>")
         md.append("")
@@ -661,14 +663,14 @@ def build_markdown_report_from_integrated_json(metadata: dict) -> str:
         md.append(f"### 🗄️ Database: {cat}")
         md.append("")
         md.append(
-            "| 변수명 (Variable) | 한글 요약 (Description) | 실제 테이블명 (Table) | 사용 여부 | 주요 참조 쿼리 (Queries) |"
+            "| 변수명 (Variable) | 한글 요약 (Description) | 실제 테이블명 (Table) | 사용 여부 | 직접 참조 모듈 (Referenced Modules) |"
         )
         md.append("|---|---|---|:---:|---|")
 
         cat_items = {k: v for k, v in sqlite_tables.items() if v["category"] == cat}
         for var_name, info in sorted(cat_items.items()):
             ref_summary = (
-                ", ".join([f"`{q}`" for q in info["referenced_in_queries"]]) if info["referenced_in_queries"] else "-"
+                ", ".join([f"`{q}`" for q in info["referenced_modules"]]) if info.get("referenced_modules") else "-"
             )
             used_status = "✅ 사용" if info["is_used"] else "❌ 미사용"
             md.append(
@@ -690,21 +692,6 @@ def build_markdown_report_from_integrated_json(metadata: dict) -> str:
                 md.append(
                     f"| `{col_name}` | `{spec['type']}` | {pk_flag} | {notnull_flag} | `{def_val}` | `{spec['recommended_alias']}` |"
                 )
-
-            # 테이블별 조건 상수가 명시된 경우 렌더링
-            if info.get("query_constants"):
-                md.append("")
-                md.append("👉 **테이블 단위 쿼리 조건문 상수 (Query Constants)**")
-                md.append("| 상수 키 (Constant Key) | 주요 매핑 예시 (Value Mappings) |")
-                md.append("|---|---|")
-                for const_k, const_v in info["query_constants"].items():
-                    if isinstance(const_v, dict):
-                        mapping_preview = ", ".join([f"`{k}`: {v}" for k, v in list(const_v.items())[:5]])
-                        if len(const_v) > 5:
-                            mapping_preview += " ..."
-                        md.append(f"| `{const_k}` | {mapping_preview} ({len(const_v)}개 항목) |")
-                    else:
-                        md.append(f"| `{const_k}` | `{str(const_v)}` |")
             md.append("")
         md.append("</details>")
         md.append("")
@@ -743,7 +730,6 @@ def generate_json():
             sqlite_cols_info = {col["name"]: col for col in get_sqlite_columns(sqlite_type, table_path)}
 
         columns_detail = {}
-        table_constants = {}
         for col in manual_info["columns"]:
             # 공통 컬럼 설정 검색
             col_meta: Dict[str, Any] = cast(
@@ -785,6 +771,7 @@ def generate_json():
 
             # 비즈니스 매핑 상수 사전 조회 (통합 공통 상수 그룹에서 우선 조회)
             value_constants = {}
+            col_query_constants = {}
             constants_key = col_meta.get("constants_key")
             if constants_key:
                 raw_constants = common_query_constants.get(constants_key, {})
@@ -793,14 +780,13 @@ def generate_json():
                 elif isinstance(raw_constants, list):
                     # 리스트 타입의 경우 딕셔너리로 형변환
                     value_constants = {str(i): val for i, val in enumerate(raw_constants)}
-
-                # 테이블 레벨 조건문 상수로 수집
-                table_constants[constants_key] = value_constants
+                if value_constants:
+                    col_query_constants[constants_key] = value_constants
 
             columns_detail[col] = {
                 "type": col_type,
                 "recommended_alias": col_meta["alias"],
-                "value_constants": value_constants,
+                "query_constants": col_query_constants,
                 **extra_attrs,
             }
 
@@ -810,13 +796,9 @@ def generate_json():
             "category": get_table_category(var_name, db_type),
             "summary_ko": manual_info["summary"],
             "is_used": details["is_used"],
-            "referenced_in_queries": referenced_map.get(var_name, []),
+            "referenced_modules": referenced_map.get(var_name, []),
             "columns_spec": columns_detail,
-            "query_constants": table_constants,
         }
-
-    # 공통 쿼리 전역 상수를 특수 예약 노드 키에 결합
-    final_metadata["_common_query_constants"] = common_query_constants
 
     # JSON 폴더 생성 및 저장
     os.makedirs(os.path.dirname(output_json_path), exist_ok=True)
