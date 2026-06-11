@@ -615,7 +615,7 @@
 | `M_CODE` | `VARCHAR` | `material_code` | - |
 | `TEST_DATE` | `TIMESTAMP` | `test_date` | - |
 | `TAND_VAL` | `DOUBLE` | `tand_val` | - |
-| `GRADE` | `VARCHAR` | `grade` | - |
+| `GRADE` | `VARCHAR` | `grade` | `JDG_DICT` (4개 항목 매핑) |
 
 #### 📑 `tdr` (TDR 개발 사양 및 원자재 물리 특성 설계 마스터)
 | ID (Column) | 물리 타입 (Type) | 별칭 추천 (Recommended Alias) | 매핑 상수 (Value Constants) |
@@ -683,10 +683,10 @@
 | `PLANT` | `VARCHAR` | `plant_code` | `PLANT_CODE_MAPPING_DICT` (8개 항목 매핑) |
 | `M_CODE` | `VARCHAR` | `material_code` | - |
 | `BARCODE_NO` | `VARCHAR` | `barcode_no` | - |
-| `PGS_STS` | `VARCHAR` | `progress_status` | - |
+| `PGS_STS` | `VARCHAR` | `progress_status` | `JDG_DICT` (4개 항목 매핑) |
 | `INS_DATE` | `TIMESTAMP` | `inspect_date` | - |
 | `RR_VALUE` | `DOUBLE` | `rr_value` | - |
-| `GRADE` | `VARCHAR` | `grade` | - |
+| `GRADE` | `VARCHAR` | `grade` | `JDG_DICT` (4개 항목 매핑) |
 
 #### 📑 `rr_standard` (차종/고객사별 RR 스펙 표준값 및 허용 한계(UCL/LCL) 마스터)
 | ID (Column) | 물리 타입 (Type) | 별칭 추천 (Recommended Alias) | 매핑 상수 (Value Constants) |
@@ -704,7 +704,7 @@
 | `BARCODE_NO` | `VARCHAR` | `barcode_no` | - |
 | `INS_DATE` | `TIMESTAMP` | `inspect_date` | - |
 | `RR_VALUE` | `DOUBLE` | `rr_value` | - |
-| `GRADE` | `VARCHAR` | `grade` | - |
+| `GRADE` | `VARCHAR` | `grade` | `JDG_DICT` (4개 항목 매핑) |
 | `ATTACH_FILE_NAME` | `VARCHAR` | `attach_file_name` | - |
 
 </details>
@@ -743,8 +743,8 @@
 | `LFV` | `DOUBLE` | `lfv` | - |
 | `CON` | `DOUBLE` | `con` | - |
 | `HAR` | `DOUBLE` | `har` | - |
-| `JDG_GR` | `VARCHAR` | `judge_grade` | - |
-| `INS_FG` | `VARCHAR` | `inspect_flag` | - |
+| `JDG_GR` | `VARCHAR` | `judge_grade` | `JDG_DICT` (4개 항목 매핑) |
+| `INS_FG` | `VARCHAR` | `inspect_flag` | `INCLUDED_INS_FG_LIST` (1개 항목 매핑) |
 
 #### 📑 `uf_inspection_standard` (유니포미티 물리 측정 규격 한계 최대치 기준값)
 | ID (Column) | 물리 타입 (Type) | 별칭 추천 (Recommended Alias) | 매핑 상수 (Value Constants) |

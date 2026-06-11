@@ -39,6 +39,15 @@ QUERY_CONSTANT_KEYS = [
     "MAPPING_PLANT_CODE",
     "PLANT_DICT",
     "PLANT_3GR_LIST",
+    "PLANT_TO_OEQG",
+    "KPI_INCLUSION_DICT",
+    "STATUS_DICT",
+    "INCLUDED_TYPE_LIST",
+    "CTMS_PURPOSE_LIST",
+    "INCLUDED_INS_FG_LIST",
+    "INCLUDED_PGS_STS_LIST",
+    "JDG_DICT",
+    "SUB_TEAM_DICT",
 ]
 
 # 비즈니스 상수 로드
@@ -799,6 +808,31 @@ def generate_json():
             "referenced_modules": referenced_map.get(var_name, []),
             "columns_spec": columns_detail,
         }
+
+    # _constants_collector 가상 테이블을 final_metadata에 직접 주입 (글로벌 쿼리 상수 전수 수집용)
+    collector_cols = {}
+    for const_key in QUERY_CONSTANT_KEYS:
+        raw_constants = common_query_constants.get(const_key, {})
+        value_constants = {}
+        if isinstance(raw_constants, dict):
+            value_constants = raw_constants
+        elif isinstance(raw_constants, list):
+            value_constants = {str(i): val for i, val in enumerate(raw_constants)}
+
+        collector_cols[const_key] = {
+            "type": "VARCHAR",
+            "recommended_alias": const_key.lower(),
+            "query_constants": {const_key: value_constants},
+        }
+    final_metadata["_constants_collector"] = {
+        "db_type": "Virtual",
+        "table_path": "virtual.constants.collector",
+        "category": "Virtual",
+        "summary_ko": "공통 쿼리 상수 전용 가상 수집기",
+        "is_used": True,
+        "referenced_modules": [],
+        "columns_spec": collector_cols,
+    }
 
     # JSON 폴더 생성 및 저장
     os.makedirs(os.path.dirname(output_json_path), exist_ok=True)
