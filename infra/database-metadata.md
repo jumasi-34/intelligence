@@ -36,7 +36,7 @@
 <summary>🔍 분류 내 테이블별 상세 컬럼 스펙 열기</summary>
 
 #### 📑 `cqms_4m_main` (CQMS 4M 설계 및 생산 변경 요청 마스터 정보)
-| 컬럼명 (Column) | 물리 타입 (Type) | 별칭 추천 (Recommended Alias) | 대분류 (Category) | 매핑 상수 (Value Constants) |
+| ID (Column) | 물리 타입 (Type) | 별칭 추천 (Recommended Alias) | 대분류 (Category) | 매핑 상수 (Value Constants) |
 |---|---|---|---|---|
 | `PLANT` | `VARCHAR` | `plant_code` | 공장코드 | 8개 상수 항목 매핑 |
 | `REQ_NO` | `VARCHAR` | `request_no` | 요청번호 | - |
@@ -49,21 +49,21 @@
 | `CHG_DESC` | `VARCHAR` | `chg_desc` | 일반속성 | - |
 
 #### 📑 `cqms_4m_mcode` (CQMS 4M 변경건에 대한 대상 자재 매핑 상세 이력)
-| 컬럼명 (Column) | 물리 타입 (Type) | 별칭 추천 (Recommended Alias) | 대분류 (Category) | 매핑 상수 (Value Constants) |
+| ID (Column) | 물리 타입 (Type) | 별칭 추천 (Recommended Alias) | 대분류 (Category) | 매핑 상수 (Value Constants) |
 |---|---|---|---|---|
 | `REQ_NO` | `VARCHAR` | `request_no` | 요청번호 | - |
 | `M_CODE` | `VARCHAR` | `material_code` | 자재코드 | - |
 | `M_NAME` | `VARCHAR` | `m_name` | 일반속성 | - |
 
 #### 📑 `cqms_attach_file` (Databricks cqms_attach_file 테이블 데이터)
-| 컬럼명 (Column) | 물리 타입 (Type) | 별칭 추천 (Recommended Alias) | 대분류 (Category) | 매핑 상수 (Value Constants) |
+| ID (Column) | 물리 타입 (Type) | 별칭 추천 (Recommended Alias) | 대분류 (Category) | 매핑 상수 (Value Constants) |
 |---|---|---|---|---|
 | `PLANT` | `VARCHAR` | `plant_code` | 공장코드 | 8개 상수 항목 매핑 |
 | `M_CODE` | `VARCHAR` | `material_code` | 자재코드 | - |
 | `SPEC_CD` | `VARCHAR` | `spec_code` | 규격코드 | - |
 
 #### 📑 `cqms_audit_main` (CQMS 외부/고객사 품질 감사(Audit) 실적 정보)
-| 컬럼명 (Column) | 물리 타입 (Type) | 별칭 추천 (Recommended Alias) | 대분류 (Category) | 매핑 상수 (Value Constants) |
+| ID (Column) | 물리 타입 (Type) | 별칭 추천 (Recommended Alias) | 대분류 (Category) | 매핑 상수 (Value Constants) |
 |---|---|---|---|---|
 | `AUDIT_NO` | `VARCHAR` | `audit_no` | 감사번호 | - |
 | `TITLE` | `VARCHAR` | `title` | 텍스트 | - |
@@ -73,41 +73,41 @@
 | `STATUS` | `VARCHAR` | `status` | 상태값 | 8개 상수 항목 매핑 |
 
 #### 📑 `cqms_audit_mcode` (CQMS 외부 감사 대상 자재 매핑 정보)
-| 컬럼명 (Column) | 물리 타입 (Type) | 별칭 추천 (Recommended Alias) | 대분류 (Category) | 매핑 상수 (Value Constants) |
+| ID (Column) | 물리 타입 (Type) | 별칭 추천 (Recommended Alias) | 대분류 (Category) | 매핑 상수 (Value Constants) |
 |---|---|---|---|---|
 | `AUDIT_NO` | `VARCHAR` | `audit_no` | 감사번호 | - |
 | `M_CODE` | `VARCHAR` | `material_code` | 자재코드 | - |
 
 #### 📑 `cqms_quality_breakdown` (CQMS 품질 불량 파손 부위 유형 코드 매핑)
-| 컬럼명 (Column) | 물리 타입 (Type) | 별칭 추천 (Recommended Alias) | 대분류 (Category) | 매핑 상수 (Value Constants) |
+| ID (Column) | 물리 타입 (Type) | 별칭 추천 (Recommended Alias) | 대분류 (Category) | 매핑 상수 (Value Constants) |
 |---|---|---|---|---|
 | `ISSUE_NO` | `VARCHAR` | `issue_no` | 품질이슈번호 | - |
 | `BREAK_DOWN_CD` | `VARCHAR` | `break_down_cd` | 일반속성 | - |
 | `BREAK_DOWN_NM` | `VARCHAR` | `break_down_nm` | 일반속성 | - |
 
 #### 📑 `cqms_quality_category` (CQMS 품질 이슈 유형 및 카테고리 마스터 코드)
-| 컬럼명 (Column) | 물리 타입 (Type) | 별칭 추천 (Recommended Alias) | 대분류 (Category) | 매핑 상수 (Value Constants) |
+| ID (Column) | 물리 타입 (Type) | 별칭 추천 (Recommended Alias) | 대분류 (Category) | 매핑 상수 (Value Constants) |
 |---|---|---|---|---|
 | `CATEGORY_CD` | `VARCHAR` | `category_code` | 분류코드 | 11개 상수 항목 매핑 |
 | `CATEGORY_NM` | `VARCHAR` | `category_nm` | 일반속성 | - |
 | `PARENT_CD` | `VARCHAR` | `parent_cd` | 일반속성 | - |
 
 #### 📑 `cqms_quality_d1team` (Databricks cqms_quality_d1team 테이블 데이터)
-| 컬럼명 (Column) | 물리 타입 (Type) | 별칭 추천 (Recommended Alias) | 대분류 (Category) | 매핑 상수 (Value Constants) |
+| ID (Column) | 물리 타입 (Type) | 별칭 추천 (Recommended Alias) | 대분류 (Category) | 매핑 상수 (Value Constants) |
 |---|---|---|---|---|
 | `PLANT` | `VARCHAR` | `plant_code` | 공장코드 | 8개 상수 항목 매핑 |
 | `M_CODE` | `VARCHAR` | `material_code` | 자재코드 | - |
 | `SPEC_CD` | `VARCHAR` | `spec_code` | 규격코드 | - |
 
 #### 📑 `cqms_quality_d7prevent` (Databricks cqms_quality_d7prevent 테이블 데이터)
-| 컬럼명 (Column) | 물리 타입 (Type) | 별칭 추천 (Recommended Alias) | 대분류 (Category) | 매핑 상수 (Value Constants) |
+| ID (Column) | 물리 타입 (Type) | 별칭 추천 (Recommended Alias) | 대분류 (Category) | 매핑 상수 (Value Constants) |
 |---|---|---|---|---|
 | `PLANT` | `VARCHAR` | `plant_code` | 공장코드 | 8개 상수 항목 매핑 |
 | `M_CODE` | `VARCHAR` | `material_code` | 자재코드 | - |
 | `SPEC_CD` | `VARCHAR` | `spec_code` | 규격코드 | - |
 
 #### 📑 `cqms_quality_main` (CQMS 완성품 품질 이슈 및 클레임 내역 마스터)
-| 컬럼명 (Column) | 물리 타입 (Type) | 별칭 추천 (Recommended Alias) | 대분류 (Category) | 매핑 상수 (Value Constants) |
+| ID (Column) | 물리 타입 (Type) | 별칭 추천 (Recommended Alias) | 대분류 (Category) | 매핑 상수 (Value Constants) |
 |---|---|---|---|---|
 | `ISSUE_NO` | `VARCHAR` | `issue_no` | 품질이슈번호 | - |
 | `TITLE` | `VARCHAR` | `title` | 텍스트 | - |
@@ -121,28 +121,28 @@
 | `STATUS` | `VARCHAR` | `status` | 상태값 | 8개 상수 항목 매핑 |
 
 #### 📑 `cqms_quality_mcode` (CQMS 품질 이슈에 해당하는 영향 자재 매핑 정보)
-| 컬럼명 (Column) | 물리 타입 (Type) | 별칭 추천 (Recommended Alias) | 대분류 (Category) | 매핑 상수 (Value Constants) |
+| ID (Column) | 물리 타입 (Type) | 별칭 추천 (Recommended Alias) | 대분류 (Category) | 매핑 상수 (Value Constants) |
 |---|---|---|---|---|
 | `ISSUE_NO` | `VARCHAR` | `issue_no` | 품질이슈번호 | - |
 | `M_CODE` | `VARCHAR` | `material_code` | 자재코드 | - |
 | `M_NAME` | `VARCHAR` | `m_name` | 일반속성 | - |
 
 #### 📑 `cqms_quality_rootcause` (Databricks cqms_quality_rootcause 테이블 데이터)
-| 컬럼명 (Column) | 물리 타입 (Type) | 별칭 추천 (Recommended Alias) | 대분류 (Category) | 매핑 상수 (Value Constants) |
+| ID (Column) | 물리 타입 (Type) | 별칭 추천 (Recommended Alias) | 대분류 (Category) | 매핑 상수 (Value Constants) |
 |---|---|---|---|---|
 | `PLANT` | `VARCHAR` | `plant_code` | 공장코드 | 8개 상수 항목 매핑 |
 | `M_CODE` | `VARCHAR` | `material_code` | 자재코드 | - |
 | `SPEC_CD` | `VARCHAR` | `spec_code` | 규격코드 | - |
 
 #### 📑 `cqms_row_visibility` (품질 문서 및 데이터 조회 가시성 제어 권한 테이블)
-| 컬럼명 (Column) | 물리 타입 (Type) | 별칭 추천 (Recommended Alias) | 대분류 (Category) | 매핑 상수 (Value Constants) |
+| ID (Column) | 물리 타입 (Type) | 별칭 추천 (Recommended Alias) | 대분류 (Category) | 매핑 상수 (Value Constants) |
 |---|---|---|---|---|
 | `TABLE_NAME` | `VARCHAR` | `table_name` | 일반속성 | - |
 | `ROW_ID` | `VARCHAR` | `row_id` | 일반속성 | - |
 | `IS_VISIBLE` | `VARCHAR` | `is_visible` | 일반속성 | - |
 
 #### 📑 `cqms_row_visibility_log` (품질 데이터 권한 조정 및 로그 열람 감사 추적 이력)
-| 컬럼명 (Column) | 물리 타입 (Type) | 별칭 추천 (Recommended Alias) | 대분류 (Category) | 매핑 상수 (Value Constants) |
+| ID (Column) | 물리 타입 (Type) | 별칭 추천 (Recommended Alias) | 대분류 (Category) | 매핑 상수 (Value Constants) |
 |---|---|---|---|---|
 | `TABLE_NAME` | `VARCHAR` | `table_name` | 일반속성 | - |
 | `ROW_ID` | `VARCHAR` | `row_id` | 일반속성 | - |
@@ -171,70 +171,70 @@
 <summary>🔍 분류 내 테이블별 상세 컬럼 스펙 열기</summary>
 
 #### 📑 `cqms_doc_brand_detail` (Databricks cqms_doc_brand_detail 테이블 데이터)
-| 컬럼명 (Column) | 물리 타입 (Type) | 별칭 추천 (Recommended Alias) | 대분류 (Category) | 매핑 상수 (Value Constants) |
+| ID (Column) | 물리 타입 (Type) | 별칭 추천 (Recommended Alias) | 대분류 (Category) | 매핑 상수 (Value Constants) |
 |---|---|---|---|---|
 | `PLANT` | `VARCHAR` | `plant_code` | 공장코드 | 8개 상수 항목 매핑 |
 | `M_CODE` | `VARCHAR` | `material_code` | 자재코드 | - |
 | `SPEC_CD` | `VARCHAR` | `spec_code` | 규격코드 | - |
 
 #### 📑 `cqms_doc_brand_main` (Databricks cqms_doc_brand_main 테이블 데이터)
-| 컬럼명 (Column) | 물리 타입 (Type) | 별칭 추천 (Recommended Alias) | 대분류 (Category) | 매핑 상수 (Value Constants) |
+| ID (Column) | 물리 타입 (Type) | 별칭 추천 (Recommended Alias) | 대분류 (Category) | 매핑 상수 (Value Constants) |
 |---|---|---|---|---|
 | `PLANT` | `VARCHAR` | `plant_code` | 공장코드 | 8개 상수 항목 매핑 |
 | `M_CODE` | `VARCHAR` | `material_code` | 자재코드 | - |
 | `SPEC_CD` | `VARCHAR` | `spec_code` | 규격코드 | - |
 
 #### 📑 `cqms_doc_code` (Databricks cqms_doc_code 테이블 데이터)
-| 컬럼명 (Column) | 물리 타입 (Type) | 별칭 추천 (Recommended Alias) | 대분류 (Category) | 매핑 상수 (Value Constants) |
+| ID (Column) | 물리 타입 (Type) | 별칭 추천 (Recommended Alias) | 대분류 (Category) | 매핑 상수 (Value Constants) |
 |---|---|---|---|---|
 | `PLANT` | `VARCHAR` | `plant_code` | 공장코드 | 8개 상수 항목 매핑 |
 | `M_CODE` | `VARCHAR` | `material_code` | 자재코드 | - |
 | `SPEC_CD` | `VARCHAR` | `spec_code` | 규격코드 | - |
 
 #### 📑 `cqms_doc_main` (Databricks cqms_doc_main 테이블 데이터)
-| 컬럼명 (Column) | 물리 타입 (Type) | 별칭 추천 (Recommended Alias) | 대분류 (Category) | 매핑 상수 (Value Constants) |
+| ID (Column) | 물리 타입 (Type) | 별칭 추천 (Recommended Alias) | 대분류 (Category) | 매핑 상수 (Value Constants) |
 |---|---|---|---|---|
 | `PLANT` | `VARCHAR` | `plant_code` | 공장코드 | 8개 상수 항목 매핑 |
 | `M_CODE` | `VARCHAR` | `material_code` | 자재코드 | - |
 | `SPEC_CD` | `VARCHAR` | `spec_code` | 규격코드 | - |
 
 #### 📑 `cqms_doc_oem_detail` (Databricks cqms_doc_oem_detail 테이블 데이터)
-| 컬럼명 (Column) | 물리 타입 (Type) | 별칭 추천 (Recommended Alias) | 대분류 (Category) | 매핑 상수 (Value Constants) |
+| ID (Column) | 물리 타입 (Type) | 별칭 추천 (Recommended Alias) | 대분류 (Category) | 매핑 상수 (Value Constants) |
 |---|---|---|---|---|
 | `PLANT` | `VARCHAR` | `plant_code` | 공장코드 | 8개 상수 항목 매핑 |
 | `M_CODE` | `VARCHAR` | `material_code` | 자재코드 | - |
 | `SPEC_CD` | `VARCHAR` | `spec_code` | 규격코드 | - |
 
 #### 📑 `cqms_doc_oem_main` (Databricks cqms_doc_oem_main 테이블 데이터)
-| 컬럼명 (Column) | 물리 타입 (Type) | 별칭 추천 (Recommended Alias) | 대분류 (Category) | 매핑 상수 (Value Constants) |
+| ID (Column) | 물리 타입 (Type) | 별칭 추천 (Recommended Alias) | 대분류 (Category) | 매핑 상수 (Value Constants) |
 |---|---|---|---|---|
 | `PLANT` | `VARCHAR` | `plant_code` | 공장코드 | 8개 상수 항목 매핑 |
 | `M_CODE` | `VARCHAR` | `material_code` | 자재코드 | - |
 | `SPEC_CD` | `VARCHAR` | `spec_code` | 규격코드 | - |
 
 #### 📑 `cqms_doc_pp_detail` (CQMS PP(Process Parameter) 제조 공정 처방 데이터 상세)
-| 컬럼명 (Column) | 물리 타입 (Type) | 별칭 추천 (Recommended Alias) | 대분류 (Category) | 매핑 상수 (Value Constants) |
+| ID (Column) | 물리 타입 (Type) | 별칭 추천 (Recommended Alias) | 대분류 (Category) | 매핑 상수 (Value Constants) |
 |---|---|---|---|---|
 | `PP_NO` | `VARCHAR` | `pp_no` | 일반속성 | - |
 | `M_CODE` | `VARCHAR` | `material_code` | 자재코드 | - |
 | `SPEC_CD` | `VARCHAR` | `spec_code` | 규격코드 | - |
 
 #### 📑 `cqms_doc_pp_info` (CQMS 공정 처방 규격 문서 상세 메타 속성)
-| 컬럼명 (Column) | 물리 타입 (Type) | 별칭 추천 (Recommended Alias) | 대분류 (Category) | 매핑 상수 (Value Constants) |
+| ID (Column) | 물리 타입 (Type) | 별칭 추천 (Recommended Alias) | 대분류 (Category) | 매핑 상수 (Value Constants) |
 |---|---|---|---|---|
 | `PP_NO` | `VARCHAR` | `pp_no` | 일반속성 | - |
 | `TITLE` | `VARCHAR` | `title` | 텍스트 | - |
 | `REG_DATE` | `TIMESTAMP` | `register_date` | 날짜/시간 | - |
 
 #### 📑 `cqms_doc_pp_main` (CQMS 공정 파라미터 매핑 마스터 규격 관계 정보)
-| 컬럼명 (Column) | 물리 타입 (Type) | 별칭 추천 (Recommended Alias) | 대분류 (Category) | 매핑 상수 (Value Constants) |
+| ID (Column) | 물리 타입 (Type) | 별칭 추천 (Recommended Alias) | 대분류 (Category) | 매핑 상수 (Value Constants) |
 |---|---|---|---|---|
 | `PP_NO` | `VARCHAR` | `pp_no` | 일반속성 | - |
 | `DOC_NO` | `VARCHAR` | `doc_no` | 문서번호 | - |
 | `REVISION_NO` | `VARCHAR` | `revision_no` | 개정번호 | - |
 
 #### 📑 `cqms_doc_revision` (Databricks cqms_doc_revision 테이블 데이터)
-| 컬럼명 (Column) | 물리 타입 (Type) | 별칭 추천 (Recommended Alias) | 대분류 (Category) | 매핑 상수 (Value Constants) |
+| ID (Column) | 물리 타입 (Type) | 별칭 추천 (Recommended Alias) | 대분류 (Category) | 매핑 상수 (Value Constants) |
 |---|---|---|---|---|
 | `PLANT` | `VARCHAR` | `plant_code` | 공장코드 | 8개 상수 항목 매핑 |
 | `M_CODE` | `VARCHAR` | `material_code` | 자재코드 | - |
@@ -256,7 +256,7 @@
 <summary>🔍 분류 내 테이블별 상세 컬럼 스펙 열기</summary>
 
 #### 📑 `cqms_iqm_main` (CQMS IQM 정밀 품질 종합 부적합 판정 대장)
-| 컬럼명 (Column) | 물리 타입 (Type) | 별칭 추천 (Recommended Alias) | 대분류 (Category) | 매핑 상수 (Value Constants) |
+| ID (Column) | 물리 타입 (Type) | 별칭 추천 (Recommended Alias) | 대분류 (Category) | 매핑 상수 (Value Constants) |
 |---|---|---|---|---|
 | `IQM_NO` | `VARCHAR` | `iqm_no` | 일반속성 | - |
 | `TITLE` | `VARCHAR` | `title` | 텍스트 | - |
@@ -265,14 +265,14 @@
 | `REG_DATE` | `TIMESTAMP` | `register_date` | 날짜/시간 | - |
 
 #### 📑 `cqms_iqm_status` (CQMS IQM 품질 판정 및 결재 진행 상황 추적)
-| 컬럼명 (Column) | 물리 타입 (Type) | 별칭 추천 (Recommended Alias) | 대분류 (Category) | 매핑 상수 (Value Constants) |
+| ID (Column) | 물리 타입 (Type) | 별칭 추천 (Recommended Alias) | 대분류 (Category) | 매핑 상수 (Value Constants) |
 |---|---|---|---|---|
 | `IQM_NO` | `VARCHAR` | `iqm_no` | 일반속성 | - |
 | `STATUS` | `VARCHAR` | `status` | 상태값 | 8개 상수 항목 매핑 |
 | `UPDATE_DATE` | `TIMESTAMP` | `update_date` | 일반속성 | - |
 
 #### 📑 `cqms_iqm_test_item` (CQMS IQM 품질 계측 정밀 시험 항목 물리 규격 스펙)
-| 컬럼명 (Column) | 물리 타입 (Type) | 별칭 추천 (Recommended Alias) | 대분류 (Category) | 매핑 상수 (Value Constants) |
+| ID (Column) | 물리 타입 (Type) | 별칭 추천 (Recommended Alias) | 대분류 (Category) | 매핑 상수 (Value Constants) |
 |---|---|---|---|---|
 | `IQM_NO` | `VARCHAR` | `iqm_no` | 일반속성 | - |
 | `TEST_CD` | `VARCHAR` | `test_cd` | 일반속성 | - |
@@ -280,14 +280,14 @@
 | `SPEC_VAL` | `DOUBLE` | `spec_val` | 일반속성 | - |
 
 #### 📑 `cqms_iqm_test_item_req` (CQMS IQM 정밀 시험에서 요구되는 고객사 합격 조건 스펙)
-| 컬럼명 (Column) | 물리 타입 (Type) | 별칭 추천 (Recommended Alias) | 대분류 (Category) | 매핑 상수 (Value Constants) |
+| ID (Column) | 물리 타입 (Type) | 별칭 추천 (Recommended Alias) | 대분류 (Category) | 매핑 상수 (Value Constants) |
 |---|---|---|---|---|
 | `IQM_NO` | `VARCHAR` | `iqm_no` | 일반속성 | - |
 | `TEST_CD` | `VARCHAR` | `test_cd` | 일반속성 | - |
 | `REQ_VAL` | `DOUBLE` | `req_val` | 일반속성 | - |
 
 #### 📑 `cqms_iqm_test_main` (CQMS IQM 품질 시험 측정 실행 마스터 기록)
-| 컬럼명 (Column) | 물리 타입 (Type) | 별칭 추천 (Recommended Alias) | 대분류 (Category) | 매핑 상수 (Value Constants) |
+| ID (Column) | 물리 타입 (Type) | 별칭 추천 (Recommended Alias) | 대분류 (Category) | 매핑 상수 (Value Constants) |
 |---|---|---|---|---|
 | `IQM_NO` | `VARCHAR` | `iqm_no` | 일반속성 | - |
 | `TEST_DATE` | `TIMESTAMP` | `test_date` | 날짜/시간 | - |
@@ -309,7 +309,7 @@
 <summary>🔍 분류 내 테이블별 상세 컬럼 스펙 열기</summary>
 
 #### 📑 `barcode_record` (제품 가류 바코드 단위 실시간 생산 이력 및 설비 이력)
-| 컬럼명 (Column) | 물리 타입 (Type) | 별칭 추천 (Recommended Alias) | 대분류 (Category) | 매핑 상수 (Value Constants) |
+| ID (Column) | 물리 타입 (Type) | 별칭 추천 (Recommended Alias) | 대분류 (Category) | 매핑 상수 (Value Constants) |
 |---|---|---|---|---|
 | `BARCODE_NO` | `VARCHAR` | `barcode_no` | 바코드번호 | - |
 | `PLANT` | `VARCHAR` | `plant_code` | 공장코드 | 8개 상수 항목 매핑 |
@@ -320,7 +320,7 @@
 | `MACHINE_CD` | `VARCHAR` | `machine_code` | 설비코드 | - |
 
 #### 📑 `mes_code_master` (MES 생산설비 및 공정 운영에 활용되는 전사 공통 코드 마스터)
-| 컬럼명 (Column) | 물리 타입 (Type) | 별칭 추천 (Recommended Alias) | 대분류 (Category) | 매핑 상수 (Value Constants) |
+| ID (Column) | 물리 타입 (Type) | 별칭 추천 (Recommended Alias) | 대분류 (Category) | 매핑 상수 (Value Constants) |
 |---|---|---|---|---|
 | `CD_ITEM` | `VARCHAR` | `cd_item` | 일반속성 | - |
 | `CD_ITEM_NM` | `VARCHAR` | `cd_item_nm` | 일반속성 | - |
@@ -328,7 +328,7 @@
 | `CD_VAL_NM` | `DOUBLE` | `cd_val_nm` | 일반속성 | - |
 
 #### 📑 `product_master` (전사 타이어 완제품 자재정보 마스터 (사이즈/패턴/규격 일치))
-| 컬럼명 (Column) | 물리 타입 (Type) | 별칭 추천 (Recommended Alias) | 대분류 (Category) | 매핑 상수 (Value Constants) |
+| ID (Column) | 물리 타입 (Type) | 별칭 추천 (Recommended Alias) | 대분류 (Category) | 매핑 상수 (Value Constants) |
 |---|---|---|---|---|
 | `PLANT` | `VARCHAR` | `plant_code` | 공장코드 | 8개 상수 항목 매핑 |
 | `M_CODE` | `VARCHAR` | `material_code` | 자재코드 | - |
@@ -340,7 +340,7 @@
 | `PATTERN_NM` | `VARCHAR` | `pattern_name` | 패턴명 | - |
 
 #### 📑 `production_volume` (공장/일자/자재별 실 생산 수량 및 스크랩, 재작업 실적 집계)
-| 컬럼명 (Column) | 물리 타입 (Type) | 별칭 추천 (Recommended Alias) | 대분류 (Category) | 매핑 상수 (Value Constants) |
+| ID (Column) | 물리 타입 (Type) | 별칭 추천 (Recommended Alias) | 대분류 (Category) | 매핑 상수 (Value Constants) |
 |---|---|---|---|---|
 | `PLANT` | `VARCHAR` | `plant_code` | 공장코드 | 8개 상수 항목 매핑 |
 | `M_CODE` | `VARCHAR` | `material_code` | 자재코드 | - |
@@ -350,7 +350,7 @@
 | `REWORK_QTY` | `DOUBLE` | `rework_qty` | 수량/실적 | - |
 
 #### 📑 `spec_revision` (제품 규격 스펙의 개정 이력 및 적용일자 관리)
-| 컬럼명 (Column) | 물리 타입 (Type) | 별칭 추천 (Recommended Alias) | 대분류 (Category) | 매핑 상수 (Value Constants) |
+| ID (Column) | 물리 타입 (Type) | 별칭 추천 (Recommended Alias) | 대분류 (Category) | 매핑 상수 (Value Constants) |
 |---|---|---|---|---|
 | `PLANT` | `VARCHAR` | `plant_code` | 공장코드 | 8개 상수 항목 매핑 |
 | `M_CODE` | `VARCHAR` | `material_code` | 자재코드 | - |
@@ -371,7 +371,7 @@
 <summary>🔍 분류 내 테이블별 상세 컬럼 스펙 열기</summary>
 
 #### 📑 `finished_product_inspection_result` (완제품 완성 단계 정밀 완성검사 부적합 이력)
-| 컬럼명 (Column) | 물리 타입 (Type) | 별칭 추천 (Recommended Alias) | 대분류 (Category) | 매핑 상수 (Value Constants) |
+| ID (Column) | 물리 타입 (Type) | 별칭 추천 (Recommended Alias) | 대분류 (Category) | 매핑 상수 (Value Constants) |
 |---|---|---|---|---|
 | `PLANT` | `VARCHAR` | `plant_code` | 공장코드 | 8개 상수 항목 매핑 |
 | `M_CODE` | `VARCHAR` | `material_code` | 자재코드 | - |
@@ -381,7 +381,7 @@
 | `NCF_QTY` | `DOUBLE` | `nonconformity_qty` | 수량/실적 | - |
 
 #### 📑 `shipment_inspection_result` (최종 완제품 출하 검사 품질 부적합(Defect) 판정 결과)
-| 컬럼명 (Column) | 물리 타입 (Type) | 별칭 추천 (Recommended Alias) | 대분류 (Category) | 매핑 상수 (Value Constants) |
+| ID (Column) | 물리 타입 (Type) | 별칭 추천 (Recommended Alias) | 대분류 (Category) | 매핑 상수 (Value Constants) |
 |---|---|---|---|---|
 | `PLANT` | `VARCHAR` | `plant_code` | 공장코드 | 8개 상수 항목 매핑 |
 | `M_CODE` | `VARCHAR` | `material_code` | 자재코드 | - |
@@ -428,28 +428,28 @@
 <summary>🔍 분류 내 테이블별 상세 컬럼 스펙 열기</summary>
 
 #### 📑 `cal_let_off_qrs` (Databricks cal_let_off_qrs 테이블 데이터)
-| 컬럼명 (Column) | 물리 타입 (Type) | 별칭 추천 (Recommended Alias) | 대분류 (Category) | 매핑 상수 (Value Constants) |
+| ID (Column) | 물리 타입 (Type) | 별칭 추천 (Recommended Alias) | 대분류 (Category) | 매핑 상수 (Value Constants) |
 |---|---|---|---|---|
 | `PLANT` | `VARCHAR` | `plant_code` | 공장코드 | 8개 상수 항목 매핑 |
 | `M_CODE` | `VARCHAR` | `material_code` | 자재코드 | - |
 | `SPEC_CD` | `VARCHAR` | `spec_code` | 규격코드 | - |
 
 #### 📑 `cal_op_qrs` (Databricks cal_op_qrs 테이블 데이터)
-| 컬럼명 (Column) | 물리 타입 (Type) | 별칭 추천 (Recommended Alias) | 대분류 (Category) | 매핑 상수 (Value Constants) |
+| ID (Column) | 물리 타입 (Type) | 별칭 추천 (Recommended Alias) | 대분류 (Category) | 매핑 상수 (Value Constants) |
 |---|---|---|---|---|
 | `PLANT` | `VARCHAR` | `plant_code` | 공장코드 | 8개 상수 항목 매핑 |
 | `M_CODE` | `VARCHAR` | `material_code` | 자재코드 | - |
 | `SPEC_CD` | `VARCHAR` | `spec_code` | 규격코드 | - |
 
 #### 📑 `cal_winding_qrs` (Databricks cal_winding_qrs 테이블 데이터)
-| 컬럼명 (Column) | 물리 타입 (Type) | 별칭 추천 (Recommended Alias) | 대분류 (Category) | 매핑 상수 (Value Constants) |
+| ID (Column) | 물리 타입 (Type) | 별칭 추천 (Recommended Alias) | 대분류 (Category) | 매핑 상수 (Value Constants) |
 |---|---|---|---|---|
 | `PLANT` | `VARCHAR` | `plant_code` | 공장코드 | 8개 상수 항목 매핑 |
 | `M_CODE` | `VARCHAR` | `material_code` | 자재코드 | - |
 | `SPEC_CD` | `VARCHAR` | `spec_code` | 규격코드 | - |
 
 #### 📑 `ctms` (CTMS 원자재 품질 물리 계측 시험(Lab) 결과 정보)
-| 컬럼명 (Column) | 물리 타입 (Type) | 별칭 추천 (Recommended Alias) | 대분류 (Category) | 매핑 상수 (Value Constants) |
+| ID (Column) | 물리 타입 (Type) | 별칭 추천 (Recommended Alias) | 대분류 (Category) | 매핑 상수 (Value Constants) |
 |---|---|---|---|---|
 | `PLANT` | `VARCHAR` | `plant_code` | 공장코드 | 8개 상수 항목 매핑 |
 | `M_CODE` | `VARCHAR` | `material_code` | 자재코드 | - |
@@ -460,119 +460,119 @@
 | `LOWER_VAL` | `DOUBLE` | `lower_val` | 일반속성 | - |
 
 #### 📑 `cut_bec_op_qrs` (Databricks cut_bec_op_qrs 테이블 데이터)
-| 컬럼명 (Column) | 물리 타입 (Type) | 별칭 추천 (Recommended Alias) | 대분류 (Category) | 매핑 상수 (Value Constants) |
+| ID (Column) | 물리 타입 (Type) | 별칭 추천 (Recommended Alias) | 대분류 (Category) | 매핑 상수 (Value Constants) |
 |---|---|---|---|---|
 | `PLANT` | `VARCHAR` | `plant_code` | 공장코드 | 8개 상수 항목 매핑 |
 | `M_CODE` | `VARCHAR` | `material_code` | 자재코드 | - |
 | `SPEC_CD` | `VARCHAR` | `spec_code` | 규격코드 | - |
 
 #### 📑 `cut_bec_strip_op_qrs` (Databricks cut_bec_strip_op_qrs 테이블 데이터)
-| 컬럼명 (Column) | 물리 타입 (Type) | 별칭 추천 (Recommended Alias) | 대분류 (Category) | 매핑 상수 (Value Constants) |
+| ID (Column) | 물리 타입 (Type) | 별칭 추천 (Recommended Alias) | 대분류 (Category) | 매핑 상수 (Value Constants) |
 |---|---|---|---|---|
 | `PLANT` | `VARCHAR` | `plant_code` | 공장코드 | 8개 상수 항목 매핑 |
 | `M_CODE` | `VARCHAR` | `material_code` | 자재코드 | - |
 | `SPEC_CD` | `VARCHAR` | `spec_code` | 규격코드 | - |
 
 #### 📑 `cut_edge_sliter_qrs` (Databricks cut_edge_sliter_qrs 테이블 데이터)
-| 컬럼명 (Column) | 물리 타입 (Type) | 별칭 추천 (Recommended Alias) | 대분류 (Category) | 매핑 상수 (Value Constants) |
+| ID (Column) | 물리 타입 (Type) | 별칭 추천 (Recommended Alias) | 대분류 (Category) | 매핑 상수 (Value Constants) |
 |---|---|---|---|---|
 | `PLANT` | `VARCHAR` | `plant_code` | 공장코드 | 8개 상수 항목 매핑 |
 | `M_CODE` | `VARCHAR` | `material_code` | 자재코드 | - |
 | `SPEC_CD` | `VARCHAR` | `spec_code` | 규격코드 | - |
 
 #### 📑 `cut_mini_sliter_qrs` (Databricks cut_mini_sliter_qrs 테이블 데이터)
-| 컬럼명 (Column) | 물리 타입 (Type) | 별칭 추천 (Recommended Alias) | 대분류 (Category) | 매핑 상수 (Value Constants) |
+| ID (Column) | 물리 타입 (Type) | 별칭 추천 (Recommended Alias) | 대분류 (Category) | 매핑 상수 (Value Constants) |
 |---|---|---|---|---|
 | `PLANT` | `VARCHAR` | `plant_code` | 공장코드 | 8개 상수 항목 매핑 |
 | `M_CODE` | `VARCHAR` | `material_code` | 자재코드 | - |
 | `SPEC_CD` | `VARCHAR` | `spec_code` | 규격코드 | - |
 
 #### 📑 `cut_pcr_il_op_qrs` (Databricks cut_pcr_il_op_qrs 테이블 데이터)
-| 컬럼명 (Column) | 물리 타입 (Type) | 별칭 추천 (Recommended Alias) | 대분류 (Category) | 매핑 상수 (Value Constants) |
+| ID (Column) | 물리 타입 (Type) | 별칭 추천 (Recommended Alias) | 대분류 (Category) | 매핑 상수 (Value Constants) |
 |---|---|---|---|---|
 | `PLANT` | `VARCHAR` | `plant_code` | 공장코드 | 8개 상수 항목 매핑 |
 | `M_CODE` | `VARCHAR` | `material_code` | 자재코드 | - |
 | `SPEC_CD` | `VARCHAR` | `spec_code` | 규격코드 | - |
 
 #### 📑 `cut_sbc_op_qrs` (Databricks cut_sbc_op_qrs 테이블 데이터)
-| 컬럼명 (Column) | 물리 타입 (Type) | 별칭 추천 (Recommended Alias) | 대분류 (Category) | 매핑 상수 (Value Constants) |
+| ID (Column) | 물리 타입 (Type) | 별칭 추천 (Recommended Alias) | 대분류 (Category) | 매핑 상수 (Value Constants) |
 |---|---|---|---|---|
 | `PLANT` | `VARCHAR` | `plant_code` | 공장코드 | 8개 상수 항목 매핑 |
 | `M_CODE` | `VARCHAR` | `material_code` | 자재코드 | - |
 | `SPEC_CD` | `VARCHAR` | `spec_code` | 규격코드 | - |
 
 #### 📑 `cut_sheet_op_qrs` (Databricks cut_sheet_op_qrs 테이블 데이터)
-| 컬럼명 (Column) | 물리 타입 (Type) | 별칭 추천 (Recommended Alias) | 대분류 (Category) | 매핑 상수 (Value Constants) |
+| ID (Column) | 물리 타입 (Type) | 별칭 추천 (Recommended Alias) | 대분류 (Category) | 매핑 상수 (Value Constants) |
 |---|---|---|---|---|
 | `PLANT` | `VARCHAR` | `plant_code` | 공장코드 | 8개 상수 항목 매핑 |
 | `M_CODE` | `VARCHAR` | `material_code` | 자재코드 | - |
 | `SPEC_CD` | `VARCHAR` | `spec_code` | 규격코드 | - |
 
 #### 📑 `cut_src_op_qrs` (Databricks cut_src_op_qrs 테이블 데이터)
-| 컬럼명 (Column) | 물리 타입 (Type) | 별칭 추천 (Recommended Alias) | 대분류 (Category) | 매핑 상수 (Value Constants) |
+| ID (Column) | 물리 타입 (Type) | 별칭 추천 (Recommended Alias) | 대분류 (Category) | 매핑 상수 (Value Constants) |
 |---|---|---|---|---|
 | `PLANT` | `VARCHAR` | `plant_code` | 공장코드 | 8개 상수 항목 매핑 |
 | `M_CODE` | `VARCHAR` | `material_code` | 자재코드 | - |
 | `SPEC_CD` | `VARCHAR` | `spec_code` | 규격코드 | - |
 
 #### 📑 `cut_tbc_op_qrs` (Databricks cut_tbc_op_qrs 테이블 데이터)
-| 컬럼명 (Column) | 물리 타입 (Type) | 별칭 추천 (Recommended Alias) | 대분류 (Category) | 매핑 상수 (Value Constants) |
+| ID (Column) | 물리 타입 (Type) | 별칭 추천 (Recommended Alias) | 대분류 (Category) | 매핑 상수 (Value Constants) |
 |---|---|---|---|---|
 | `PLANT` | `VARCHAR` | `plant_code` | 공장코드 | 8개 상수 항목 매핑 |
 | `M_CODE` | `VARCHAR` | `material_code` | 자재코드 | - |
 | `SPEC_CD` | `VARCHAR` | `spec_code` | 규격코드 | - |
 
 #### 📑 `cut_tbr_il_op_qrs` (Databricks cut_tbr_il_op_qrs 테이블 데이터)
-| 컬럼명 (Column) | 물리 타입 (Type) | 별칭 추천 (Recommended Alias) | 대분류 (Category) | 매핑 상수 (Value Constants) |
+| ID (Column) | 물리 타입 (Type) | 별칭 추천 (Recommended Alias) | 대분류 (Category) | 매핑 상수 (Value Constants) |
 |---|---|---|---|---|
 | `PLANT` | `VARCHAR` | `plant_code` | 공장코드 | 8개 상수 항목 매핑 |
 | `M_CODE` | `VARCHAR` | `material_code` | 자재코드 | - |
 | `SPEC_CD` | `VARCHAR` | `spec_code` | 규격코드 | - |
 
 #### 📑 `cut_trc_op_qrs` (Databricks cut_trc_op_qrs 테이블 데이터)
-| 컬럼명 (Column) | 물리 타입 (Type) | 별칭 추천 (Recommended Alias) | 대분류 (Category) | 매핑 상수 (Value Constants) |
+| ID (Column) | 물리 타입 (Type) | 별칭 추천 (Recommended Alias) | 대분류 (Category) | 매핑 상수 (Value Constants) |
 |---|---|---|---|---|
 | `PLANT` | `VARCHAR` | `plant_code` | 공장코드 | 8개 상수 항목 매핑 |
 | `M_CODE` | `VARCHAR` | `material_code` | 자재코드 | - |
 | `SPEC_CD` | `VARCHAR` | `spec_code` | 규격코드 | - |
 
 #### 📑 `cut_wide_sliter_qrs` (Databricks cut_wide_sliter_qrs 테이블 데이터)
-| 컬럼명 (Column) | 물리 타입 (Type) | 별칭 추천 (Recommended Alias) | 대분류 (Category) | 매핑 상수 (Value Constants) |
+| ID (Column) | 물리 타입 (Type) | 별칭 추천 (Recommended Alias) | 대분류 (Category) | 매핑 상수 (Value Constants) |
 |---|---|---|---|---|
 | `PLANT` | `VARCHAR` | `plant_code` | 공장코드 | 8개 상수 항목 매핑 |
 | `M_CODE` | `VARCHAR` | `material_code` | 자재코드 | - |
 | `SPEC_CD` | `VARCHAR` | `spec_code` | 규격코드 | - |
 
 #### 📑 `ext_sidewall_op_qrs` (Databricks ext_sidewall_op_qrs 테이블 데이터)
-| 컬럼명 (Column) | 물리 타입 (Type) | 별칭 추천 (Recommended Alias) | 대분류 (Category) | 매핑 상수 (Value Constants) |
+| ID (Column) | 물리 타입 (Type) | 별칭 추천 (Recommended Alias) | 대분류 (Category) | 매핑 상수 (Value Constants) |
 |---|---|---|---|---|
 | `PLANT` | `VARCHAR` | `plant_code` | 공장코드 | 8개 상수 항목 매핑 |
 | `M_CODE` | `VARCHAR` | `material_code` | 자재코드 | - |
 | `SPEC_CD` | `VARCHAR` | `spec_code` | 규격코드 | - |
 
 #### 📑 `ext_tread_op_qrs` (Databricks ext_tread_op_qrs 테이블 데이터)
-| 컬럼명 (Column) | 물리 타입 (Type) | 별칭 추천 (Recommended Alias) | 대분류 (Category) | 매핑 상수 (Value Constants) |
+| ID (Column) | 물리 타입 (Type) | 별칭 추천 (Recommended Alias) | 대분류 (Category) | 매핑 상수 (Value Constants) |
 |---|---|---|---|---|
 | `PLANT` | `VARCHAR` | `plant_code` | 공장코드 | 8개 상수 항목 매핑 |
 | `M_CODE` | `VARCHAR` | `material_code` | 자재코드 | - |
 | `SPEC_CD` | `VARCHAR` | `spec_code` | 규격코드 | - |
 
 #### 📑 `gmes_rework_defect_raw` (Databricks gmes_rework_defect_raw 테이블 데이터)
-| 컬럼명 (Column) | 물리 타입 (Type) | 별칭 추천 (Recommended Alias) | 대분류 (Category) | 매핑 상수 (Value Constants) |
+| ID (Column) | 물리 타입 (Type) | 별칭 추천 (Recommended Alias) | 대분류 (Category) | 매핑 상수 (Value Constants) |
 |---|---|---|---|---|
 | `PLANT` | `VARCHAR` | `plant_code` | 공장코드 | 8개 상수 항목 매핑 |
 | `M_CODE` | `VARCHAR` | `material_code` | 자재코드 | - |
 | `SPEC_CD` | `VARCHAR` | `spec_code` | 규격코드 | - |
 
 #### 📑 `gmes_uf_result_raw` (Databricks gmes_uf_result_raw 테이블 데이터)
-| 컬럼명 (Column) | 물리 타입 (Type) | 별칭 추천 (Recommended Alias) | 대분류 (Category) | 매핑 상수 (Value Constants) |
+| ID (Column) | 물리 타입 (Type) | 별칭 추천 (Recommended Alias) | 대분류 (Category) | 매핑 상수 (Value Constants) |
 |---|---|---|---|---|
 | `PLANT` | `VARCHAR` | `plant_code` | 공장코드 | 8개 상수 항목 매핑 |
 | `M_CODE` | `VARCHAR` | `material_code` | 자재코드 | - |
 | `SPEC_CD` | `VARCHAR` | `spec_code` | 규격코드 | - |
 
 #### 📑 `hgws` (HGWS 글로벌 클레임 청구 및 반품(Return) 이력)
-| 컬럼명 (Column) | 물리 타입 (Type) | 별칭 추천 (Recommended Alias) | 대분류 (Category) | 매핑 상수 (Value Constants) |
+| ID (Column) | 물리 타입 (Type) | 별칭 추천 (Recommended Alias) | 대분류 (Category) | 매핑 상수 (Value Constants) |
 |---|---|---|---|---|
 | `PLANT` | `VARCHAR` | `plant_code` | 공장코드 | 8개 상수 항목 매핑 |
 | `WERKS` | `VARCHAR` | `plant_code` | 공장코드 | 8개 상수 항목 매핑 |
@@ -584,7 +584,7 @@
 | `ZAREA` | `VARCHAR` | `country_area` | 지역코드 | 5개 상수 항목 매핑 |
 
 #### 📑 `lot_track` (가류 바코드 기준 생산 추적 및 원자재 추적 랏 트래킹)
-| 컬럼명 (Column) | 물리 타입 (Type) | 별칭 추천 (Recommended Alias) | 대분류 (Category) | 매핑 상수 (Value Constants) |
+| ID (Column) | 물리 타입 (Type) | 별칭 추천 (Recommended Alias) | 대분류 (Category) | 매핑 상수 (Value Constants) |
 |---|---|---|---|---|
 | `BARCODE_NO` | `VARCHAR` | `barcode_no` | 바코드번호 | - |
 | `PLANT` | `VARCHAR` | `plant_code` | 공장코드 | 8개 상수 항목 매핑 |
@@ -592,14 +592,14 @@
 | `PROD_DATE` | `TIMESTAMP` | `production_date` | 날짜/시간 | - |
 
 #### 📑 `plm_spec_full` (Databricks plm_spec_full 테이블 데이터)
-| 컬럼명 (Column) | 물리 타입 (Type) | 별칭 추천 (Recommended Alias) | 대분류 (Category) | 매핑 상수 (Value Constants) |
+| ID (Column) | 물리 타입 (Type) | 별칭 추천 (Recommended Alias) | 대분류 (Category) | 매핑 상수 (Value Constants) |
 |---|---|---|---|---|
 | `PLANT` | `VARCHAR` | `plant_code` | 공장코드 | 8개 상수 항목 매핑 |
 | `M_CODE` | `VARCHAR` | `material_code` | 자재코드 | - |
 | `SPEC_CD` | `VARCHAR` | `spec_code` | 규격코드 | - |
 
 #### 📑 `plm_spec_label` (PLM 규격 내 타이어 라벨 스펙 정보 및 관리 공차)
-| 컬럼명 (Column) | 물리 타입 (Type) | 별칭 추천 (Recommended Alias) | 대분류 (Category) | 매핑 상수 (Value Constants) |
+| ID (Column) | 물리 타입 (Type) | 별칭 추천 (Recommended Alias) | 대분류 (Category) | 매핑 상수 (Value Constants) |
 |---|---|---|---|---|
 | `PLANT` | `VARCHAR` | `plant_code` | 공장코드 | 8개 상수 항목 매핑 |
 | `M_CODE` | `VARCHAR` | `material_code` | 자재코드 | - |
@@ -609,16 +609,16 @@
 | `LCL_VAL` | `DOUBLE` | `lcl_val` | 일반속성 | - |
 
 #### 📑 `rpa_test_result` (RPA 기기 계측 품질 시험 이력 및 자동 판정 등급)
-| 컬럼명 (Column) | 물리 타입 (Type) | 별칭 추천 (Recommended Alias) | 대분류 (Category) | 매핑 상수 (Value Constants) |
+| ID (Column) | 물리 타입 (Type) | 별칭 추천 (Recommended Alias) | 대분류 (Category) | 매핑 상수 (Value Constants) |
 |---|---|---|---|---|
 | `PLANT` | `VARCHAR` | `plant_code` | 공장코드 | 8개 상수 항목 매핑 |
 | `M_CODE` | `VARCHAR` | `material_code` | 자재코드 | - |
 | `TEST_DATE` | `TIMESTAMP` | `test_date` | 날짜/시간 | - |
 | `TAND_VAL` | `DOUBLE` | `tand_val` | 일반속성 | - |
-| `GRADE` | `VARCHAR` | `grade` | 품질등급 | 4개 상수 항목 매핑 |
+| `GRADE` | `VARCHAR` | `grade` | 품질등급 | - |
 
 #### 📑 `tdr` (TDR 개발 사양 및 원자재 물리 특성 설계 마스터)
-| 컬럼명 (Column) | 물리 타입 (Type) | 별칭 추천 (Recommended Alias) | 대분류 (Category) | 매핑 상수 (Value Constants) |
+| ID (Column) | 물리 타입 (Type) | 별칭 추천 (Recommended Alias) | 대분류 (Category) | 매핑 상수 (Value Constants) |
 |---|---|---|---|---|
 | `PLANT` | `VARCHAR` | `plant_code` | 공장코드 | 8개 상수 항목 매핑 |
 | `M_CODE` | `VARCHAR` | `material_code` | 자재코드 | - |
@@ -627,7 +627,7 @@
 | `REG_DATE` | `TIMESTAMP` | `register_date` | 날짜/시간 | - |
 
 #### 📑 `worksheet_building_overall` (생산 성형 공정 종합 집계 작업 보고 시트)
-| 컬럼명 (Column) | 물리 타입 (Type) | 별칭 추천 (Recommended Alias) | 대분류 (Category) | 매핑 상수 (Value Constants) |
+| ID (Column) | 물리 타입 (Type) | 별칭 추천 (Recommended Alias) | 대분류 (Category) | 매핑 상수 (Value Constants) |
 |---|---|---|---|---|
 | `PLANT` | `VARCHAR` | `plant_code` | 공장코드 | 8개 상수 항목 매핑 |
 | `M_CODE` | `VARCHAR` | `material_code` | 자재코드 | - |
@@ -647,7 +647,7 @@
 <summary>🔍 분류 내 테이블별 상세 컬럼 스펙 열기</summary>
 
 #### 📑 `building_manufacture_report` (반제품 성형(Building) 공정 실 생산량 및 설비 보고 정보)
-| 컬럼명 (Column) | 물리 타입 (Type) | 별칭 추천 (Recommended Alias) | 대분류 (Category) | 매핑 상수 (Value Constants) |
+| ID (Column) | 물리 타입 (Type) | 별칭 추천 (Recommended Alias) | 대분류 (Category) | 매핑 상수 (Value Constants) |
 |---|---|---|---|---|
 | `PLANT` | `VARCHAR` | `plant_code` | 공장코드 | 8개 상수 항목 매핑 |
 | `M_CODE` | `VARCHAR` | `material_code` | 자재코드 | - |
@@ -656,7 +656,7 @@
 | `PRDT_QTY` | `DOUBLE` | `production_qty` | 수량/실적 | - |
 
 #### 📑 `production_machine` (생산 설비 가동 시간 및 가동 실적 매핑 정보)
-| 컬럼명 (Column) | 물리 타입 (Type) | 별칭 추천 (Recommended Alias) | 대분류 (Category) | 매핑 상수 (Value Constants) |
+| ID (Column) | 물리 타입 (Type) | 별칭 추천 (Recommended Alias) | 대분류 (Category) | 매핑 상수 (Value Constants) |
 |---|---|---|---|---|
 | `PLANT` | `VARCHAR` | `plant_code` | 공장코드 | 8개 상수 항목 매핑 |
 | `M_CODE` | `VARCHAR` | `material_code` | 자재코드 | - |
@@ -678,18 +678,18 @@
 <summary>🔍 분류 내 테이블별 상세 컬럼 스펙 열기</summary>
 
 #### 📑 `rr_lot_samples` (RR(Rolling Resistance, 회전저항) 품질 측정 샘플 랏 정보)
-| 컬럼명 (Column) | 물리 타입 (Type) | 별칭 추천 (Recommended Alias) | 대분류 (Category) | 매핑 상수 (Value Constants) |
+| ID (Column) | 물리 타입 (Type) | 별칭 추천 (Recommended Alias) | 대분류 (Category) | 매핑 상수 (Value Constants) |
 |---|---|---|---|---|
 | `PLANT` | `VARCHAR` | `plant_code` | 공장코드 | 8개 상수 항목 매핑 |
 | `M_CODE` | `VARCHAR` | `material_code` | 자재코드 | - |
 | `BARCODE_NO` | `VARCHAR` | `barcode_no` | 바코드번호 | - |
-| `PGS_STS` | `VARCHAR` | `progress_status` | 상태값 | 4개 상수 항목 매핑 |
+| `PGS_STS` | `VARCHAR` | `progress_status` | 상태값 | - |
 | `INS_DATE` | `TIMESTAMP` | `inspect_date` | 날짜/시간 | - |
 | `RR_VALUE` | `DOUBLE` | `rr_value` | 일반속성 | - |
-| `GRADE` | `VARCHAR` | `grade` | 품질등급 | 4개 상수 항목 매핑 |
+| `GRADE` | `VARCHAR` | `grade` | 품질등급 | - |
 
 #### 📑 `rr_standard` (차종/고객사별 RR 스펙 표준값 및 허용 한계(UCL/LCL) 마스터)
-| 컬럼명 (Column) | 물리 타입 (Type) | 별칭 추천 (Recommended Alias) | 대분류 (Category) | 매핑 상수 (Value Constants) |
+| ID (Column) | 물리 타입 (Type) | 별칭 추천 (Recommended Alias) | 대분류 (Category) | 매핑 상수 (Value Constants) |
 |---|---|---|---|---|
 | `PLANT` | `VARCHAR` | `plant_code` | 공장코드 | 8개 상수 항목 매핑 |
 | `M_CODE` | `VARCHAR` | `material_code` | 자재코드 | - |
@@ -699,12 +699,12 @@
 | `LCL` | `DOUBLE` | `lcl` | 일반속성 | - |
 
 #### 📑 `rr_test_result` (RR 품질 검사 실 계측 데이터 및 등재 첨부파일)
-| 컬럼명 (Column) | 물리 타입 (Type) | 별칭 추천 (Recommended Alias) | 대분류 (Category) | 매핑 상수 (Value Constants) |
+| ID (Column) | 물리 타입 (Type) | 별칭 추천 (Recommended Alias) | 대분류 (Category) | 매핑 상수 (Value Constants) |
 |---|---|---|---|---|
 | `BARCODE_NO` | `VARCHAR` | `barcode_no` | 바코드번호 | - |
 | `INS_DATE` | `TIMESTAMP` | `inspect_date` | 날짜/시간 | - |
 | `RR_VALUE` | `DOUBLE` | `rr_value` | 일반속성 | - |
-| `GRADE` | `VARCHAR` | `grade` | 품질등급 | 4개 상수 항목 매핑 |
+| `GRADE` | `VARCHAR` | `grade` | 품질등급 | - |
 | `ATTACH_FILE_NAME` | `VARCHAR` | `attach_file_name` | 일반속성 | - |
 
 </details>
@@ -721,7 +721,7 @@
 <summary>🔍 분류 내 테이블별 상세 컬럼 스펙 열기</summary>
 
 #### 📑 `uf_db_standard` (유니포미티 통계적 관리 한계치(UCL/LCL) 기준값)
-| 컬럼명 (Column) | 물리 타입 (Type) | 별칭 추천 (Recommended Alias) | 대분류 (Category) | 매핑 상수 (Value Constants) |
+| ID (Column) | 물리 타입 (Type) | 별칭 추천 (Recommended Alias) | 대분류 (Category) | 매핑 상수 (Value Constants) |
 |---|---|---|---|---|
 | `PLANT` | `VARCHAR` | `plant_code` | 공장코드 | 8개 상수 항목 매핑 |
 | `M_CODE` | `VARCHAR` | `material_code` | 자재코드 | - |
@@ -732,7 +732,7 @@
 | `HAR_UCL` | `DOUBLE` | `har_ucl` | 일반속성 | - |
 
 #### 📑 `uf_inspection_result` (완제품 유니포미티(Uniformity) 품질 계측 정밀 결과)
-| 컬럼명 (Column) | 물리 타입 (Type) | 별칭 추천 (Recommended Alias) | 대분류 (Category) | 매핑 상수 (Value Constants) |
+| ID (Column) | 물리 타입 (Type) | 별칭 추천 (Recommended Alias) | 대분류 (Category) | 매핑 상수 (Value Constants) |
 |---|---|---|---|---|
 | `PLANT` | `VARCHAR` | `plant_code` | 공장코드 | 8개 상수 항목 매핑 |
 | `M_CODE` | `VARCHAR` | `material_code` | 자재코드 | - |
@@ -743,11 +743,11 @@
 | `LFV` | `DOUBLE` | `lfv` | 일반속성 | - |
 | `CON` | `DOUBLE` | `con` | 일반속성 | - |
 | `HAR` | `DOUBLE` | `har` | 일반속성 | - |
-| `JDG_GR` | `VARCHAR` | `judge_grade` | 품질등급 | 4개 상수 항목 매핑 |
-| `INS_FG` | `VARCHAR` | `inspect_flag` | 상태값 | 1개 상수 항목 매핑 |
+| `JDG_GR` | `VARCHAR` | `judge_grade` | 품질등급 | - |
+| `INS_FG` | `VARCHAR` | `inspect_flag` | 상태값 | - |
 
 #### 📑 `uf_inspection_standard` (유니포미티 물리 측정 규격 한계 최대치 기준값)
-| 컬럼명 (Column) | 물리 타입 (Type) | 별칭 추천 (Recommended Alias) | 대분류 (Category) | 매핑 상수 (Value Constants) |
+| ID (Column) | 물리 타입 (Type) | 별칭 추천 (Recommended Alias) | 대분류 (Category) | 매핑 상수 (Value Constants) |
 |---|---|---|---|---|
 | `PLANT` | `VARCHAR` | `plant_code` | 공장코드 | 8개 상수 항목 매핑 |
 | `M_CODE` | `VARCHAR` | `material_code` | 자재코드 | - |
