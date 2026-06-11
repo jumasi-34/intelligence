@@ -1,192 +1,936 @@
-# 데이터베이스 테이블 메타데이터 명세서 (Database Metadata Specification)
+# 📊 데이터베이스 테이블 및 쿼리 메타데이터 명세서 (Integrated Database Metadata Specification)
 
-> 이 문서는 `app/core/query/query_database.py`에 정의된 모든 데이터베이스 테이블의 변수명, 실제 경로, 시스템 요약 및 스키마 메타정보를 자동으로 수집 및 정리한 명세서입니다.
-> 시스템 인텔리전스 및 하네스 테스트, 신규 쿼리 작성 시 단일 진실 공급원(SSOT)으로 사용됩니다.
+> 이 문서는 `app/core/query/query_tables_metadata.json`에 일원화 관리되는 물리적 스펙과 비즈니스 논리 매핑 정보(한글, 상수)를 바탕으로 자동 갱신된 단일 진실 공급원(SSOT) 기술 명세서입니다.
+> AI 에이전트의 정밀 코딩 및 쿼리 생성, 하네스 검증 시 스키마 무결성 판단 기준으로 사용됩니다.
 
-## 데이터베이스 분류 통계
-
-- **전체 정의된 테이블 수**: 84 개
-- **Databricks Cloud Tables**: 69 개
-- **SQLite Local Tables**: 15 개
-
----
-
-## Databricks Cloud Tables
-
-### 카테고리: Barcode
-
-| 변수명 (Variable Name) | 실제 테이블 경로 (Table Path) | 설명 (Description) | 주요 참조 쿼리 (Queries) | 주요 컬럼 (Columns Summary) |
-|---|---|---|---|---|
-| `barcode_record` | `hkt_dw.production.wrk_f_lwrktr140` | Databricks Barcode table: barcode_record | `ev3_query.py`, `gmes_query.py` | BARCODE_NO, PLANT, M_CODE, SPEC_CD, PROD_DATE, SHIFT_CD, MACHINE_CD |
-
-### 카테고리: Building
-
-| 변수명 (Variable Name) | 실제 테이블 경로 (Table Path) | 설명 (Description) | 주요 참조 쿼리 (Queries) | 주요 컬럼 (Columns Summary) |
-|---|---|---|---|---|
-| `building_manufacture_report` | `hkt_dw.quality.qlt_f_lqlttr127` | Databricks Building table: building_manufacture_report | `gmes_query.py`, `q_iqm_plus.py` | PLANT, M_CODE, WORK_DATE, SPEC_CD, PRDT_QTY |
-
-### 카테고리: CQMS
-
-| 변수명 (Variable Name) | 실제 테이블 경로 (Table Path) | 설명 (Description) | 주요 참조 쿼리 (Queries) | 주요 컬럼 (Columns Summary) |
-|---|---|---|---|---|
-| `change_main` | `hkt_system_dw.eqms.cqms_change_m` | Databricks CQMS table: change_main | `cqms_query.py` | PLANT, REQ_NO, TITLE, REG_USER, REG_DATE, M_CODE, STATUS, CHG_REASON, CHG_DESC |
-| `change_mcode` | `hkt_system_dw.eqms.cqms_sub_mcode_d` | Databricks CQMS table: change_mcode | `cqms_query.py` | REQ_NO, M_CODE, M_NAME |
-| `qi_main` | `hkt_system_dw.eqms.cqms_quality_issue` | Databricks CQMS table: qi_main | `cqms_query.py` | ISSUE_NO, TITLE, REG_DATE, OCCUR_DATE, PLANT, M_CODE, DEFECT_CD, DEFECT_NM, DEFECT_QTY, STATUS |
-| `qi_category` | `hkt_system_dw.eqms.cqms_issue_category_data_oere` | Databricks CQMS table: qi_category | `cqms_query.py` | CATEGORY_CD, CATEGORY_NM, PARENT_CD |
-| `qi_mcode` | `hkt_system_dw.eqms.cqms_quality_issue_material` | Databricks CQMS table: qi_mcode | `cqms_query.py` | ISSUE_NO, M_CODE, M_NAME |
-| `qi_breakdown` | `hkt_system_dw.eqms.cqms_quality_issue_break_down` | Databricks CQMS table: qi_breakdown | None | ISSUE_NO, BREAK_DOWN_CD, BREAK_DOWN_NM |
-| `audit_main` | `hkt_system_dw.eqms.cqms_customer_audit` | Databricks CQMS table: audit_main | `cqms_query.py` | AUDIT_NO, TITLE, AUDIT_DATE, AUDIT_USER, PLANT, STATUS |
-| `audit_mcode` | `hkt_system_dw.eqms.cqms_customer_audit_material` | Databricks CQMS table: audit_mcode | `cqms_query.py` | AUDIT_NO, M_CODE |
-| `app_info_mcode` | `hkt_system_dw.eqms.cqms_doc_m` | Databricks CQMS table: app_info_mcode | None | DOC_NO, M_CODE |
-| `app_info_contents` | `hkt_system_dw.eqms.cqms_doc_revision` | Databricks CQMS table: app_info_contents | None | DOC_NO, REVISION_NO, CONTENTS, FILE_NAME |
-| `cqms_doc_code_table` | `hkt_system_dw.eqms.oe_doc_cate_comm` | Databricks CQMS table: cqms_doc_code_table | None | CATE_CD, CATE_NM, PARENT_CD |
-| `cqms_doc_oem_cat_main` | `hkt_system_dw.eqms.oe_doc_cate_d` | Databricks CQMS table: cqms_doc_oem_cat_main | None | CATE_CD, DOC_NO, TITLE |
-| `cqms_doc_oem_cat_rev_mgnt` | `hkt_system_dw.eqms.oe_doc_cate_m` | Databricks CQMS table: cqms_doc_oem_cat_rev_mgnt | None | DOC_NO, REVISION_NO, APPLY_DATE |
-| `cqms_doc_pp_detail` | `hkt_system_dw.eqms.oe_doc_cate_pp_d` | Databricks CQMS table: cqms_doc_pp_detail | None | PP_NO, M_CODE, SPEC_CD |
-| `cqms_doc_pp_info` | `hkt_system_dw.eqms.oe_doc_cate_pp_info` | Databricks CQMS table: cqms_doc_pp_info | None | PP_NO, TITLE, REG_DATE |
-| `cqms_doc_pp_main` | `hkt_system_dw.eqms.oe_doc_cate_pp_m` | Databricks CQMS table: cqms_doc_pp_main | None | PP_NO, DOC_NO, REVISION_NO |
-| `cqms_doc_sales_brand_detail` | `hkt_system_dw.eqms.oe_doc_cate_sales_brand_d` | Databricks CQMS table: cqms_doc_sales_brand_detail | None | BRAND_NO, M_CODE |
-| `cqms_doc_sales_brand_main` | `hkt_system_dw.eqms.oe_doc_cate_sales_brand_m` | Databricks CQMS table: cqms_doc_sales_brand_main | None | BRAND_NO, TITLE |
-| `cqms_row_visibility` | `hkt_system_dw.eqms.cqms_row_hide_show_m` | Databricks CQMS table: cqms_row_visibility | None | TABLE_NAME, ROW_ID, IS_VISIBLE |
-| `cqms_row_visibility_log` | `hkt_system_dw.eqms.cqms_row_hide_show_m_log` | Databricks CQMS table: cqms_row_visibility_log | None | TABLE_NAME, ROW_ID, ACTION, WORKER, ACTION_DATE |
-| `cqms_iqm_main` | `hkt_system_dw.eqms.cqms_iqm_m` | Databricks CQMS table: cqms_iqm_main | None | IQM_NO, TITLE, PLANT, M_CODE, REG_DATE |
-| `cqms_iqm_status` | `hkt_system_dw.eqms.cqms_iqm_status_m` | Databricks CQMS table: cqms_iqm_status | None | IQM_NO, STATUS, UPDATE_DATE |
-| `cqms_iqm_test_item` | `hkt_system_dw.eqms.cqms_iqm_test_item_info` | Databricks CQMS table: cqms_iqm_test_item | None | IQM_NO, TEST_CD, TEST_NM, SPEC_VAL |
-| `cqms_iqm_test_item_req` | `hkt_system_dw.eqms.cqms_iqm_test_item_info_req` | Databricks CQMS table: cqms_iqm_test_item_req | None | IQM_NO, TEST_CD, REQ_VAL |
-| `cqms_iqm_test_main` | `hkt_system_dw.eqms.cqms_iqm_test_m` | Databricks CQMS table: cqms_iqm_test_main | None | IQM_NO, TEST_DATE, TEST_USER |
-| `qi_d1_team` | `hkt_system_dw.eqms.cqms_quality_issue_d1_team` | Databricks CQMS table: qi_d1_team | None | ISSUE_NO, TEAM_CD, TEAM_NM |
-| `qi_d7_prevention` | `hkt_system_dw.eqms.cqms_quality_issue_d7_prevent` | Databricks CQMS table: qi_d7_prevention | None | ISSUE_NO, PREVENT_CD, PREVENT_NM |
-| `qi_root_cause` | `hkt_system_dw.eqms.cqms_quality_issue_root_cause` | Databricks CQMS table: qi_root_cause | None | ISSUE_NO, CAUSE_CD, CAUSE_NM |
-| `cqms_attachment` | `hkt_system_dw.eqms.cqms_attach_file_onedrive` | Databricks CQMS table: cqms_attachment | None | ATTACH_ID, PARENT_ID, FILE_NAME, FILE_PATH |
-
-### 카테고리: CTMS
-
-| 변수명 (Variable Name) | 실제 테이블 경로 (Table Path) | 설명 (Description) | 주요 참조 쿼리 (Queries) | 주요 컬럼 (Columns Summary) |
-|---|---|---|---|---|
-| `ctms` | `hkt_system_dw.tableau.ctms_result_data` | Databricks CTMS table: ctms | `ctms_query.py`, `plm_query.py` | PLANT, M_CODE, TEST_DATE, CTL_VALUE, DIRECTION, UPPER_VAL, LOWER_VAL |
-
-### 카테고리: Common
-
-| 변수명 (Variable Name) | 실제 테이블 경로 (Table Path) | 설명 (Description) | 주요 참조 쿼리 (Queries) | 주요 컬럼 (Columns Summary) |
-|---|---|---|---|---|
-| `product_master` | `hkt_dw.specification.mas_d_lmastr101` | Databricks Common table: product_master | `gmes_query.py`, `q_iqm_plus.py` | PLANT, M_CODE, SPEC_CD, SIZE_CD, PATTERN_CD, STXC, SIZE_NAME, PATTERN_NM |
-| `spec_revision` | `hkt_dw.specification.par_f_lmastr144` | Databricks Common table: spec_revision | `gmes_query.py`, `q_iqm_plus.py` | PLANT, M_CODE, SPEC_CD, REVISION_NO, APPLY_DATE |
-| `mes_code_master` | `hkt_dw.master.mst_d_lcomtr107` | Databricks Common table: mes_code_master | `gmes_query.py` | CD_ITEM, CD_ITEM_NM, CD_VAL, CD_VAL_NM |
-| `production_volume` | `hkt_dw.production.wrk_f_lwrkts118` | Databricks Common table: production_volume | `gmes_query.py`, `q_iqm_plus.py` | PLANT, M_CODE, WORK_DATE, PRDT_QTY, SCRAP_QTY, REWORK_QTY |
-| `full_spec` | `hkt_rnd_dw.full_specification.tb_pl_if_plmspec_rcx_bas` | Databricks Common table: full_spec | `plm_query.py` | SPEC_CD, M_CODE, SIZE_NAME, PATTERN_NM, STXC |
-
-### 카테고리: HGWS
-
-| 변수명 (Variable Name) | 실제 테이블 경로 (Table Path) | 설명 (Description) | 주요 참조 쿼리 (Queries) | 주요 컬럼 (Columns Summary) |
-|---|---|---|---|---|
-| `hgws` | `hkt_system_dw.tableau.sap_zsrt10000` | Databricks HGWS table: hgws | `ev3_query.py`, `hgws_query.py` | PLANT, M_CODE, RETURN_DATE, RETURN_QTY, CLAIM_CD, CLAIM_DESC |
-
-### 카테고리: Nonconformity
-
-| 변수명 (Variable Name) | 실제 테이블 경로 (Table Path) | 설명 (Description) | 주요 참조 쿼리 (Queries) | 주요 컬럼 (Columns Summary) |
-|---|---|---|---|---|
-| `shipment_inspection_result` | `hkt_dw.quality.qlt_f_lqlttr120` | Databricks Nonconformity table: shipment_inspection_result | `gmes_query.py`, `q_iqm_plus.py` | PLANT, M_CODE, INS_DATE, DFT_CD, DFT_DESC, NCF_QTY |
-| `finished_product_inspection_result` | `hkt_dw.quality.qlt_f_lqlttr107` | Databricks Nonconformity table: finished_product_inspection_result | `gmes_query.py` | PLANT, M_CODE, INS_DATE, DFT_CD, DFT_DESC, NCF_QTY |
-
-### 카테고리: PLM
-
-| 변수명 (Variable Name) | 실제 테이블 경로 (Table Path) | 설명 (Description) | 주요 참조 쿼리 (Queries) | 주요 컬럼 (Columns Summary) |
-|---|---|---|---|---|
-| `plm_uf_db_standard` | `hkt_rnd_dw.specification.tb_pl_dw_spec_pd_item_label_bas` | Databricks PLM table: plm_uf_db_standard | `gmes_query.py` | PLANT, M_CODE, SPEC_CD, ITEM_LABEL, UCL_VAL, LCL_VAL |
-
-### 카테고리: Production (Machine)
-
-| 변수명 (Variable Name) | 실제 테이블 경로 (Table Path) | 설명 (Description) | 주요 참조 쿼리 (Queries) | 주요 컬럼 (Columns Summary) |
-|---|---|---|---|---|
-| `production_machine` | `hkt_dw.production.wrk_f_lwrktr106` | Databricks Production (Machine) table: production_machine | `gmes_query.py` | PLANT, M_CODE, WORK_DATE, MACHINE_CD, PRDT_QTY |
-
-### 카테고리: QRS
-
-| 변수명 (Variable Name) | 실제 테이블 경로 (Table Path) | 설명 (Description) | 주요 참조 쿼리 (Queries) | 주요 컬럼 (Columns Summary) |
-|---|---|---|---|---|
-| `ext_tread_op_qrs` | `hkt_dw.quality.qlt_d_loprtr120` | Databricks QRS table: ext_tread_op_qrs | `qrs_query.py` | N/A |
-| `ext_sidewall_op_qrs` | `hkt_dw.quality.qlt_d_loprtr122` | Databricks QRS table: ext_sidewall_op_qrs | `qrs_query.py` | N/A |
-| `cal_op_qrs` | `hkt_dw.quality.qlt_d_loprtr125` | Databricks QRS table: cal_op_qrs | `qrs_query.py` | N/A |
-| `cal_winding_qrs` | `hkt_dw.quality.qlt_d_loprtr126` | Databricks QRS table: cal_winding_qrs | `qrs_query.py` | N/A |
-| `cal_let_off_qrs` | `hkt_dw.quality.qlt_d_loprtr127` | Databricks QRS table: cal_let_off_qrs | `qrs_query.py` | N/A |
-| `cut_trc_op_qrs` | `hkt_dw.quality.qlt_d_loprtr134` | Databricks QRS table: cut_trc_op_qrs | `qrs_query.py` | N/A |
-| `cut_src_op_qrs` | `hkt_dw.quality.qlt_d_loprtr135` | Databricks QRS table: cut_src_op_qrs | `qrs_query.py` | N/A |
-| `cut_sbc_op_qrs` | `hkt_dw.quality.qlt_d_loprtr133` | Databricks QRS table: cut_sbc_op_qrs | `qrs_query.py` | N/A |
-| `cut_pcr_il_op_qrs` | `hkt_dw.quality.qlt_d_loprtr137` | Databricks QRS table: cut_pcr_il_op_qrs | `qrs_query.py` | N/A |
-| `cut_tbr_il_op_qrs` | `hkt_dw.quality.qlt_d_loprtr138` | Databricks QRS table: cut_tbr_il_op_qrs | `qrs_query.py` | N/A |
-| `cut_tbc_op_qrs` | `hkt_dw.quality.qlt_d_loprtr136` | Databricks QRS table: cut_tbc_op_qrs | `qrs_query.py` | N/A |
-| `cut_bec_op_qrs` | `hkt_dw.quality.qlt_d_loprtr139` | Databricks QRS table: cut_bec_op_qrs | `qrs_query.py` | N/A |
-| `cut_wide_sliter_qrs` | `hkt_dw.quality.qlt_d_loprtr140` | Databricks QRS table: cut_wide_sliter_qrs | `qrs_query.py` | N/A |
-| `cut_mini_sliter_qrs` | `hkt_dw.quality.qlt_d_loprtr141` | Databricks QRS table: cut_mini_sliter_qrs | `qrs_query.py` | N/A |
-| `cut_edge_sliter_qrs` | `hkt_dw.quality.qlt_d_loprtr142` | Databricks QRS table: cut_edge_sliter_qrs | `qrs_query.py` | N/A |
-| `cut_sheet_op_qrs` | `hkt_dw.quality.qlt_d_loprtr143` | Databricks QRS table: cut_sheet_op_qrs | `qrs_query.py` | N/A |
-| `cut_bec_strip_op_qrs` | `hkt_dw.quality.qlt_d_loprtr144` | Databricks QRS table: cut_bec_strip_op_qrs | None | N/A |
-
-### 카테고리: RPA
-
-| 변수명 (Variable Name) | 실제 테이블 경로 (Table Path) | 설명 (Description) | 주요 참조 쿼리 (Queries) | 주요 컬럼 (Columns Summary) |
-|---|---|---|---|---|
-| `rpa_test_result` | `hkt_dw.quality.qlt_f_lqlttr268` | Databricks RPA table: rpa_test_result | `gmes_query.py` | PLANT, M_CODE, TEST_DATE, TAND_VAL, GRADE |
-
-### 카테고리: RR
-
-| 변수명 (Variable Name) | 실제 테이블 경로 (Table Path) | 설명 (Description) | 주요 참조 쿼리 (Queries) | 주요 컬럼 (Columns Summary) |
-|---|---|---|---|---|
-| `rr_lot_samples` | `hkt_dw.quality.qlt_d_lqlttr309` | Databricks RR table: rr_lot_samples | `gmes_query.py` | PLANT, M_CODE, BARCODE_NO, PGS_STS, INS_DATE, RR_VALUE, GRADE |
-| `rr_test_result` | `hkt_dw.quality.qlt_f_lqlttr316` | Databricks RR table: rr_test_result | `gmes_query.py` | BARCODE_NO, INS_DATE, RR_VALUE, GRADE, ATTACH_FILE_NAME |
-| `rr_standard` | `hkt_dw.quality.qlt_d_lqlttr510` | Databricks RR table: rr_standard | `gmes_query.py` | PLANT, M_CODE, CAR_MAKER, VEHICLE, UCL, LCL |
-
-### 카테고리: TDR
-
-| 변수명 (Variable Name) | 실제 테이블 경로 (Table Path) | 설명 (Description) | 주요 참조 쿼리 (Queries) | 주요 컬럼 (Columns Summary) |
-|---|---|---|---|---|
-| `tdr` | `hkt_system_dw.tdr.v_gate_document_to_oda` | Databricks TDR table: tdr | None | PLANT, M_CODE, DOC_NO, TITLE, REG_DATE |
-| `lot_track` | `hkt_dw.production.wrk_f_lwrktr140` | Databricks TDR table: lot_track | `ev3_query.py`, `gmes_query.py` | BARCODE_NO, PLANT, M_CODE, PROD_DATE |
-
-### 카테고리: Uniformity
-
-| 변수명 (Variable Name) | 실제 테이블 경로 (Table Path) | 설명 (Description) | 주요 참조 쿼리 (Queries) | 주요 컬럼 (Columns Summary) |
-|---|---|---|---|---|
-| `uf_inspection_result` | `hkt_dw.quality.qlt_f_lqlttr105` | Databricks Uniformity table: uf_inspection_result | `gmes_query.py`, `q_iqm_plus.py` | PLANT, M_CODE, SPEC_CD, STXC, INS_DATE, RFV, LFV, CON, HAR, JDG_GR, INS_FG |
-| `uf_inspection_standard` | `hkt_dw.quality.qlt_d_lcomtr201` | Databricks Uniformity table: uf_inspection_standard | `gmes_query.py` | PLANT, M_CODE, SPEC_CD, RFV_MAX, LFV_MAX, CON_MAX, HAR_MAX |
-| `uf_db_standard` | `hkt_dw.quality.qlt_d_lcomtr202` | Databricks Uniformity table: uf_db_standard | `gmes_query.py` | PLANT, M_CODE, SPEC_CD, RFV_UCL, LFV_UCL, CON_UCL, HAR_UCL |
-
-### 카테고리: Worksheet
-
-| 변수명 (Variable Name) | 실제 테이블 경로 (Table Path) | 설명 (Description) | 주요 참조 쿼리 (Queries) | 주요 컬럼 (Columns Summary) |
-|---|---|---|---|---|
-| `worksheet_building_overall` | `hkt_dw.quality.qlt_d_loprtr178` | Databricks Worksheet table: worksheet_building_overall | None | PLANT, M_CODE, WORK_DATE, BUILD_QTY |
+## 📈 메타데이터 통계
+- **전체 관리 테이블 수**: 86 개
+  - ☁️ Databricks Cloud Tables: 71 개
+  - 💾 SQLite Local Tables: 15 개
+  - 🚀 현재 활성화(사용 중) 테이블 수: 61 개
 
 ---
 
-## SQLite Local Tables
+## ☁️ Databricks Cloud Tables
 
-### SQLite Database: LOG (`log.db`)
+### 📁 분류: CQMS
 
-| 변수명 (Variable Name) | 실제 테이블명 (Table Name) | 설명 (Description) | 주요 참조 쿼리 (Queries) | 컬럼 명세 (Columns Info) |
+| 변수명 (Variable) | 한글 요약 (Description) | 실제 테이블 경로 (Table Path) | 사용 여부 | 주요 참조 쿼리 (Queries) |
+|---|---|---|:---:|---|
+| `cqms_4m_main` | **CQMS 4M 설계 및 생산 변경 요청 마스터 정보** | `hkt_system_dw.eqms.cqms_change_m` | ✅ 사용 | `cqms_query.py` |
+| `cqms_4m_mcode` | **CQMS 4M 변경건에 대한 대상 자재 매핑 상세 이력** | `hkt_system_dw.eqms.cqms_sub_mcode_d` | ✅ 사용 | `cqms_query.py` |
+| `cqms_attach_file` | **Databricks cqms_attach_file 테이블 데이터** | `hkt_system_dw.eqms.cqms_attach_file_onedrive` | ❌ 미사용 | - |
+| `cqms_audit_main` | **CQMS 외부/고객사 품질 감사(Audit) 실적 정보** | `hkt_system_dw.eqms.cqms_customer_audit` | ✅ 사용 | `cqms_query.py` |
+| `cqms_audit_mcode` | **CQMS 외부 감사 대상 자재 매핑 정보** | `hkt_system_dw.eqms.cqms_customer_audit_material` | ✅ 사용 | `cqms_query.py` |
+| `cqms_quality_breakdown` | **CQMS 품질 불량 파손 부위 유형 코드 매핑** | `hkt_system_dw.eqms.cqms_quality_issue_break_down` | ❌ 미사용 | - |
+| `cqms_quality_category` | **CQMS 품질 이슈 유형 및 카테고리 마스터 코드** | `hkt_system_dw.eqms.cqms_issue_category_data_oere` | ✅ 사용 | `cqms_query.py` |
+| `cqms_quality_d1team` | **Databricks cqms_quality_d1team 테이블 데이터** | `hkt_system_dw.eqms.cqms_quality_issue_d1_team` | ❌ 미사용 | - |
+| `cqms_quality_d7prevent` | **Databricks cqms_quality_d7prevent 테이블 데이터** | `hkt_system_dw.eqms.cqms_quality_issue_d7_prevent` | ❌ 미사용 | - |
+| `cqms_quality_main` | **CQMS 완성품 품질 이슈 및 클레임 내역 마스터** | `hkt_system_dw.eqms.cqms_quality_issue` | ✅ 사용 | `cqms_query.py` |
+| `cqms_quality_mcode` | **CQMS 품질 이슈에 해당하는 영향 자재 매핑 정보** | `hkt_system_dw.eqms.cqms_quality_issue_material` | ✅ 사용 | `cqms_query.py` |
+| `cqms_quality_rootcause` | **Databricks cqms_quality_rootcause 테이블 데이터** | `hkt_system_dw.eqms.cqms_quality_issue_root_cause` | ❌ 미사용 | - |
+| `cqms_row_visibility` | **품질 문서 및 데이터 조회 가시성 제어 권한 테이블** | `hkt_system_dw.eqms.cqms_row_hide_show_m` | ❌ 미사용 | - |
+| `cqms_row_visibility_log` | **품질 데이터 권한 조정 및 로그 열람 감사 추적 이력** | `hkt_system_dw.eqms.cqms_row_hide_show_m_log` | ❌ 미사용 | - |
+
+<details>
+<summary>🔍 분류 내 테이블별 상세 컬럼 스펙 열기</summary>
+
+#### 📑 `cqms_4m_main` (CQMS 4M 설계 및 생산 변경 요청 마스터 정보)
+| 컬럼명 (Column) | 물리 타입 (Type) | 별칭 추천 (Recommended Alias) | 대분류 (Category) | 매핑 상수 (Value Constants) |
 |---|---|---|---|---|
-| `login_log` | `user_login` | SQLite log table: login_log | None | • <b>id</b> (INTEGER) [PK]<br>• <b>employee_id</b> (TEXT)<br>• <b>login_time</b> (TEXT) |
+| `PLANT` | `VARCHAR` | `plant_code` | 공장코드 | 8개 상수 항목 매핑 |
+| `REQ_NO` | `VARCHAR` | `request_no` | 요청번호 | - |
+| `TITLE` | `VARCHAR` | `title` | 텍스트 | - |
+| `REG_USER` | `VARCHAR` | `register_user` | 등록자 | - |
+| `REG_DATE` | `TIMESTAMP` | `register_date` | 날짜/시간 | - |
+| `M_CODE` | `VARCHAR` | `material_code` | 자재코드 | - |
+| `STATUS` | `VARCHAR` | `status` | 상태값 | 8개 상수 항목 매핑 |
+| `CHG_REASON` | `VARCHAR` | `chg_reason` | 일반속성 | - |
+| `CHG_DESC` | `VARCHAR` | `chg_desc` | 일반속성 | - |
 
-### SQLite Database: STAGING (`staging.db`)
-
-| 변수명 (Variable Name) | 실제 테이블명 (Table Name) | 설명 (Description) | 주요 참조 쿼리 (Queries) | 컬럼 명세 (Columns Info) |
+#### 📑 `cqms_4m_mcode` (CQMS 4M 변경건에 대한 대상 자재 매핑 상세 이력)
+| 컬럼명 (Column) | 물리 타입 (Type) | 별칭 추천 (Recommended Alias) | 대분류 (Category) | 매핑 상수 (Value Constants) |
 |---|---|---|---|---|
-| `prd_audit_spec_master` | `product_audit_spec_master` | -- Lv 2. Spec Master | `q_iqm_plus.py`, `sqlite_query.py` | • <b>MCODE</b> (TEXT)<br>• <b>YEAR</b> (INTEGER)<br>• <b>PLANT</b> (TEXT)<br>• <b>MP_GATE_DT</b> (TEXT)<br>• <b>MFG_MCODE</b> (TEXT)<br>• <b>RR_MCODE</b> (TEXT)<br>• <b>Remark</b> (TEXT)<br>• <b>Supply Status</b> (TEXT)<br>• <b>Car Maker</b> (TEXT)<br>• <b>Vehicle Model Local</b> (TEXT)<br>• <b>SPEC_CD</b> (TEXT)<br>• <b>STXC_1st</b> (TEXT)<br>• <b>RCPE_VER_1st</b> (TEXT)<br>• <b>VLDT_SRT_DATE_1st</b> (TEXT)<br>• <b>STXC</b> (TEXT)<br>• <b>RCPE_VER</b> (TEXT)<br>• <b>VLDT_SRT_DATE</b> (TEXT)<br>• <b>REVISION_COUNT</b> (TEXT)<br>• <b>MIN_WRK_DATE</b> (TEXT) |
-| `prd_audit_pdrt` | `product_audit_pdrt` | -- Lv 2. Production Volume | `q_iqm_plus.py`, `sqlite_query.py` | • <b>MFG_MCODE</b> (TEXT)<br>• <b>PERIOD_NAME</b> (TEXT)<br>• <b>MASS_PERIOD</b> (INTEGER)<br>• <b>PRDT_QTY</b> (REAL) |
-| `prd_audit_ncf` | `product_audit_ncf` | -- Lv 2. Nonconformity | None | • <b>MFG_MCODE</b> (TEXT)<br>• <b>PERIOD_NAME</b> (TEXT)<br>• <b>SCRAP_DFT_QTY</b> (REAL)<br>• <b>SCRAP_RATE</b> (REAL)<br>• <b>SCRAP_INDEX</b> (REAL)<br>• <b>REWORK_DFT_QTY</b> (TEXT)<br>• <b>REWORK_RATE</b> (TEXT)<br>• <b>REWORK_INDEX</b> (TEXT) |
-| `prd_audit_scrap` | `product_audit_scrap` | -- Lv 2. Scrap | `q_iqm_plus.py` | • <b>MFG_MCODE</b> (TEXT)<br>• <b>PERIOD_NAME</b> (TEXT)<br>• <b>SCRAP_DFT_QTY</b> (REAL)<br>• <b>SCRAP_RATE</b> (REAL)<br>• <b>SCRAP_INDEX</b> (REAL) |
-| `prd_audit_rework` | `product_audit_rework` | -- Lv 2. Rework | `q_iqm_plus.py` | • <b>MFG_MCODE</b> (TEXT)<br>• <b>PERIOD_NAME</b> (TEXT)<br>• <b>REWORK_DFT_QTY</b> (REAL)<br>• <b>REWORK_RATE</b> (REAL)<br>• <b>REWORK_INDEX</b> (REAL) |
-| `prd_audit_gt_wt` | `product_audit_gt_wt` | -- Lv 2. G/T Weight | `q_iqm_plus.py` | • <b>MFG_MCODE</b> (TEXT)<br>• <b>PERIOD_NAME</b> (TEXT)<br>• <b>GT_WT_PASS_COUNT</b> (INTEGER)<br>• <b>GT_WT_INS_COUNT</b> (INTEGER)<br>• <b>GT_WT_PASS_RATE</b> (REAL)<br>• <b>GT_WT_INDEX</b> (REAL) |
-| `prd_audit_uf` | `product_audit_uf` | -- Lv 2. Uniformity | `q_iqm_plus.py` | • <b>MFG_MCODE</b> (TEXT)<br>• <b>PERIOD_NAME</b> (TEXT)<br>• <b>UF_PASS_COUNT</b> (INTEGER)<br>• <b>UF_INS_COUNT</b> (INTEGER)<br>• <b>UF_PASS_RATE</b> (REAL)<br>• <b>UF_INDEX</b> (REAL) |
-| `prd_audit_rr` | `product_audit_rr` | -- Lv 2. RR | `q_iqm_plus.py` | • <b>RR_MCODE</b> (TEXT)<br>• <b>PERIOD_NAME</b> (TEXT)<br>• <b>RR_AVG</b> (REAL)<br>• <b>RR_STD</b> (TEXT)<br>• <b>RR_COUNT</b> (INTEGER)<br>• <b>RR_SPEC_MAX</b> (REAL)<br>• <b>RR_SPEC_MIN</b> (TEXT)<br>• <b>RR_SIGMA_LEVEL</b> (TEXT)<br>• <b>RR_INDEX</b> (TEXT) |
-| `prd_audit_ctl` | `product_audit_ctl` | -- Lv 2. CTL | `q_iqm_plus.py` | • <b>MFG_MCODE</b> (TEXT)<br>• <b>PERIOD_NAME</b> (TEXT)<br>• <b>CTL_COUNT</b> (INTEGER)<br>• <b>CTL_PASS_RATE_CUM</b> (REAL)<br>• <b>CTL_INDEX</b> (REAL) |
-| `prd_audit_ctl_rawdata` | `product_audit_ctl_rawdata` | SQLite staging table: prd_audit_ctl_rawdata | `q_iqm_plus.py` | • <b>MEASUREMENT TYPE</b> (TEXT)<br>• <b>TIRE TYPE</b> (TEXT)<br>• <b>SIZE</b> (TEXT)<br>• <b>PATTERN</b> (TEXT)<br>• <b>USE CODE</b> (TEXT)<br>• <b>BRAND</b> (TEXT)<br>• <b>DATE</b> (TEXT)<br>• <b>REPORT NO.</b> (TEXT)<br>• <b>MFG SPEC</b> (TEXT)<br>• <b>CTL SPEC</b> (TEXT)<br>• <b>PURPOSE</b> (TEXT)<br>• <b>PLANT</b> (TEXT)<br>• <b>ITEM</b> (TEXT)<br>• <b>TOLERANCE</b> (TEXT)<br>• <b>SPECU</b> (TEXT)<br>• <b>SPECL</b> (TEXT)<br>• <b>MEASUREAVGU</b> (TEXT)<br>• <b>MEASUREAVGL</b> (TEXT)<br>• <b>MEASUREAVG</b> (TEXT)<br>• <b>OKNGU</b> (TEXT)<br>• <b>OKNGL</b> (TEXT)<br>• <b>OKNG</b> (TEXT)<br>• <b>M-CODE</b> (TEXT)<br>• <b>SPEC</b> (TEXT) |
-| `sellin_monthly_agg` | `sellin_monthly_agg` | SQLite staging table: sellin_monthly_agg | `hope_query.py`, `sqlite_query.py` | • <b>RE/OE</b> (TEXT)<br>• <b>M_CODE</b> (TEXT)<br>• <b>YYYY</b> (TEXT)<br>• <b>MM</b> (TEXT)<br>• <b>SUPP_QTY</b> (INTEGER) |
+| `REQ_NO` | `VARCHAR` | `request_no` | 요청번호 | - |
+| `M_CODE` | `VARCHAR` | `material_code` | 자재코드 | - |
+| `M_NAME` | `VARCHAR` | `m_name` | 일반속성 | - |
 
-### SQLite Database: OPS (`ops.db`)
-
-| 변수명 (Variable Name) | 실제 테이블명 (Table Name) | 설명 (Description) | 주요 참조 쿼리 (Queries) | 컬럼 명세 (Columns Info) |
+#### 📑 `cqms_attach_file` (Databricks cqms_attach_file 테이블 데이터)
+| 컬럼명 (Column) | 물리 타입 (Type) | 별칭 추천 (Recommended Alias) | 대분류 (Category) | 매핑 상수 (Value Constants) |
 |---|---|---|---|---|
-| `hope_reg_dev` | `product_audit_regular_development` | -- Lv 0. 정규 개발 DB | `sqlite_query.py` | • <b>No.</b> (INTEGER)<br>• <b>Project Group</b> (TEXT)<br>• <b>Dev. Type</b> (TEXT)<br>• <b>Dev. Status</b> (TEXT)<br>• <b>OEM</b> (TEXT)<br>• <b>Project</b> (TEXT)<br>• <b>2Vehicle Group</b> (TEXT)<br>• <b>Vehicle</b> (TEXT)<br>• <b>KAM</b> (TEXT)<br>• <b>Team</b> (TEXT)<br>• <b>PM Name(Eng)</b> (TEXT)<br>• <b>PMO</b> (TEXT)<br>• <b>Project No.</b> (TEXT)<br>• <b>M-code</b> (INTEGER)<br>• <b>OE Component No.</b> (TEXT)<br>• <b>2Product Type </b> (TEXT)<br>• <b>Size</b> (TEXT)<br>• <b>Pattern</b> (TEXT)<br>• <b>Prod. Type</b> (TEXT)<br>• <b>Prod. Type.1</b> (TEXT)<br>• <b>PR</b> (INTEGER)<br>• <b>Plant</b> (TEXT)<br>• <b>OE Share</b> (TEXT)<br>• <b>OE Order Volume</b> (TEXT)<br>• <b>P Gate BP. End</b> (TEXT)<br>• <b>P Gate Act. End</b> (TEXT)<br>• <b>D Gate Pln End</b> (TEXT)<br>• <b>D Gate Act End</b> (TEXT)<br>• <b>Tech BP. End</b> (TEXT)<br>• <b>Tech Act. End</b> (TEXT)<br>• <b>V Gate BP. End</b> (TEXT)<br>• <b>V Gate Act. End</b> (TEXT)<br>• <b>ISIR BP. End</b> (TEXT)<br>• <b>ISIR Act. End</b> (TEXT)<br>• <b>MP Gate BP. End</b> (TEXT)<br>• <b>MP Gate Act. End</b> (TEXT)<br>• <b>SOP BP. End</b> (TEXT)<br>• <b>SOP Act. End</b> (TEXT) |
-| `mcode_mapping_mgt` | `product_audit_mcode_master` | -- lv 1. MCODE Master DB | `q_iqm_plus.py`, `sqlite_query.py` | • <b>MCODE</b> (TEXT)<br>• <b>MFG_MCODE</b> (TEXT)<br>• <b>RR_MCODE</b> (TEXT)<br>• <b>DELETE_MCODE</b> (INTEGER)<br>• <b>Remark</b> (TEXT) |
-| `fm_library` | `quality_issue_management` | SQLite ops table: fm_library | None | • <b>id</b> (INTEGER) [PK]<br>• <b>category</b> (TEXT)<br>• <b>non_conformity_classification</b> (TEXT)<br>• <b>cause_analysis_result</b> (TEXT)<br>• <b>occurrence_photo</b> (TEXT)<br>• <b>occurrence_location</b> (TEXT)<br>• <b>estimated_cause_process</b> (TEXT)<br>• <b>occurrence_frequency</b> (TEXT)<br>• <b>analysis_item</b> (TEXT)<br>• <b>occurrence_phenomenon_result</b> (TEXT)<br>• <b>created_at</b> (TIMESTAMP)<br>• <b>updated_at</b> (TIMESTAMP) |
+| `PLANT` | `VARCHAR` | `plant_code` | 공장코드 | 8개 상수 항목 매핑 |
+| `M_CODE` | `VARCHAR` | `material_code` | 자재코드 | - |
+| `SPEC_CD` | `VARCHAR` | `spec_code` | 규격코드 | - |
+
+#### 📑 `cqms_audit_main` (CQMS 외부/고객사 품질 감사(Audit) 실적 정보)
+| 컬럼명 (Column) | 물리 타입 (Type) | 별칭 추천 (Recommended Alias) | 대분류 (Category) | 매핑 상수 (Value Constants) |
+|---|---|---|---|---|
+| `AUDIT_NO` | `VARCHAR` | `audit_no` | 감사번호 | - |
+| `TITLE` | `VARCHAR` | `title` | 텍스트 | - |
+| `AUDIT_DATE` | `TIMESTAMP` | `audit_date` | 날짜/시간 | - |
+| `AUDIT_USER` | `VARCHAR` | `audit_user` | 감사자 | - |
+| `PLANT` | `VARCHAR` | `plant_code` | 공장코드 | 8개 상수 항목 매핑 |
+| `STATUS` | `VARCHAR` | `status` | 상태값 | 8개 상수 항목 매핑 |
+
+#### 📑 `cqms_audit_mcode` (CQMS 외부 감사 대상 자재 매핑 정보)
+| 컬럼명 (Column) | 물리 타입 (Type) | 별칭 추천 (Recommended Alias) | 대분류 (Category) | 매핑 상수 (Value Constants) |
+|---|---|---|---|---|
+| `AUDIT_NO` | `VARCHAR` | `audit_no` | 감사번호 | - |
+| `M_CODE` | `VARCHAR` | `material_code` | 자재코드 | - |
+
+#### 📑 `cqms_quality_breakdown` (CQMS 품질 불량 파손 부위 유형 코드 매핑)
+| 컬럼명 (Column) | 물리 타입 (Type) | 별칭 추천 (Recommended Alias) | 대분류 (Category) | 매핑 상수 (Value Constants) |
+|---|---|---|---|---|
+| `ISSUE_NO` | `VARCHAR` | `issue_no` | 품질이슈번호 | - |
+| `BREAK_DOWN_CD` | `VARCHAR` | `break_down_cd` | 일반속성 | - |
+| `BREAK_DOWN_NM` | `VARCHAR` | `break_down_nm` | 일반속성 | - |
+
+#### 📑 `cqms_quality_category` (CQMS 품질 이슈 유형 및 카테고리 마스터 코드)
+| 컬럼명 (Column) | 물리 타입 (Type) | 별칭 추천 (Recommended Alias) | 대분류 (Category) | 매핑 상수 (Value Constants) |
+|---|---|---|---|---|
+| `CATEGORY_CD` | `VARCHAR` | `category_code` | 분류코드 | 11개 상수 항목 매핑 |
+| `CATEGORY_NM` | `VARCHAR` | `category_nm` | 일반속성 | - |
+| `PARENT_CD` | `VARCHAR` | `parent_cd` | 일반속성 | - |
+
+#### 📑 `cqms_quality_d1team` (Databricks cqms_quality_d1team 테이블 데이터)
+| 컬럼명 (Column) | 물리 타입 (Type) | 별칭 추천 (Recommended Alias) | 대분류 (Category) | 매핑 상수 (Value Constants) |
+|---|---|---|---|---|
+| `PLANT` | `VARCHAR` | `plant_code` | 공장코드 | 8개 상수 항목 매핑 |
+| `M_CODE` | `VARCHAR` | `material_code` | 자재코드 | - |
+| `SPEC_CD` | `VARCHAR` | `spec_code` | 규격코드 | - |
+
+#### 📑 `cqms_quality_d7prevent` (Databricks cqms_quality_d7prevent 테이블 데이터)
+| 컬럼명 (Column) | 물리 타입 (Type) | 별칭 추천 (Recommended Alias) | 대분류 (Category) | 매핑 상수 (Value Constants) |
+|---|---|---|---|---|
+| `PLANT` | `VARCHAR` | `plant_code` | 공장코드 | 8개 상수 항목 매핑 |
+| `M_CODE` | `VARCHAR` | `material_code` | 자재코드 | - |
+| `SPEC_CD` | `VARCHAR` | `spec_code` | 규격코드 | - |
+
+#### 📑 `cqms_quality_main` (CQMS 완성품 품질 이슈 및 클레임 내역 마스터)
+| 컬럼명 (Column) | 물리 타입 (Type) | 별칭 추천 (Recommended Alias) | 대분류 (Category) | 매핑 상수 (Value Constants) |
+|---|---|---|---|---|
+| `ISSUE_NO` | `VARCHAR` | `issue_no` | 품질이슈번호 | - |
+| `TITLE` | `VARCHAR` | `title` | 텍스트 | - |
+| `REG_DATE` | `TIMESTAMP` | `register_date` | 날짜/시간 | - |
+| `OCCUR_DATE` | `TIMESTAMP` | `occur_date` | 날짜/시간 | - |
+| `PLANT` | `VARCHAR` | `plant_code` | 공장코드 | 8개 상수 항목 매핑 |
+| `M_CODE` | `VARCHAR` | `material_code` | 자재코드 | - |
+| `DEFECT_CD` | `VARCHAR` | `defect_cd` | 일반속성 | - |
+| `DEFECT_NM` | `VARCHAR` | `defect_nm` | 일반속성 | - |
+| `DEFECT_QTY` | `DOUBLE` | `defect_qty` | 수량/실적 | - |
+| `STATUS` | `VARCHAR` | `status` | 상태값 | 8개 상수 항목 매핑 |
+
+#### 📑 `cqms_quality_mcode` (CQMS 품질 이슈에 해당하는 영향 자재 매핑 정보)
+| 컬럼명 (Column) | 물리 타입 (Type) | 별칭 추천 (Recommended Alias) | 대분류 (Category) | 매핑 상수 (Value Constants) |
+|---|---|---|---|---|
+| `ISSUE_NO` | `VARCHAR` | `issue_no` | 품질이슈번호 | - |
+| `M_CODE` | `VARCHAR` | `material_code` | 자재코드 | - |
+| `M_NAME` | `VARCHAR` | `m_name` | 일반속성 | - |
+
+#### 📑 `cqms_quality_rootcause` (Databricks cqms_quality_rootcause 테이블 데이터)
+| 컬럼명 (Column) | 물리 타입 (Type) | 별칭 추천 (Recommended Alias) | 대분류 (Category) | 매핑 상수 (Value Constants) |
+|---|---|---|---|---|
+| `PLANT` | `VARCHAR` | `plant_code` | 공장코드 | 8개 상수 항목 매핑 |
+| `M_CODE` | `VARCHAR` | `material_code` | 자재코드 | - |
+| `SPEC_CD` | `VARCHAR` | `spec_code` | 규격코드 | - |
+
+#### 📑 `cqms_row_visibility` (품질 문서 및 데이터 조회 가시성 제어 권한 테이블)
+| 컬럼명 (Column) | 물리 타입 (Type) | 별칭 추천 (Recommended Alias) | 대분류 (Category) | 매핑 상수 (Value Constants) |
+|---|---|---|---|---|
+| `TABLE_NAME` | `VARCHAR` | `table_name` | 일반속성 | - |
+| `ROW_ID` | `VARCHAR` | `row_id` | 일반속성 | - |
+| `IS_VISIBLE` | `VARCHAR` | `is_visible` | 일반속성 | - |
+
+#### 📑 `cqms_row_visibility_log` (품질 데이터 권한 조정 및 로그 열람 감사 추적 이력)
+| 컬럼명 (Column) | 물리 타입 (Type) | 별칭 추천 (Recommended Alias) | 대분류 (Category) | 매핑 상수 (Value Constants) |
+|---|---|---|---|---|
+| `TABLE_NAME` | `VARCHAR` | `table_name` | 일반속성 | - |
+| `ROW_ID` | `VARCHAR` | `row_id` | 일반속성 | - |
+| `ACTION` | `VARCHAR` | `action` | 일반속성 | - |
+| `WORKER` | `VARCHAR` | `worker` | 일반속성 | - |
+| `ACTION_DATE` | `TIMESTAMP` | `action_date` | 일반속성 | - |
+
+</details>
+
+### 📁 분류: CQMS Document
+
+| 변수명 (Variable) | 한글 요약 (Description) | 실제 테이블 경로 (Table Path) | 사용 여부 | 주요 참조 쿼리 (Queries) |
+|---|---|---|:---:|---|
+| `cqms_doc_brand_detail` | **Databricks cqms_doc_brand_detail 테이블 데이터** | `hkt_system_dw.eqms.oe_doc_cate_sales_brand_d` | ❌ 미사용 | - |
+| `cqms_doc_brand_main` | **Databricks cqms_doc_brand_main 테이블 데이터** | `hkt_system_dw.eqms.oe_doc_cate_sales_brand_m` | ❌ 미사용 | - |
+| `cqms_doc_code` | **Databricks cqms_doc_code 테이블 데이터** | `hkt_system_dw.eqms.oe_doc_cate_comm` | ❌ 미사용 | - |
+| `cqms_doc_main` | **Databricks cqms_doc_main 테이블 데이터** | `hkt_system_dw.eqms.cqms_doc_m` | ❌ 미사용 | - |
+| `cqms_doc_oem_detail` | **Databricks cqms_doc_oem_detail 테이블 데이터** | `hkt_system_dw.eqms.oe_doc_cate_d` | ❌ 미사용 | - |
+| `cqms_doc_oem_main` | **Databricks cqms_doc_oem_main 테이블 데이터** | `hkt_system_dw.eqms.oe_doc_cate_m` | ❌ 미사용 | - |
+| `cqms_doc_pp_detail` | **CQMS PP(Process Parameter) 제조 공정 처방 데이터 상세** | `hkt_system_dw.eqms.oe_doc_cate_pp_d` | ❌ 미사용 | - |
+| `cqms_doc_pp_info` | **CQMS 공정 처방 규격 문서 상세 메타 속성** | `hkt_system_dw.eqms.oe_doc_cate_pp_info` | ❌ 미사용 | - |
+| `cqms_doc_pp_main` | **CQMS 공정 파라미터 매핑 마스터 규격 관계 정보** | `hkt_system_dw.eqms.oe_doc_cate_pp_m` | ❌ 미사용 | - |
+| `cqms_doc_revision` | **Databricks cqms_doc_revision 테이블 데이터** | `hkt_system_dw.eqms.cqms_doc_revision` | ❌ 미사용 | - |
+
+<details>
+<summary>🔍 분류 내 테이블별 상세 컬럼 스펙 열기</summary>
+
+#### 📑 `cqms_doc_brand_detail` (Databricks cqms_doc_brand_detail 테이블 데이터)
+| 컬럼명 (Column) | 물리 타입 (Type) | 별칭 추천 (Recommended Alias) | 대분류 (Category) | 매핑 상수 (Value Constants) |
+|---|---|---|---|---|
+| `PLANT` | `VARCHAR` | `plant_code` | 공장코드 | 8개 상수 항목 매핑 |
+| `M_CODE` | `VARCHAR` | `material_code` | 자재코드 | - |
+| `SPEC_CD` | `VARCHAR` | `spec_code` | 규격코드 | - |
+
+#### 📑 `cqms_doc_brand_main` (Databricks cqms_doc_brand_main 테이블 데이터)
+| 컬럼명 (Column) | 물리 타입 (Type) | 별칭 추천 (Recommended Alias) | 대분류 (Category) | 매핑 상수 (Value Constants) |
+|---|---|---|---|---|
+| `PLANT` | `VARCHAR` | `plant_code` | 공장코드 | 8개 상수 항목 매핑 |
+| `M_CODE` | `VARCHAR` | `material_code` | 자재코드 | - |
+| `SPEC_CD` | `VARCHAR` | `spec_code` | 규격코드 | - |
+
+#### 📑 `cqms_doc_code` (Databricks cqms_doc_code 테이블 데이터)
+| 컬럼명 (Column) | 물리 타입 (Type) | 별칭 추천 (Recommended Alias) | 대분류 (Category) | 매핑 상수 (Value Constants) |
+|---|---|---|---|---|
+| `PLANT` | `VARCHAR` | `plant_code` | 공장코드 | 8개 상수 항목 매핑 |
+| `M_CODE` | `VARCHAR` | `material_code` | 자재코드 | - |
+| `SPEC_CD` | `VARCHAR` | `spec_code` | 규격코드 | - |
+
+#### 📑 `cqms_doc_main` (Databricks cqms_doc_main 테이블 데이터)
+| 컬럼명 (Column) | 물리 타입 (Type) | 별칭 추천 (Recommended Alias) | 대분류 (Category) | 매핑 상수 (Value Constants) |
+|---|---|---|---|---|
+| `PLANT` | `VARCHAR` | `plant_code` | 공장코드 | 8개 상수 항목 매핑 |
+| `M_CODE` | `VARCHAR` | `material_code` | 자재코드 | - |
+| `SPEC_CD` | `VARCHAR` | `spec_code` | 규격코드 | - |
+
+#### 📑 `cqms_doc_oem_detail` (Databricks cqms_doc_oem_detail 테이블 데이터)
+| 컬럼명 (Column) | 물리 타입 (Type) | 별칭 추천 (Recommended Alias) | 대분류 (Category) | 매핑 상수 (Value Constants) |
+|---|---|---|---|---|
+| `PLANT` | `VARCHAR` | `plant_code` | 공장코드 | 8개 상수 항목 매핑 |
+| `M_CODE` | `VARCHAR` | `material_code` | 자재코드 | - |
+| `SPEC_CD` | `VARCHAR` | `spec_code` | 규격코드 | - |
+
+#### 📑 `cqms_doc_oem_main` (Databricks cqms_doc_oem_main 테이블 데이터)
+| 컬럼명 (Column) | 물리 타입 (Type) | 별칭 추천 (Recommended Alias) | 대분류 (Category) | 매핑 상수 (Value Constants) |
+|---|---|---|---|---|
+| `PLANT` | `VARCHAR` | `plant_code` | 공장코드 | 8개 상수 항목 매핑 |
+| `M_CODE` | `VARCHAR` | `material_code` | 자재코드 | - |
+| `SPEC_CD` | `VARCHAR` | `spec_code` | 규격코드 | - |
+
+#### 📑 `cqms_doc_pp_detail` (CQMS PP(Process Parameter) 제조 공정 처방 데이터 상세)
+| 컬럼명 (Column) | 물리 타입 (Type) | 별칭 추천 (Recommended Alias) | 대분류 (Category) | 매핑 상수 (Value Constants) |
+|---|---|---|---|---|
+| `PP_NO` | `VARCHAR` | `pp_no` | 일반속성 | - |
+| `M_CODE` | `VARCHAR` | `material_code` | 자재코드 | - |
+| `SPEC_CD` | `VARCHAR` | `spec_code` | 규격코드 | - |
+
+#### 📑 `cqms_doc_pp_info` (CQMS 공정 처방 규격 문서 상세 메타 속성)
+| 컬럼명 (Column) | 물리 타입 (Type) | 별칭 추천 (Recommended Alias) | 대분류 (Category) | 매핑 상수 (Value Constants) |
+|---|---|---|---|---|
+| `PP_NO` | `VARCHAR` | `pp_no` | 일반속성 | - |
+| `TITLE` | `VARCHAR` | `title` | 텍스트 | - |
+| `REG_DATE` | `TIMESTAMP` | `register_date` | 날짜/시간 | - |
+
+#### 📑 `cqms_doc_pp_main` (CQMS 공정 파라미터 매핑 마스터 규격 관계 정보)
+| 컬럼명 (Column) | 물리 타입 (Type) | 별칭 추천 (Recommended Alias) | 대분류 (Category) | 매핑 상수 (Value Constants) |
+|---|---|---|---|---|
+| `PP_NO` | `VARCHAR` | `pp_no` | 일반속성 | - |
+| `DOC_NO` | `VARCHAR` | `doc_no` | 문서번호 | - |
+| `REVISION_NO` | `VARCHAR` | `revision_no` | 개정번호 | - |
+
+#### 📑 `cqms_doc_revision` (Databricks cqms_doc_revision 테이블 데이터)
+| 컬럼명 (Column) | 물리 타입 (Type) | 별칭 추천 (Recommended Alias) | 대분류 (Category) | 매핑 상수 (Value Constants) |
+|---|---|---|---|---|
+| `PLANT` | `VARCHAR` | `plant_code` | 공장코드 | 8개 상수 항목 매핑 |
+| `M_CODE` | `VARCHAR` | `material_code` | 자재코드 | - |
+| `SPEC_CD` | `VARCHAR` | `spec_code` | 규격코드 | - |
+
+</details>
+
+### 📁 분류: CQMS IQM
+
+| 변수명 (Variable) | 한글 요약 (Description) | 실제 테이블 경로 (Table Path) | 사용 여부 | 주요 참조 쿼리 (Queries) |
+|---|---|---|:---:|---|
+| `cqms_iqm_main` | **CQMS IQM 정밀 품질 종합 부적합 판정 대장** | `hkt_system_dw.eqms.cqms_iqm_m` | ❌ 미사용 | - |
+| `cqms_iqm_status` | **CQMS IQM 품질 판정 및 결재 진행 상황 추적** | `hkt_system_dw.eqms.cqms_iqm_status_m` | ❌ 미사용 | - |
+| `cqms_iqm_test_item` | **CQMS IQM 품질 계측 정밀 시험 항목 물리 규격 스펙** | `hkt_system_dw.eqms.cqms_iqm_test_item_info` | ❌ 미사용 | - |
+| `cqms_iqm_test_item_req` | **CQMS IQM 정밀 시험에서 요구되는 고객사 합격 조건 스펙** | `hkt_system_dw.eqms.cqms_iqm_test_item_info_req` | ❌ 미사용 | - |
+| `cqms_iqm_test_main` | **CQMS IQM 품질 시험 측정 실행 마스터 기록** | `hkt_system_dw.eqms.cqms_iqm_test_m` | ❌ 미사용 | - |
+
+<details>
+<summary>🔍 분류 내 테이블별 상세 컬럼 스펙 열기</summary>
+
+#### 📑 `cqms_iqm_main` (CQMS IQM 정밀 품질 종합 부적합 판정 대장)
+| 컬럼명 (Column) | 물리 타입 (Type) | 별칭 추천 (Recommended Alias) | 대분류 (Category) | 매핑 상수 (Value Constants) |
+|---|---|---|---|---|
+| `IQM_NO` | `VARCHAR` | `iqm_no` | 일반속성 | - |
+| `TITLE` | `VARCHAR` | `title` | 텍스트 | - |
+| `PLANT` | `VARCHAR` | `plant_code` | 공장코드 | 8개 상수 항목 매핑 |
+| `M_CODE` | `VARCHAR` | `material_code` | 자재코드 | - |
+| `REG_DATE` | `TIMESTAMP` | `register_date` | 날짜/시간 | - |
+
+#### 📑 `cqms_iqm_status` (CQMS IQM 품질 판정 및 결재 진행 상황 추적)
+| 컬럼명 (Column) | 물리 타입 (Type) | 별칭 추천 (Recommended Alias) | 대분류 (Category) | 매핑 상수 (Value Constants) |
+|---|---|---|---|---|
+| `IQM_NO` | `VARCHAR` | `iqm_no` | 일반속성 | - |
+| `STATUS` | `VARCHAR` | `status` | 상태값 | 8개 상수 항목 매핑 |
+| `UPDATE_DATE` | `TIMESTAMP` | `update_date` | 일반속성 | - |
+
+#### 📑 `cqms_iqm_test_item` (CQMS IQM 품질 계측 정밀 시험 항목 물리 규격 스펙)
+| 컬럼명 (Column) | 물리 타입 (Type) | 별칭 추천 (Recommended Alias) | 대분류 (Category) | 매핑 상수 (Value Constants) |
+|---|---|---|---|---|
+| `IQM_NO` | `VARCHAR` | `iqm_no` | 일반속성 | - |
+| `TEST_CD` | `VARCHAR` | `test_cd` | 일반속성 | - |
+| `TEST_NM` | `VARCHAR` | `test_nm` | 일반속성 | - |
+| `SPEC_VAL` | `DOUBLE` | `spec_val` | 일반속성 | - |
+
+#### 📑 `cqms_iqm_test_item_req` (CQMS IQM 정밀 시험에서 요구되는 고객사 합격 조건 스펙)
+| 컬럼명 (Column) | 물리 타입 (Type) | 별칭 추천 (Recommended Alias) | 대분류 (Category) | 매핑 상수 (Value Constants) |
+|---|---|---|---|---|
+| `IQM_NO` | `VARCHAR` | `iqm_no` | 일반속성 | - |
+| `TEST_CD` | `VARCHAR` | `test_cd` | 일반속성 | - |
+| `REQ_VAL` | `DOUBLE` | `req_val` | 일반속성 | - |
+
+#### 📑 `cqms_iqm_test_main` (CQMS IQM 품질 시험 측정 실행 마스터 기록)
+| 컬럼명 (Column) | 물리 타입 (Type) | 별칭 추천 (Recommended Alias) | 대분류 (Category) | 매핑 상수 (Value Constants) |
+|---|---|---|---|---|
+| `IQM_NO` | `VARCHAR` | `iqm_no` | 일반속성 | - |
+| `TEST_DATE` | `TIMESTAMP` | `test_date` | 날짜/시간 | - |
+| `TEST_USER` | `VARCHAR` | `test_user` | 일반속성 | - |
+
+</details>
+
+### 📁 분류: Common Master
+
+| 변수명 (Variable) | 한글 요약 (Description) | 실제 테이블 경로 (Table Path) | 사용 여부 | 주요 참조 쿼리 (Queries) |
+|---|---|---|:---:|---|
+| `barcode_record` | **제품 가류 바코드 단위 실시간 생산 이력 및 설비 이력** | `hkt_dw.production.wrk_f_lwrktr140` | ✅ 사용 | `ev3_query.py`, `gmes_query.py`, `hgws_return_query.py` |
+| `mes_code_master` | **MES 생산설비 및 공정 운영에 활용되는 전사 공통 코드 마스터** | `hkt_dw.master.mst_d_lcomtr107` | ✅ 사용 | `gmes_query.py` |
+| `product_master` | **전사 타이어 완제품 자재정보 마스터 (사이즈/패턴/규격 일치)** | `hkt_dw.specification.mas_d_lmastr101` | ✅ 사용 | `gmes_query.py`, `hgws_return_query.py`, `q_iqm_plus.py` |
+| `production_volume` | **공장/일자/자재별 실 생산 수량 및 스크랩, 재작업 실적 집계** | `hkt_dw.production.wrk_f_lwrkts118` | ✅ 사용 | `gmes_query.py`, `q_iqm_plus.py` |
+| `spec_revision` | **제품 규격 스펙의 개정 이력 및 적용일자 관리** | `hkt_dw.specification.par_f_lmastr144` | ✅ 사용 | `gmes_query.py`, `q_iqm_plus.py` |
+
+<details>
+<summary>🔍 분류 내 테이블별 상세 컬럼 스펙 열기</summary>
+
+#### 📑 `barcode_record` (제품 가류 바코드 단위 실시간 생산 이력 및 설비 이력)
+| 컬럼명 (Column) | 물리 타입 (Type) | 별칭 추천 (Recommended Alias) | 대분류 (Category) | 매핑 상수 (Value Constants) |
+|---|---|---|---|---|
+| `BARCODE_NO` | `VARCHAR` | `barcode_no` | 바코드번호 | - |
+| `PLANT` | `VARCHAR` | `plant_code` | 공장코드 | 8개 상수 항목 매핑 |
+| `M_CODE` | `VARCHAR` | `material_code` | 자재코드 | - |
+| `SPEC_CD` | `VARCHAR` | `spec_code` | 규격코드 | - |
+| `PROD_DATE` | `TIMESTAMP` | `production_date` | 날짜/시간 | - |
+| `SHIFT_CD` | `VARCHAR` | `shift_code` | 근무교대조 | 3개 상수 항목 매핑 |
+| `MACHINE_CD` | `VARCHAR` | `machine_code` | 설비코드 | - |
+
+#### 📑 `mes_code_master` (MES 생산설비 및 공정 운영에 활용되는 전사 공통 코드 마스터)
+| 컬럼명 (Column) | 물리 타입 (Type) | 별칭 추천 (Recommended Alias) | 대분류 (Category) | 매핑 상수 (Value Constants) |
+|---|---|---|---|---|
+| `CD_ITEM` | `VARCHAR` | `cd_item` | 일반속성 | - |
+| `CD_ITEM_NM` | `VARCHAR` | `cd_item_nm` | 일반속성 | - |
+| `CD_VAL` | `DOUBLE` | `cd_val` | 일반속성 | - |
+| `CD_VAL_NM` | `DOUBLE` | `cd_val_nm` | 일반속성 | - |
+
+#### 📑 `product_master` (전사 타이어 완제품 자재정보 마스터 (사이즈/패턴/규격 일치))
+| 컬럼명 (Column) | 물리 타입 (Type) | 별칭 추천 (Recommended Alias) | 대분류 (Category) | 매핑 상수 (Value Constants) |
+|---|---|---|---|---|
+| `PLANT` | `VARCHAR` | `plant_code` | 공장코드 | 8개 상수 항목 매핑 |
+| `M_CODE` | `VARCHAR` | `material_code` | 자재코드 | - |
+| `SPEC_CD` | `VARCHAR` | `spec_code` | 규격코드 | - |
+| `SIZE_CD` | `VARCHAR` | `size_code` | 사이즈코드 | - |
+| `PATTERN_CD` | `VARCHAR` | `pattern_code` | 패턴코드 | - |
+| `STXC` | `VARCHAR` | `stxc_val` | 규격값 | - |
+| `SIZE_NAME` | `VARCHAR` | `size_name` | 사이즈명 | - |
+| `PATTERN_NM` | `VARCHAR` | `pattern_name` | 패턴명 | - |
+
+#### 📑 `production_volume` (공장/일자/자재별 실 생산 수량 및 스크랩, 재작업 실적 집계)
+| 컬럼명 (Column) | 물리 타입 (Type) | 별칭 추천 (Recommended Alias) | 대분류 (Category) | 매핑 상수 (Value Constants) |
+|---|---|---|---|---|
+| `PLANT` | `VARCHAR` | `plant_code` | 공장코드 | 8개 상수 항목 매핑 |
+| `M_CODE` | `VARCHAR` | `material_code` | 자재코드 | - |
+| `WORK_DATE` | `TIMESTAMP` | `work_date` | 날짜/시간 | - |
+| `PRDT_QTY` | `DOUBLE` | `production_qty` | 수량/실적 | - |
+| `SCRAP_QTY` | `DOUBLE` | `scrap_qty` | 수량/실적 | - |
+| `REWORK_QTY` | `DOUBLE` | `rework_qty` | 수량/실적 | - |
+
+#### 📑 `spec_revision` (제품 규격 스펙의 개정 이력 및 적용일자 관리)
+| 컬럼명 (Column) | 물리 타입 (Type) | 별칭 추천 (Recommended Alias) | 대분류 (Category) | 매핑 상수 (Value Constants) |
+|---|---|---|---|---|
+| `PLANT` | `VARCHAR` | `plant_code` | 공장코드 | 8개 상수 항목 매핑 |
+| `M_CODE` | `VARCHAR` | `material_code` | 자재코드 | - |
+| `SPEC_CD` | `VARCHAR` | `spec_code` | 규격코드 | - |
+| `REVISION_NO` | `VARCHAR` | `revision_no` | 개정번호 | - |
+| `APPLY_DATE` | `TIMESTAMP` | `apply_date` | 일반속성 | - |
+
+</details>
+
+### 📁 분류: Nonconformity
+
+| 변수명 (Variable) | 한글 요약 (Description) | 실제 테이블 경로 (Table Path) | 사용 여부 | 주요 참조 쿼리 (Queries) |
+|---|---|---|:---:|---|
+| `finished_product_inspection_result` | **완제품 완성 단계 정밀 완성검사 부적합 이력** | `hkt_dw.quality.qlt_f_lqlttr107` | ✅ 사용 | `gmes_query.py`, `q_iqm_plus.py` |
+| `shipment_inspection_result` | **최종 완제품 출하 검사 품질 부적합(Defect) 판정 결과** | `hkt_dw.quality.qlt_f_lqlttr120` | ✅ 사용 | `gmes_query.py`, `q_iqm_plus.py` |
+
+<details>
+<summary>🔍 분류 내 테이블별 상세 컬럼 스펙 열기</summary>
+
+#### 📑 `finished_product_inspection_result` (완제품 완성 단계 정밀 완성검사 부적합 이력)
+| 컬럼명 (Column) | 물리 타입 (Type) | 별칭 추천 (Recommended Alias) | 대분류 (Category) | 매핑 상수 (Value Constants) |
+|---|---|---|---|---|
+| `PLANT` | `VARCHAR` | `plant_code` | 공장코드 | 8개 상수 항목 매핑 |
+| `M_CODE` | `VARCHAR` | `material_code` | 자재코드 | - |
+| `INS_DATE` | `TIMESTAMP` | `inspect_date` | 날짜/시간 | - |
+| `DFT_CD` | `VARCHAR` | `defect_code` | 불량코드 | 26개 상수 항목 매핑 |
+| `DFT_DESC` | `VARCHAR` | `dft_desc` | 일반속성 | - |
+| `NCF_QTY` | `DOUBLE` | `nonconformity_qty` | 수량/실적 | - |
+
+#### 📑 `shipment_inspection_result` (최종 완제품 출하 검사 품질 부적합(Defect) 판정 결과)
+| 컬럼명 (Column) | 물리 타입 (Type) | 별칭 추천 (Recommended Alias) | 대분류 (Category) | 매핑 상수 (Value Constants) |
+|---|---|---|---|---|
+| `PLANT` | `VARCHAR` | `plant_code` | 공장코드 | 8개 상수 항목 매핑 |
+| `M_CODE` | `VARCHAR` | `material_code` | 자재코드 | - |
+| `INS_DATE` | `TIMESTAMP` | `inspect_date` | 날짜/시간 | - |
+| `DFT_CD` | `VARCHAR` | `defect_code` | 불량코드 | 26개 상수 항목 매핑 |
+| `DFT_DESC` | `VARCHAR` | `dft_desc` | 일반속성 | - |
+| `NCF_QTY` | `DOUBLE` | `nonconformity_qty` | 수량/실적 | - |
+
+</details>
+
+### 📁 분류: Other Domain
+
+| 변수명 (Variable) | 한글 요약 (Description) | 실제 테이블 경로 (Table Path) | 사용 여부 | 주요 참조 쿼리 (Queries) |
+|---|---|---|:---:|---|
+| `cal_let_off_qrs` | **Databricks cal_let_off_qrs 테이블 데이터** | `hkt_dw.quality.qlt_d_loprtr127` | ✅ 사용 | `qrs_query.py` |
+| `cal_op_qrs` | **Databricks cal_op_qrs 테이블 데이터** | `hkt_dw.quality.qlt_d_loprtr125` | ✅ 사용 | `qrs_query.py` |
+| `cal_winding_qrs` | **Databricks cal_winding_qrs 테이블 데이터** | `hkt_dw.quality.qlt_d_loprtr126` | ✅ 사용 | `qrs_query.py` |
+| `ctms` | **CTMS 원자재 품질 물리 계측 시험(Lab) 결과 정보** | `hkt_system_dw.tableau.ctms_result_data` | ✅ 사용 | `ctms_query.py`, `plm_query.py` |
+| `cut_bec_op_qrs` | **Databricks cut_bec_op_qrs 테이블 데이터** | `hkt_dw.quality.qlt_d_loprtr139` | ✅ 사용 | `qrs_query.py` |
+| `cut_bec_strip_op_qrs` | **Databricks cut_bec_strip_op_qrs 테이블 데이터** | `hkt_dw.quality.qlt_d_loprtr144` | ✅ 사용 | - |
+| `cut_edge_sliter_qrs` | **Databricks cut_edge_sliter_qrs 테이블 데이터** | `hkt_dw.quality.qlt_d_loprtr142` | ✅ 사용 | `qrs_query.py` |
+| `cut_mini_sliter_qrs` | **Databricks cut_mini_sliter_qrs 테이블 데이터** | `hkt_dw.quality.qlt_d_loprtr141` | ✅ 사용 | `qrs_query.py` |
+| `cut_pcr_il_op_qrs` | **Databricks cut_pcr_il_op_qrs 테이블 데이터** | `hkt_dw.quality.qlt_d_loprtr137` | ✅ 사용 | `qrs_query.py` |
+| `cut_sbc_op_qrs` | **Databricks cut_sbc_op_qrs 테이블 데이터** | `hkt_dw.quality.qlt_d_loprtr133` | ✅ 사용 | `qrs_query.py` |
+| `cut_sheet_op_qrs` | **Databricks cut_sheet_op_qrs 테이블 데이터** | `hkt_dw.quality.qlt_d_loprtr143` | ✅ 사용 | `qrs_query.py` |
+| `cut_src_op_qrs` | **Databricks cut_src_op_qrs 테이블 데이터** | `hkt_dw.quality.qlt_d_loprtr135` | ✅ 사용 | `qrs_query.py` |
+| `cut_tbc_op_qrs` | **Databricks cut_tbc_op_qrs 테이블 데이터** | `hkt_dw.quality.qlt_d_loprtr136` | ✅ 사용 | `qrs_query.py` |
+| `cut_tbr_il_op_qrs` | **Databricks cut_tbr_il_op_qrs 테이블 데이터** | `hkt_dw.quality.qlt_d_loprtr138` | ✅ 사용 | `qrs_query.py` |
+| `cut_trc_op_qrs` | **Databricks cut_trc_op_qrs 테이블 데이터** | `hkt_dw.quality.qlt_d_loprtr134` | ✅ 사용 | `qrs_query.py` |
+| `cut_wide_sliter_qrs` | **Databricks cut_wide_sliter_qrs 테이블 데이터** | `hkt_dw.quality.qlt_d_loprtr140` | ✅ 사용 | `qrs_query.py` |
+| `ext_sidewall_op_qrs` | **Databricks ext_sidewall_op_qrs 테이블 데이터** | `hkt_dw.quality.qlt_d_loprtr122` | ✅ 사용 | `qrs_query.py` |
+| `ext_tread_op_qrs` | **Databricks ext_tread_op_qrs 테이블 데이터** | `hkt_dw.quality.qlt_d_loprtr120` | ✅ 사용 | `qrs_query.py` |
+| `gmes_rework_defect_raw` | **Databricks gmes_rework_defect_raw 테이블 데이터** | `hkt_dw.quality.qlt_f_lqltts112` | ❌ 미사용 | - |
+| `gmes_uf_result_raw` | **Databricks gmes_uf_result_raw 테이블 데이터** | `hkt_quality.inspection.uniformity_result_raw` | ✅ 사용 | `gmes_query.py`, `q_iqm_plus.py` |
+| `hgws` | **HGWS 글로벌 클레임 청구 및 반품(Return) 이력** | `hkt_system_dw.tableau.sap_zsrt10000` | ✅ 사용 | `ev3_query.py`, `hgws_return_query.py` |
+| `lot_track` | **가류 바코드 기준 생산 추적 및 원자재 추적 랏 트래킹** | `hkt_dw.production.wrk_f_lwrktr140` | ✅ 사용 | `gmes_query.py` |
+| `plm_spec_full` | **Databricks plm_spec_full 테이블 데이터** | `hkt_rnd_dw.full_specification.tb_pl_if_plmspec_rcx_bas` | ✅ 사용 | `plm_query.py` |
+| `plm_spec_label` | **PLM 규격 내 타이어 라벨 스펙 정보 및 관리 공차** | `hkt_rnd_dw.specification.tb_pl_dw_spec_pd_item_label_bas` | ✅ 사용 | `gmes_query.py` |
+| `rpa_test_result` | **RPA 기기 계측 품질 시험 이력 및 자동 판정 등급** | `hkt_dw.quality.qlt_f_lqlttr268` | ✅ 사용 | `gmes_query.py` |
+| `tdr` | **TDR 개발 사양 및 원자재 물리 특성 설계 마스터** | `hkt_system_dw.tdr.v_gate_document_to_oda` | ❌ 미사용 | - |
+| `worksheet_building_overall` | **생산 성형 공정 종합 집계 작업 보고 시트** | `hkt_dw.quality.qlt_d_loprtr178` | ❌ 미사용 | - |
+
+<details>
+<summary>🔍 분류 내 테이블별 상세 컬럼 스펙 열기</summary>
+
+#### 📑 `cal_let_off_qrs` (Databricks cal_let_off_qrs 테이블 데이터)
+| 컬럼명 (Column) | 물리 타입 (Type) | 별칭 추천 (Recommended Alias) | 대분류 (Category) | 매핑 상수 (Value Constants) |
+|---|---|---|---|---|
+| `PLANT` | `VARCHAR` | `plant_code` | 공장코드 | 8개 상수 항목 매핑 |
+| `M_CODE` | `VARCHAR` | `material_code` | 자재코드 | - |
+| `SPEC_CD` | `VARCHAR` | `spec_code` | 규격코드 | - |
+
+#### 📑 `cal_op_qrs` (Databricks cal_op_qrs 테이블 데이터)
+| 컬럼명 (Column) | 물리 타입 (Type) | 별칭 추천 (Recommended Alias) | 대분류 (Category) | 매핑 상수 (Value Constants) |
+|---|---|---|---|---|
+| `PLANT` | `VARCHAR` | `plant_code` | 공장코드 | 8개 상수 항목 매핑 |
+| `M_CODE` | `VARCHAR` | `material_code` | 자재코드 | - |
+| `SPEC_CD` | `VARCHAR` | `spec_code` | 규격코드 | - |
+
+#### 📑 `cal_winding_qrs` (Databricks cal_winding_qrs 테이블 데이터)
+| 컬럼명 (Column) | 물리 타입 (Type) | 별칭 추천 (Recommended Alias) | 대분류 (Category) | 매핑 상수 (Value Constants) |
+|---|---|---|---|---|
+| `PLANT` | `VARCHAR` | `plant_code` | 공장코드 | 8개 상수 항목 매핑 |
+| `M_CODE` | `VARCHAR` | `material_code` | 자재코드 | - |
+| `SPEC_CD` | `VARCHAR` | `spec_code` | 규격코드 | - |
+
+#### 📑 `ctms` (CTMS 원자재 품질 물리 계측 시험(Lab) 결과 정보)
+| 컬럼명 (Column) | 물리 타입 (Type) | 별칭 추천 (Recommended Alias) | 대분류 (Category) | 매핑 상수 (Value Constants) |
+|---|---|---|---|---|
+| `PLANT` | `VARCHAR` | `plant_code` | 공장코드 | 8개 상수 항목 매핑 |
+| `M_CODE` | `VARCHAR` | `material_code` | 자재코드 | - |
+| `TEST_DATE` | `TIMESTAMP` | `test_date` | 날짜/시간 | - |
+| `CTL_VALUE` | `DOUBLE` | `ctl_value` | 일반속성 | - |
+| `DIRECTION` | `VARCHAR` | `direction_flag` | 상태값 | - |
+| `UPPER_VAL` | `DOUBLE` | `upper_val` | 일반속성 | - |
+| `LOWER_VAL` | `DOUBLE` | `lower_val` | 일반속성 | - |
+
+#### 📑 `cut_bec_op_qrs` (Databricks cut_bec_op_qrs 테이블 데이터)
+| 컬럼명 (Column) | 물리 타입 (Type) | 별칭 추천 (Recommended Alias) | 대분류 (Category) | 매핑 상수 (Value Constants) |
+|---|---|---|---|---|
+| `PLANT` | `VARCHAR` | `plant_code` | 공장코드 | 8개 상수 항목 매핑 |
+| `M_CODE` | `VARCHAR` | `material_code` | 자재코드 | - |
+| `SPEC_CD` | `VARCHAR` | `spec_code` | 규격코드 | - |
+
+#### 📑 `cut_bec_strip_op_qrs` (Databricks cut_bec_strip_op_qrs 테이블 데이터)
+| 컬럼명 (Column) | 물리 타입 (Type) | 별칭 추천 (Recommended Alias) | 대분류 (Category) | 매핑 상수 (Value Constants) |
+|---|---|---|---|---|
+| `PLANT` | `VARCHAR` | `plant_code` | 공장코드 | 8개 상수 항목 매핑 |
+| `M_CODE` | `VARCHAR` | `material_code` | 자재코드 | - |
+| `SPEC_CD` | `VARCHAR` | `spec_code` | 규격코드 | - |
+
+#### 📑 `cut_edge_sliter_qrs` (Databricks cut_edge_sliter_qrs 테이블 데이터)
+| 컬럼명 (Column) | 물리 타입 (Type) | 별칭 추천 (Recommended Alias) | 대분류 (Category) | 매핑 상수 (Value Constants) |
+|---|---|---|---|---|
+| `PLANT` | `VARCHAR` | `plant_code` | 공장코드 | 8개 상수 항목 매핑 |
+| `M_CODE` | `VARCHAR` | `material_code` | 자재코드 | - |
+| `SPEC_CD` | `VARCHAR` | `spec_code` | 규격코드 | - |
+
+#### 📑 `cut_mini_sliter_qrs` (Databricks cut_mini_sliter_qrs 테이블 데이터)
+| 컬럼명 (Column) | 물리 타입 (Type) | 별칭 추천 (Recommended Alias) | 대분류 (Category) | 매핑 상수 (Value Constants) |
+|---|---|---|---|---|
+| `PLANT` | `VARCHAR` | `plant_code` | 공장코드 | 8개 상수 항목 매핑 |
+| `M_CODE` | `VARCHAR` | `material_code` | 자재코드 | - |
+| `SPEC_CD` | `VARCHAR` | `spec_code` | 규격코드 | - |
+
+#### 📑 `cut_pcr_il_op_qrs` (Databricks cut_pcr_il_op_qrs 테이블 데이터)
+| 컬럼명 (Column) | 물리 타입 (Type) | 별칭 추천 (Recommended Alias) | 대분류 (Category) | 매핑 상수 (Value Constants) |
+|---|---|---|---|---|
+| `PLANT` | `VARCHAR` | `plant_code` | 공장코드 | 8개 상수 항목 매핑 |
+| `M_CODE` | `VARCHAR` | `material_code` | 자재코드 | - |
+| `SPEC_CD` | `VARCHAR` | `spec_code` | 규격코드 | - |
+
+#### 📑 `cut_sbc_op_qrs` (Databricks cut_sbc_op_qrs 테이블 데이터)
+| 컬럼명 (Column) | 물리 타입 (Type) | 별칭 추천 (Recommended Alias) | 대분류 (Category) | 매핑 상수 (Value Constants) |
+|---|---|---|---|---|
+| `PLANT` | `VARCHAR` | `plant_code` | 공장코드 | 8개 상수 항목 매핑 |
+| `M_CODE` | `VARCHAR` | `material_code` | 자재코드 | - |
+| `SPEC_CD` | `VARCHAR` | `spec_code` | 규격코드 | - |
+
+#### 📑 `cut_sheet_op_qrs` (Databricks cut_sheet_op_qrs 테이블 데이터)
+| 컬럼명 (Column) | 물리 타입 (Type) | 별칭 추천 (Recommended Alias) | 대분류 (Category) | 매핑 상수 (Value Constants) |
+|---|---|---|---|---|
+| `PLANT` | `VARCHAR` | `plant_code` | 공장코드 | 8개 상수 항목 매핑 |
+| `M_CODE` | `VARCHAR` | `material_code` | 자재코드 | - |
+| `SPEC_CD` | `VARCHAR` | `spec_code` | 규격코드 | - |
+
+#### 📑 `cut_src_op_qrs` (Databricks cut_src_op_qrs 테이블 데이터)
+| 컬럼명 (Column) | 물리 타입 (Type) | 별칭 추천 (Recommended Alias) | 대분류 (Category) | 매핑 상수 (Value Constants) |
+|---|---|---|---|---|
+| `PLANT` | `VARCHAR` | `plant_code` | 공장코드 | 8개 상수 항목 매핑 |
+| `M_CODE` | `VARCHAR` | `material_code` | 자재코드 | - |
+| `SPEC_CD` | `VARCHAR` | `spec_code` | 규격코드 | - |
+
+#### 📑 `cut_tbc_op_qrs` (Databricks cut_tbc_op_qrs 테이블 데이터)
+| 컬럼명 (Column) | 물리 타입 (Type) | 별칭 추천 (Recommended Alias) | 대분류 (Category) | 매핑 상수 (Value Constants) |
+|---|---|---|---|---|
+| `PLANT` | `VARCHAR` | `plant_code` | 공장코드 | 8개 상수 항목 매핑 |
+| `M_CODE` | `VARCHAR` | `material_code` | 자재코드 | - |
+| `SPEC_CD` | `VARCHAR` | `spec_code` | 규격코드 | - |
+
+#### 📑 `cut_tbr_il_op_qrs` (Databricks cut_tbr_il_op_qrs 테이블 데이터)
+| 컬럼명 (Column) | 물리 타입 (Type) | 별칭 추천 (Recommended Alias) | 대분류 (Category) | 매핑 상수 (Value Constants) |
+|---|---|---|---|---|
+| `PLANT` | `VARCHAR` | `plant_code` | 공장코드 | 8개 상수 항목 매핑 |
+| `M_CODE` | `VARCHAR` | `material_code` | 자재코드 | - |
+| `SPEC_CD` | `VARCHAR` | `spec_code` | 규격코드 | - |
+
+#### 📑 `cut_trc_op_qrs` (Databricks cut_trc_op_qrs 테이블 데이터)
+| 컬럼명 (Column) | 물리 타입 (Type) | 별칭 추천 (Recommended Alias) | 대분류 (Category) | 매핑 상수 (Value Constants) |
+|---|---|---|---|---|
+| `PLANT` | `VARCHAR` | `plant_code` | 공장코드 | 8개 상수 항목 매핑 |
+| `M_CODE` | `VARCHAR` | `material_code` | 자재코드 | - |
+| `SPEC_CD` | `VARCHAR` | `spec_code` | 규격코드 | - |
+
+#### 📑 `cut_wide_sliter_qrs` (Databricks cut_wide_sliter_qrs 테이블 데이터)
+| 컬럼명 (Column) | 물리 타입 (Type) | 별칭 추천 (Recommended Alias) | 대분류 (Category) | 매핑 상수 (Value Constants) |
+|---|---|---|---|---|
+| `PLANT` | `VARCHAR` | `plant_code` | 공장코드 | 8개 상수 항목 매핑 |
+| `M_CODE` | `VARCHAR` | `material_code` | 자재코드 | - |
+| `SPEC_CD` | `VARCHAR` | `spec_code` | 규격코드 | - |
+
+#### 📑 `ext_sidewall_op_qrs` (Databricks ext_sidewall_op_qrs 테이블 데이터)
+| 컬럼명 (Column) | 물리 타입 (Type) | 별칭 추천 (Recommended Alias) | 대분류 (Category) | 매핑 상수 (Value Constants) |
+|---|---|---|---|---|
+| `PLANT` | `VARCHAR` | `plant_code` | 공장코드 | 8개 상수 항목 매핑 |
+| `M_CODE` | `VARCHAR` | `material_code` | 자재코드 | - |
+| `SPEC_CD` | `VARCHAR` | `spec_code` | 규격코드 | - |
+
+#### 📑 `ext_tread_op_qrs` (Databricks ext_tread_op_qrs 테이블 데이터)
+| 컬럼명 (Column) | 물리 타입 (Type) | 별칭 추천 (Recommended Alias) | 대분류 (Category) | 매핑 상수 (Value Constants) |
+|---|---|---|---|---|
+| `PLANT` | `VARCHAR` | `plant_code` | 공장코드 | 8개 상수 항목 매핑 |
+| `M_CODE` | `VARCHAR` | `material_code` | 자재코드 | - |
+| `SPEC_CD` | `VARCHAR` | `spec_code` | 규격코드 | - |
+
+#### 📑 `gmes_rework_defect_raw` (Databricks gmes_rework_defect_raw 테이블 데이터)
+| 컬럼명 (Column) | 물리 타입 (Type) | 별칭 추천 (Recommended Alias) | 대분류 (Category) | 매핑 상수 (Value Constants) |
+|---|---|---|---|---|
+| `PLANT` | `VARCHAR` | `plant_code` | 공장코드 | 8개 상수 항목 매핑 |
+| `M_CODE` | `VARCHAR` | `material_code` | 자재코드 | - |
+| `SPEC_CD` | `VARCHAR` | `spec_code` | 규격코드 | - |
+
+#### 📑 `gmes_uf_result_raw` (Databricks gmes_uf_result_raw 테이블 데이터)
+| 컬럼명 (Column) | 물리 타입 (Type) | 별칭 추천 (Recommended Alias) | 대분류 (Category) | 매핑 상수 (Value Constants) |
+|---|---|---|---|---|
+| `PLANT` | `VARCHAR` | `plant_code` | 공장코드 | 8개 상수 항목 매핑 |
+| `M_CODE` | `VARCHAR` | `material_code` | 자재코드 | - |
+| `SPEC_CD` | `VARCHAR` | `spec_code` | 규격코드 | - |
+
+#### 📑 `hgws` (HGWS 글로벌 클레임 청구 및 반품(Return) 이력)
+| 컬럼명 (Column) | 물리 타입 (Type) | 별칭 추천 (Recommended Alias) | 대분류 (Category) | 매핑 상수 (Value Constants) |
+|---|---|---|---|---|
+| `PLANT` | `VARCHAR` | `plant_code` | 공장코드 | 8개 상수 항목 매핑 |
+| `WERKS` | `VARCHAR` | `plant_code` | 공장코드 | 8개 상수 항목 매핑 |
+| `M_CODE` | `VARCHAR` | `material_code` | 자재코드 | - |
+| `RETURN_DATE` | `TIMESTAMP` | `return_date` | 날짜/시간 | - |
+| `RETURN_QTY` | `DOUBLE` | `return_qty` | 수량/실적 | - |
+| `CLAIM_CD` | `VARCHAR` | `claim_code` | 클레임코드 | 23개 상수 항목 매핑 |
+| `CLAIM_DESC` | `VARCHAR` | `claim_desc` | 일반속성 | - |
+| `ZAREA` | `VARCHAR` | `country_area` | 지역코드 | 5개 상수 항목 매핑 |
+
+#### 📑 `lot_track` (가류 바코드 기준 생산 추적 및 원자재 추적 랏 트래킹)
+| 컬럼명 (Column) | 물리 타입 (Type) | 별칭 추천 (Recommended Alias) | 대분류 (Category) | 매핑 상수 (Value Constants) |
+|---|---|---|---|---|
+| `BARCODE_NO` | `VARCHAR` | `barcode_no` | 바코드번호 | - |
+| `PLANT` | `VARCHAR` | `plant_code` | 공장코드 | 8개 상수 항목 매핑 |
+| `M_CODE` | `VARCHAR` | `material_code` | 자재코드 | - |
+| `PROD_DATE` | `TIMESTAMP` | `production_date` | 날짜/시간 | - |
+
+#### 📑 `plm_spec_full` (Databricks plm_spec_full 테이블 데이터)
+| 컬럼명 (Column) | 물리 타입 (Type) | 별칭 추천 (Recommended Alias) | 대분류 (Category) | 매핑 상수 (Value Constants) |
+|---|---|---|---|---|
+| `PLANT` | `VARCHAR` | `plant_code` | 공장코드 | 8개 상수 항목 매핑 |
+| `M_CODE` | `VARCHAR` | `material_code` | 자재코드 | - |
+| `SPEC_CD` | `VARCHAR` | `spec_code` | 규격코드 | - |
+
+#### 📑 `plm_spec_label` (PLM 규격 내 타이어 라벨 스펙 정보 및 관리 공차)
+| 컬럼명 (Column) | 물리 타입 (Type) | 별칭 추천 (Recommended Alias) | 대분류 (Category) | 매핑 상수 (Value Constants) |
+|---|---|---|---|---|
+| `PLANT` | `VARCHAR` | `plant_code` | 공장코드 | 8개 상수 항목 매핑 |
+| `M_CODE` | `VARCHAR` | `material_code` | 자재코드 | - |
+| `SPEC_CD` | `VARCHAR` | `spec_code` | 규격코드 | - |
+| `ITEM_LABEL` | `VARCHAR` | `item_label` | 일반속성 | - |
+| `UCL_VAL` | `DOUBLE` | `ucl_val` | 일반속성 | - |
+| `LCL_VAL` | `DOUBLE` | `lcl_val` | 일반속성 | - |
+
+#### 📑 `rpa_test_result` (RPA 기기 계측 품질 시험 이력 및 자동 판정 등급)
+| 컬럼명 (Column) | 물리 타입 (Type) | 별칭 추천 (Recommended Alias) | 대분류 (Category) | 매핑 상수 (Value Constants) |
+|---|---|---|---|---|
+| `PLANT` | `VARCHAR` | `plant_code` | 공장코드 | 8개 상수 항목 매핑 |
+| `M_CODE` | `VARCHAR` | `material_code` | 자재코드 | - |
+| `TEST_DATE` | `TIMESTAMP` | `test_date` | 날짜/시간 | - |
+| `TAND_VAL` | `DOUBLE` | `tand_val` | 일반속성 | - |
+| `GRADE` | `VARCHAR` | `grade` | 품질등급 | 4개 상수 항목 매핑 |
+
+#### 📑 `tdr` (TDR 개발 사양 및 원자재 물리 특성 설계 마스터)
+| 컬럼명 (Column) | 물리 타입 (Type) | 별칭 추천 (Recommended Alias) | 대분류 (Category) | 매핑 상수 (Value Constants) |
+|---|---|---|---|---|
+| `PLANT` | `VARCHAR` | `plant_code` | 공장코드 | 8개 상수 항목 매핑 |
+| `M_CODE` | `VARCHAR` | `material_code` | 자재코드 | - |
+| `DOC_NO` | `VARCHAR` | `doc_no` | 문서번호 | - |
+| `TITLE` | `VARCHAR` | `title` | 텍스트 | - |
+| `REG_DATE` | `TIMESTAMP` | `register_date` | 날짜/시간 | - |
+
+#### 📑 `worksheet_building_overall` (생산 성형 공정 종합 집계 작업 보고 시트)
+| 컬럼명 (Column) | 물리 타입 (Type) | 별칭 추천 (Recommended Alias) | 대분류 (Category) | 매핑 상수 (Value Constants) |
+|---|---|---|---|---|
+| `PLANT` | `VARCHAR` | `plant_code` | 공장코드 | 8개 상수 항목 매핑 |
+| `M_CODE` | `VARCHAR` | `material_code` | 자재코드 | - |
+| `WORK_DATE` | `TIMESTAMP` | `work_date` | 날짜/시간 | - |
+| `BUILD_QTY` | `DOUBLE` | `build_qty` | 일반속성 | - |
+
+</details>
+
+### 📁 분류: Production
+
+| 변수명 (Variable) | 한글 요약 (Description) | 실제 테이블 경로 (Table Path) | 사용 여부 | 주요 참조 쿼리 (Queries) |
+|---|---|---|:---:|---|
+| `building_manufacture_report` | **반제품 성형(Building) 공정 실 생산량 및 설비 보고 정보** | `hkt_dw.quality.qlt_f_lqlttr127` | ✅ 사용 | `gmes_query.py`, `q_iqm_plus.py` |
+| `production_machine` | **생산 설비 가동 시간 및 가동 실적 매핑 정보** | `hkt_dw.production.wrk_f_lwrktr106` | ✅ 사용 | `gmes_query.py` |
+
+<details>
+<summary>🔍 분류 내 테이블별 상세 컬럼 스펙 열기</summary>
+
+#### 📑 `building_manufacture_report` (반제품 성형(Building) 공정 실 생산량 및 설비 보고 정보)
+| 컬럼명 (Column) | 물리 타입 (Type) | 별칭 추천 (Recommended Alias) | 대분류 (Category) | 매핑 상수 (Value Constants) |
+|---|---|---|---|---|
+| `PLANT` | `VARCHAR` | `plant_code` | 공장코드 | 8개 상수 항목 매핑 |
+| `M_CODE` | `VARCHAR` | `material_code` | 자재코드 | - |
+| `WORK_DATE` | `TIMESTAMP` | `work_date` | 날짜/시간 | - |
+| `SPEC_CD` | `VARCHAR` | `spec_code` | 규격코드 | - |
+| `PRDT_QTY` | `DOUBLE` | `production_qty` | 수량/실적 | - |
+
+#### 📑 `production_machine` (생산 설비 가동 시간 및 가동 실적 매핑 정보)
+| 컬럼명 (Column) | 물리 타입 (Type) | 별칭 추천 (Recommended Alias) | 대분류 (Category) | 매핑 상수 (Value Constants) |
+|---|---|---|---|---|
+| `PLANT` | `VARCHAR` | `plant_code` | 공장코드 | 8개 상수 항목 매핑 |
+| `M_CODE` | `VARCHAR` | `material_code` | 자재코드 | - |
+| `WORK_DATE` | `TIMESTAMP` | `work_date` | 날짜/시간 | - |
+| `MACHINE_CD` | `VARCHAR` | `machine_code` | 설비코드 | - |
+| `PRDT_QTY` | `DOUBLE` | `production_qty` | 수량/실적 | - |
+
+</details>
+
+### 📁 분류: Rolling Resistance
+
+| 변수명 (Variable) | 한글 요약 (Description) | 실제 테이블 경로 (Table Path) | 사용 여부 | 주요 참조 쿼리 (Queries) |
+|---|---|---|:---:|---|
+| `rr_lot_samples` | **RR(Rolling Resistance, 회전저항) 품질 측정 샘플 랏 정보** | `hkt_dw.quality.qlt_d_lqlttr309` | ✅ 사용 | `gmes_query.py` |
+| `rr_standard` | **차종/고객사별 RR 스펙 표준값 및 허용 한계(UCL/LCL) 마스터** | `hkt_dw.quality.qlt_d_lqlttr510` | ✅ 사용 | `gmes_query.py` |
+| `rr_test_result` | **RR 품질 검사 실 계측 데이터 및 등재 첨부파일** | `hkt_dw.quality.qlt_f_lqlttr316` | ✅ 사용 | `gmes_query.py` |
+
+<details>
+<summary>🔍 분류 내 테이블별 상세 컬럼 스펙 열기</summary>
+
+#### 📑 `rr_lot_samples` (RR(Rolling Resistance, 회전저항) 품질 측정 샘플 랏 정보)
+| 컬럼명 (Column) | 물리 타입 (Type) | 별칭 추천 (Recommended Alias) | 대분류 (Category) | 매핑 상수 (Value Constants) |
+|---|---|---|---|---|
+| `PLANT` | `VARCHAR` | `plant_code` | 공장코드 | 8개 상수 항목 매핑 |
+| `M_CODE` | `VARCHAR` | `material_code` | 자재코드 | - |
+| `BARCODE_NO` | `VARCHAR` | `barcode_no` | 바코드번호 | - |
+| `PGS_STS` | `VARCHAR` | `progress_status` | 상태값 | 4개 상수 항목 매핑 |
+| `INS_DATE` | `TIMESTAMP` | `inspect_date` | 날짜/시간 | - |
+| `RR_VALUE` | `DOUBLE` | `rr_value` | 일반속성 | - |
+| `GRADE` | `VARCHAR` | `grade` | 품질등급 | 4개 상수 항목 매핑 |
+
+#### 📑 `rr_standard` (차종/고객사별 RR 스펙 표준값 및 허용 한계(UCL/LCL) 마스터)
+| 컬럼명 (Column) | 물리 타입 (Type) | 별칭 추천 (Recommended Alias) | 대분류 (Category) | 매핑 상수 (Value Constants) |
+|---|---|---|---|---|
+| `PLANT` | `VARCHAR` | `plant_code` | 공장코드 | 8개 상수 항목 매핑 |
+| `M_CODE` | `VARCHAR` | `material_code` | 자재코드 | - |
+| `CAR_MAKER` | `VARCHAR` | `car_maker` | 일반속성 | - |
+| `VEHICLE` | `VARCHAR` | `vehicle` | 일반속성 | - |
+| `UCL` | `DOUBLE` | `ucl` | 일반속성 | - |
+| `LCL` | `DOUBLE` | `lcl` | 일반속성 | - |
+
+#### 📑 `rr_test_result` (RR 품질 검사 실 계측 데이터 및 등재 첨부파일)
+| 컬럼명 (Column) | 물리 타입 (Type) | 별칭 추천 (Recommended Alias) | 대분류 (Category) | 매핑 상수 (Value Constants) |
+|---|---|---|---|---|
+| `BARCODE_NO` | `VARCHAR` | `barcode_no` | 바코드번호 | - |
+| `INS_DATE` | `TIMESTAMP` | `inspect_date` | 날짜/시간 | - |
+| `RR_VALUE` | `DOUBLE` | `rr_value` | 일반속성 | - |
+| `GRADE` | `VARCHAR` | `grade` | 품질등급 | 4개 상수 항목 매핑 |
+| `ATTACH_FILE_NAME` | `VARCHAR` | `attach_file_name` | 일반속성 | - |
+
+</details>
+
+### 📁 분류: Uniformity
+
+| 변수명 (Variable) | 한글 요약 (Description) | 실제 테이블 경로 (Table Path) | 사용 여부 | 주요 참조 쿼리 (Queries) |
+|---|---|---|:---:|---|
+| `uf_db_standard` | **유니포미티 통계적 관리 한계치(UCL/LCL) 기준값** | `hkt_dw.quality.qlt_d_lcomtr202` | ✅ 사용 | `gmes_query.py` |
+| `uf_inspection_result` | **완제품 유니포미티(Uniformity) 품질 계측 정밀 결과** | `hkt_dw.quality.qlt_f_lqlttr105` | ✅ 사용 | `gmes_query.py` |
+| `uf_inspection_standard` | **유니포미티 물리 측정 규격 한계 최대치 기준값** | `hkt_dw.quality.qlt_d_lcomtr201` | ✅ 사용 | `gmes_query.py` |
+
+<details>
+<summary>🔍 분류 내 테이블별 상세 컬럼 스펙 열기</summary>
+
+#### 📑 `uf_db_standard` (유니포미티 통계적 관리 한계치(UCL/LCL) 기준값)
+| 컬럼명 (Column) | 물리 타입 (Type) | 별칭 추천 (Recommended Alias) | 대분류 (Category) | 매핑 상수 (Value Constants) |
+|---|---|---|---|---|
+| `PLANT` | `VARCHAR` | `plant_code` | 공장코드 | 8개 상수 항목 매핑 |
+| `M_CODE` | `VARCHAR` | `material_code` | 자재코드 | - |
+| `SPEC_CD` | `VARCHAR` | `spec_code` | 규격코드 | - |
+| `RFV_UCL` | `DOUBLE` | `rfv_ucl` | 일반속성 | - |
+| `LFV_UCL` | `DOUBLE` | `lfv_ucl` | 일반속성 | - |
+| `CON_UCL` | `DOUBLE` | `con_ucl` | 일반속성 | - |
+| `HAR_UCL` | `DOUBLE` | `har_ucl` | 일반속성 | - |
+
+#### 📑 `uf_inspection_result` (완제품 유니포미티(Uniformity) 품질 계측 정밀 결과)
+| 컬럼명 (Column) | 물리 타입 (Type) | 별칭 추천 (Recommended Alias) | 대분류 (Category) | 매핑 상수 (Value Constants) |
+|---|---|---|---|---|
+| `PLANT` | `VARCHAR` | `plant_code` | 공장코드 | 8개 상수 항목 매핑 |
+| `M_CODE` | `VARCHAR` | `material_code` | 자재코드 | - |
+| `SPEC_CD` | `VARCHAR` | `spec_code` | 규격코드 | - |
+| `STXC` | `VARCHAR` | `stxc_val` | 규격값 | - |
+| `INS_DATE` | `TIMESTAMP` | `inspect_date` | 날짜/시간 | - |
+| `RFV` | `DOUBLE` | `rfv` | 일반속성 | - |
+| `LFV` | `DOUBLE` | `lfv` | 일반속성 | - |
+| `CON` | `DOUBLE` | `con` | 일반속성 | - |
+| `HAR` | `DOUBLE` | `har` | 일반속성 | - |
+| `JDG_GR` | `VARCHAR` | `judge_grade` | 품질등급 | 4개 상수 항목 매핑 |
+| `INS_FG` | `VARCHAR` | `inspect_flag` | 상태값 | 1개 상수 항목 매핑 |
+
+#### 📑 `uf_inspection_standard` (유니포미티 물리 측정 규격 한계 최대치 기준값)
+| 컬럼명 (Column) | 물리 타입 (Type) | 별칭 추천 (Recommended Alias) | 대분류 (Category) | 매핑 상수 (Value Constants) |
+|---|---|---|---|---|
+| `PLANT` | `VARCHAR` | `plant_code` | 공장코드 | 8개 상수 항목 매핑 |
+| `M_CODE` | `VARCHAR` | `material_code` | 자재코드 | - |
+| `SPEC_CD` | `VARCHAR` | `spec_code` | 규격코드 | - |
+| `RFV_MAX` | `DOUBLE` | `rfv_max` | 일반속성 | - |
+| `LFV_MAX` | `DOUBLE` | `lfv_max` | 일반속성 | - |
+| `CON_MAX` | `DOUBLE` | `con_max` | 일반속성 | - |
+| `HAR_MAX` | `DOUBLE` | `har_max` | 일반속성 | - |
+
+</details>
+
+---
+
+## 💾 SQLite Local Tables
+
+### 🗄️ Database: Log Database
+
+| 변수명 (Variable) | 한글 요약 (Description) | 실제 테이블명 (Table) | 사용 여부 | 주요 참조 쿼리 (Queries) |
+|---|---|---|:---:|---|
+| `login_log` | **로컬 사용자 시스템 로그인 이력 세션 데이터** | `user_login` | ✅ 사용 | - |
+
+<details>
+<summary>🔍 분류 내 테이블별 상세 컬럼 스펙 열기</summary>
+
+#### 📑 `login_log` (로컬 사용자 시스템 로그인 이력 세션 데이터)
+| 컬럼명 (Column) | 타입 (Type) | PK | Not Null | 기본값 (Default) | 추천 별칭 | 대분류 |
+|---|---|:---:|:---:|---|---|---|
+| `id` | `INTEGER` | 🔑 | - | `-` | `id` | 일반속성 |
+| `employee_id` | `TEXT` | - | Y | `-` | `employee_id` | 일반속성 |
+| `login_time` | `TEXT` | - | Y | `-` | `login_time` | 일반속성 |
+
+</details>
+
+### 🗄️ Database: Operational Database
+
+| 변수명 (Variable) | 한글 요약 (Description) | 실제 테이블명 (Table) | 사용 여부 | 주요 참조 쿼리 (Queries) |
+|---|---|---|:---:|---|
+| `fm_library` | **현장 이상 발생 라이브러리 및 불량 발생 사진 매핑 테이블** | `quality_issue_management` | ✅ 사용 | - |
+| `prd_audit_ctl_rawdata` | **SQLite prd_audit_ctl_rawdata 테이블 데이터** | `product_audit_ctl_rawdata` | ✅ 사용 | `q_iqm_plus.py` |
+| `sellin_monthly_agg` | **Sell-in 대리점 공급 실적 월별 수동 집계 정보** | `sellin_monthly_agg` | ✅ 사용 | `hope_query.py`, `sqlite_query.py` |
+| `sqliteOps_iqm_devSpecList` | **SQLite sqliteOps_iqm_devSpecList 테이블 데이터** | `product_audit_regular_development` | ✅ 사용 | `sqlite_query.py` |
+| `sqliteOps_iqm_mcodeMapping` | **SQLite sqliteOps_iqm_mcodeMapping 테이블 데이터** | `product_audit_mcode_master` | ✅ 사용 | `q_iqm_plus.py`, `sqlite_query.py` |
+
+<details>
+<summary>🔍 분류 내 테이블별 상세 컬럼 스펙 열기</summary>
+
+#### 📑 `fm_library` (현장 이상 발생 라이브러리 및 불량 발생 사진 매핑 테이블)
+| 컬럼명 (Column) | 타입 (Type) | PK | Not Null | 기본값 (Default) | 추천 별칭 | 대분류 |
+|---|---|:---:|:---:|---|---|---|
+| `id` | `INTEGER` | 🔑 | - | `-` | `id` | 일반속성 |
+| `category` | `TEXT` | - | Y | `-` | `category` | 일반속성 |
+| `non_conformity_classification` | `TEXT` | - | - | `-` | `non_conformity_classification` | 일반속성 |
+| `cause_analysis_result` | `TEXT` | - | - | `-` | `cause_analysis_result` | 일반속성 |
+
+#### 📑 `prd_audit_ctl_rawdata` (SQLite prd_audit_ctl_rawdata 테이블 데이터)
+| 컬럼명 (Column) | 타입 (Type) | PK | Not Null | 기본값 (Default) | 추천 별칭 | 대분류 |
+|---|---|:---:|:---:|---|---|---|
+| `PLANT` | `VARCHAR` | - | - | `-` | `plant_code` | 공장코드 |
+| `M_CODE` | `VARCHAR` | - | - | `-` | `material_code` | 자재코드 |
+| `SPEC_CD` | `VARCHAR` | - | - | `-` | `spec_code` | 규격코드 |
+
+#### 📑 `sellin_monthly_agg` (Sell-in 대리점 공급 실적 월별 수동 집계 정보)
+| 컬럼명 (Column) | 타입 (Type) | PK | Not Null | 기본값 (Default) | 추천 별칭 | 대분류 |
+|---|---|:---:|:---:|---|---|---|
+| `RE/OE` | `VARCHAR` | - | - | `-` | `re/oe` | 일반속성 |
+| `M_CODE` | `VARCHAR` | - | - | `-` | `material_code` | 자재코드 |
+| `YYYY` | `VARCHAR` | - | - | `-` | `yyyy` | 일반속성 |
+| `MM` | `VARCHAR` | - | - | `-` | `mm` | 일반속성 |
+| `SUPP_QTY` | `DOUBLE` | - | - | `-` | `supp_qty` | 일반속성 |
+
+#### 📑 `sqliteOps_iqm_devSpecList` (SQLite sqliteOps_iqm_devSpecList 테이블 데이터)
+| 컬럼명 (Column) | 타입 (Type) | PK | Not Null | 기본값 (Default) | 추천 별칭 | 대분류 |
+|---|---|:---:|:---:|---|---|---|
+| `PLANT` | `VARCHAR` | - | - | `-` | `plant_code` | 공장코드 |
+| `M_CODE` | `VARCHAR` | - | - | `-` | `material_code` | 자재코드 |
+| `SPEC_CD` | `VARCHAR` | - | - | `-` | `spec_code` | 규격코드 |
+
+#### 📑 `sqliteOps_iqm_mcodeMapping` (SQLite sqliteOps_iqm_mcodeMapping 테이블 데이터)
+| 컬럼명 (Column) | 타입 (Type) | PK | Not Null | 기본값 (Default) | 추천 별칭 | 대분류 |
+|---|---|:---:|:---:|---|---|---|
+| `PLANT` | `VARCHAR` | - | - | `-` | `plant_code` | 공장코드 |
+| `M_CODE` | `VARCHAR` | - | - | `-` | `material_code` | 자재코드 |
+| `SPEC_CD` | `VARCHAR` | - | - | `-` | `spec_code` | 규격코드 |
+
+</details>
+
+### 🗄️ Database: Staging Database
+
+| 변수명 (Variable) | 한글 요약 (Description) | 실제 테이블명 (Table) | 사용 여부 | 주요 참조 쿼리 (Queries) |
+|---|---|---|:---:|---|
+| `sqliteStaging_iqm_ctl` | **IQM 플러스 CTL 시험 합격률 실적 중간 동기화 테이블** | `product_audit_ctl` | ✅ 사용 | `q_iqm_plus.py` |
+| `sqliteStaging_iqm_gtWt` | **IQM 플러스 완성 중량(G/T Weight) 검사 합격 통계 테이블** | `product_audit_gt_wt` | ✅ 사용 | `q_iqm_plus.py` |
+| `sqliteStaging_iqm_ncf` | **IQM 플러스 분석용 비정규 폐기/재작업률 중간 집계 테이블** | `product_audit_ncf` | ✅ 사용 | - |
+| `sqliteStaging_iqm_prdt` | **IQM 플러스 수동 집계 대상 완제품 실 생산량 동기화 테이블** | `product_audit_pdrt` | ✅ 사용 | `q_iqm_plus.py`, `sqlite_query.py` |
+| `sqliteStaging_iqm_rework` | **IQM 플러스 분석용 재작업(Rework) 발생 집계 테이블** | `product_audit_rework` | ✅ 사용 | `q_iqm_plus.py` |
+| `sqliteStaging_iqm_rr` | **IQM 플러스 회전저항(RR) 시험 수치 및 분산 통계 집계 테이블** | `product_audit_rr` | ✅ 사용 | `q_iqm_plus.py` |
+| `sqliteStaging_iqm_scrap` | **IQM 플러스 분석용 원자재 스크랩 집계 테이블** | `product_audit_scrap` | ✅ 사용 | `q_iqm_plus.py` |
+| `sqliteStaging_iqm_specMaster` | **IQM 플러스 단계별 제품 개정 규격 정보 동기화 테이블** | `product_audit_spec_master` | ✅ 사용 | `q_iqm_plus.py`, `sqlite_query.py` |
+| `sqliteStaging_iqm_uf` | **IQM 플러스 완제품 Uniformity 검사 합격률 통계 집계 테이블** | `product_audit_uf` | ✅ 사용 | `q_iqm_plus.py` |
+
+<details>
+<summary>🔍 분류 내 테이블별 상세 컬럼 스펙 열기</summary>
+
+#### 📑 `sqliteStaging_iqm_ctl` (IQM 플러스 CTL 시험 합격률 실적 중간 동기화 테이블)
+| 컬럼명 (Column) | 타입 (Type) | PK | Not Null | 기본값 (Default) | 추천 별칭 | 대분류 |
+|---|---|:---:|:---:|---|---|---|
+| `MFG_MCODE` | `TEXT` | - | - | `-` | `mfg_mcode` | 일반속성 |
+| `PERIOD_NAME` | `TEXT` | - | - | `-` | `period_name` | 일반속성 |
+| `CTL_COUNT` | `INTEGER` | - | - | `-` | `ctl_count` | 일반속성 |
+| `CTL_PASS_RATE_CUM` | `REAL` | - | - | `-` | `ctl_pass_rate_cum` | 일반속성 |
+
+#### 📑 `sqliteStaging_iqm_gtWt` (IQM 플러스 완성 중량(G/T Weight) 검사 합격 통계 테이블)
+| 컬럼명 (Column) | 타입 (Type) | PK | Not Null | 기본값 (Default) | 추천 별칭 | 대분류 |
+|---|---|:---:|:---:|---|---|---|
+| `MFG_MCODE` | `TEXT` | - | - | `-` | `mfg_mcode` | 일반속성 |
+| `PERIOD_NAME` | `TEXT` | - | - | `-` | `period_name` | 일반속성 |
+| `GT_WT_PASS_COUNT` | `INTEGER` | - | - | `-` | `gt_wt_pass_count` | 일반속성 |
+| `GT_WT_INS_COUNT` | `INTEGER` | - | - | `-` | `gt_wt_ins_count` | 일반속성 |
+| `GT_WT_PASS_RATE` | `REAL` | - | - | `-` | `gt_wt_pass_rate` | 일반속성 |
+
+#### 📑 `sqliteStaging_iqm_ncf` (IQM 플러스 분석용 비정규 폐기/재작업률 중간 집계 테이블)
+| 컬럼명 (Column) | 타입 (Type) | PK | Not Null | 기본값 (Default) | 추천 별칭 | 대분류 |
+|---|---|:---:|:---:|---|---|---|
+| `MFG_MCODE` | `TEXT` | - | - | `-` | `mfg_mcode` | 일반속성 |
+| `PERIOD_NAME` | `TEXT` | - | - | `-` | `period_name` | 일반속성 |
+| `SCRAP_DFT_QTY` | `REAL` | - | - | `-` | `scrap_dft_qty` | 일반속성 |
+| `SCRAP_RATE` | `REAL` | - | - | `-` | `scrap_rate` | 일반속성 |
+| `REWORK_DFT_QTY` | `TEXT` | - | - | `-` | `rework_dft_qty` | 일반속성 |
+| `REWORK_RATE` | `TEXT` | - | - | `-` | `rework_rate` | 일반속성 |
+
+#### 📑 `sqliteStaging_iqm_prdt` (IQM 플러스 수동 집계 대상 완제품 실 생산량 동기화 테이블)
+| 컬럼명 (Column) | 타입 (Type) | PK | Not Null | 기본값 (Default) | 추천 별칭 | 대분류 |
+|---|---|:---:|:---:|---|---|---|
+| `MFG_MCODE` | `TEXT` | - | - | `-` | `mfg_mcode` | 일반속성 |
+| `PERIOD_NAME` | `TEXT` | - | - | `-` | `period_name` | 일반속성 |
+| `MASS_PERIOD` | `INTEGER` | - | - | `-` | `mass_period` | 일반속성 |
+| `PRDT_QTY` | `REAL` | - | - | `-` | `production_qty` | 수량/실적 |
+
+#### 📑 `sqliteStaging_iqm_rework` (IQM 플러스 분석용 재작업(Rework) 발생 집계 테이블)
+| 컬럼명 (Column) | 타입 (Type) | PK | Not Null | 기본값 (Default) | 추천 별칭 | 대분류 |
+|---|---|:---:|:---:|---|---|---|
+| `MFG_MCODE` | `TEXT` | - | - | `-` | `mfg_mcode` | 일반속성 |
+| `PERIOD_NAME` | `TEXT` | - | - | `-` | `period_name` | 일반속성 |
+| `REWORK_DFT_QTY` | `REAL` | - | - | `-` | `rework_dft_qty` | 일반속성 |
+| `REWORK_RATE` | `REAL` | - | - | `-` | `rework_rate` | 일반속성 |
+
+#### 📑 `sqliteStaging_iqm_rr` (IQM 플러스 회전저항(RR) 시험 수치 및 분산 통계 집계 테이블)
+| 컬럼명 (Column) | 타입 (Type) | PK | Not Null | 기본값 (Default) | 추천 별칭 | 대분류 |
+|---|---|:---:|:---:|---|---|---|
+| `RR_MCODE` | `TEXT` | - | - | `-` | `rr_mcode` | 일반속성 |
+| `PERIOD_NAME` | `TEXT` | - | - | `-` | `period_name` | 일반속성 |
+| `RR_AVG` | `REAL` | - | - | `-` | `rr_avg` | 일반속성 |
+| `RR_STD` | `TEXT` | - | - | `-` | `rr_std` | 일반속성 |
+| `RR_COUNT` | `INTEGER` | - | - | `-` | `rr_count` | 일반속성 |
+| `RR_SPEC_MAX` | `REAL` | - | - | `-` | `rr_spec_max` | 일반속성 |
+
+#### 📑 `sqliteStaging_iqm_scrap` (IQM 플러스 분석용 원자재 스크랩 집계 테이블)
+| 컬럼명 (Column) | 타입 (Type) | PK | Not Null | 기본값 (Default) | 추천 별칭 | 대분류 |
+|---|---|:---:|:---:|---|---|---|
+| `MFG_MCODE` | `TEXT` | - | - | `-` | `mfg_mcode` | 일반속성 |
+| `PERIOD_NAME` | `TEXT` | - | - | `-` | `period_name` | 일반속성 |
+| `SCRAP_DFT_QTY` | `REAL` | - | - | `-` | `scrap_dft_qty` | 일반속성 |
+| `SCRAP_RATE` | `REAL` | - | - | `-` | `scrap_rate` | 일반속성 |
+
+#### 📑 `sqliteStaging_iqm_specMaster` (IQM 플러스 단계별 제품 개정 규격 정보 동기화 테이블)
+| 컬럼명 (Column) | 타입 (Type) | PK | Not Null | 기본값 (Default) | 추천 별칭 | 대분류 |
+|---|---|:---:|:---:|---|---|---|
+| `MCODE` | `TEXT` | - | - | `-` | `mcode` | 일반속성 |
+| `YEAR` | `INTEGER` | - | - | `-` | `year` | 일반속성 |
+| `PLANT` | `TEXT` | - | - | `-` | `plant_code` | 공장코드 |
+| `MP_GATE_DT` | `TEXT` | - | - | `-` | `mp_gate_dt` | 일반속성 |
+| `MFG_MCODE` | `TEXT` | - | - | `-` | `mfg_mcode` | 일반속성 |
+| `SPEC_CD` | `TEXT` | - | - | `-` | `spec_code` | 규격코드 |
+| `STXC` | `TEXT` | - | - | `-` | `stxc_val` | 규격값 |
+| `RCPE_VER` | `TEXT` | - | - | `-` | `rcpe_ver` | 일반속성 |
+
+#### 📑 `sqliteStaging_iqm_uf` (IQM 플러스 완제품 Uniformity 검사 합격률 통계 집계 테이블)
+| 컬럼명 (Column) | 타입 (Type) | PK | Not Null | 기본값 (Default) | 추천 별칭 | 대분류 |
+|---|---|:---:|:---:|---|---|---|
+| `MFG_MCODE` | `TEXT` | - | - | `-` | `mfg_mcode` | 일반속성 |
+| `PERIOD_NAME` | `TEXT` | - | - | `-` | `period_name` | 일반속성 |
+| `UF_PASS_COUNT` | `INTEGER` | - | - | `-` | `uf_pass_count` | 일반속성 |
+| `UF_INS_COUNT` | `INTEGER` | - | - | `-` | `uf_ins_count` | 일반속성 |
+| `UF_PASS_RATE` | `REAL` | - | - | `-` | `uf_pass_rate` | 일반속성 |
+
+</details>
