@@ -1,8 +1,8 @@
-# app/queries 대규모 리팩토링 작업 계획서 (보완본 v2)
+# app/queries 대규모 리팩토링 작업 계획서 (보완본 v3)
 
 이 문서는 `app/queries/` 폴더 내 SQL 쿼리 빌더 모듈들의 가독성을 향상시키고, 작성 일관성을 확보하며, 유지보수성을 극대화하기 위한 대규모 리팩토링 작업 계획을 정의합니다.
 
-추가적인 설계 요건(JSON 메타데이터 관리, 상수 역할 분리, CTE 분할 금지, 작성 스타일 다변화)과 **종합 네이밍 컨벤션 표준(테이블, 모듈, 함수, 공통 상수, 디코드 및 추가 로컬 변수 일체)**을 반영하여 철저히 정비된 마스터 계획서입니다.
+추가적인 설계 요건(JSON 메타데이터 관리, 상수 역할 분리, CTE 분할 금지, 작성 스타일 다변화), **종합 네이밍 컨벤션 표준(테이블, 모듈, 함수, 공통 상수, 디코드 및 추가 로컬 변수 일체)**, 그리고 **하네스 안전성 보완책(정규화 동등성 비교 및 정적 키 교차 검증)**을 완벽히 수용하여 철저히 정비된 마스터 계획서입니다.
 
 ---
 
@@ -278,12 +278,13 @@ def get_ctms_ctl_general_rawdata(params: CTMSProcessingParams) -> str:
 
 ### 2단계: 테스트 하네스(Sandbox) 구축 (Harnessing Setup)
 - 리팩토링 과정에서 SQL 문법이나 논리 구조가 변경되지 않음을 담보하기 위해, `tests/refactoring_harness_test.py` 검증 장치를 신규 설계합니다.
-- 공백/줄바꿈 정규화 비교 및 SQL 주석 제거를 병행하여, 전후 SQL의 순수 기계적 의미 동등성을 완벽히 검증합니다.
+- **SQL 의미론적 동등성(Semantic Equivalence) 검증**: 개행, 탭, 다중 공백 및 주석 차이로 인한 검증 오탐을 방지하기 위해, 정규 표현식(`re`)을 활용한 SQL 정규화 헬퍼(`normalize_sql`)를 탑재하여 순수 논리적 동등성만 기계적으로 정밀 대조합니다.
 
 ### 3단계: JSON 메타데이터 아키텍처 수립 및 런타임 바인딩 구현
 - `app/core/query/query_metadata.json` 설계를 착수하고, 테이블 상수와 DECODE 매핑 상수를 격리하여 기술합니다.
 - `app/core/query/query_database.py`에서 JSON 파일을 싱글턴 패턴 혹은 모듈 임포트 시점에 동적으로 캐싱 로드하여 기존 `DatabricksTables` 및 `SQLiteTables` 구조에 바인딩하는 로직을 수립합니다.
 - DECODE 전용 SQL 구문 조립 헬퍼를 `query_helper.py`에 마련하여 파이썬 런타임 변수 의존성을 해소합니다.
+- **정적상수-JSON 상호 교차 검증 (Cross-Check Test)**: `query_database.py` 속성명과 `query_metadata.json` 최상위 Key가 1:1로 정확히 일치하는지 자동 추적 및 검증하는 정합성 유닛 테스트 코드를 하네스에 포함하여 런타임 바인딩 에러를 예방합니다.
 
 ### 4단계: 모듈별 점진적 리팩토링 수행 (Iterative Refactoring)
 - 스타일별 및 규모별 점진적 교정을 수행합니다.
