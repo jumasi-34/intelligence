@@ -26,7 +26,7 @@
 
 ---
 
-## 3. UI 개발 4대 표준
+## 3. UI 개발 5대 표준
 1. **1:1 대칭 매핑 아키텍처**:
    - 모든 화면은 **화면 컨트롤러(`*_page.py`)**와 **시각화 드로잉(`*_plots.py`)** 파일이 1:1 매핑되어 한 쌍으로 작동해야 합니다.
 2. **공통 UI 모듈 (`app/core/ui/`) 최우선 참조**:
@@ -35,6 +35,17 @@
    - 사용자가 UI 필터(기간, 공장, 제품 등)로 선택한 값은 낱개 변수로 뿌리지 않고, 반드시 `app/core/params/parameters.py`의 전용 데이터클래스(`*Params`) 객체로 조립하여 서비스 함수로 전달합니다.
 4. **세션 상태(Session State) 네임스페이스 통제**:
    - 임의의 문자열을 키로 사용하지 말고, `core/constants/` 또는 `core/page/` 등에 미리 정의된 표준 세션 상태 키 목록만을 바인딩하여 세션을 추적 및 관리합니다.
+5. **동적 메타데이터 기반 컬럼 설정기 (`get_dynamic_column_configs`) 필수 연동**:
+   - 화면 단에서 데이터프레임을 표출(`st.dataframe`, `st.data_editor` 등)하거나 차트에 바인딩할 때, SQL 쿼리 상에서 한글 AS 별칭을 임의 코딩하는 대신 반드시 `get_dynamic_column_configs` 동적 헬퍼를 활용해야 합니다.
+   - 해당 헬퍼 함수는 테이블별 메타데이터(`local.data/query/metadata_*.json`)와 글로벌 공통 사전(`local.data/query/global_metadata.json`)을 동적으로 연동하여 한글 레이블, 소수점 자릿수 포맷, 컬럼 도움말(툴팁) 등을 일관성 있고 완벽하게 조립해 줍니다.
+   - **사용 코드 표준 예시**:
+     ```python
+     from app.core.boilerplate_column_config import get_dynamic_column_configs
+
+     # 'cqms_qi_mttc' 테이블의 메타데이터와 현재 데이터프레임 컬럼을 바인딩
+     column_config = get_dynamic_column_configs("cqms_qi_mttc", df.columns)
+     st.dataframe(df, column_config=column_config, use_container_width=True)
+     ```
 
 ---
 

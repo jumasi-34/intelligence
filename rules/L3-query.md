@@ -31,6 +31,16 @@
    - Databricks 테이블 경로는 임의의 문자열로 적지 않고, 반드시 `app/core/query/query_database.py` 내의 `DatabricksTables` 클래스 상수를 참조하여 바인딩합니다.
 4. **파라미터 바인딩 통일**:
    - 쿼리 함수는 `app/core/params/parameters.py`에 선언된 파라미터 `dataclass`를 입력 인자로 전달받아 일관되게 처리합니다.
+5. **한글 AS Alias(별칭) 사용 금지 및 물리 컬럼명 보존 수칙**:
+   - SQL 쿼리 내에서 디스플레이용 한글 `AS "별칭"` 선언을 엄격히 금지합니다. 오직 영문 물리 컬럼명(예: `PLANT_CODE`, `MTTC_VAL`)을 그대로 반환하도록 설계하여, 컬럼명 강제 하드코딩으로 인한 관리 공수 폭증과 인코딩 오류, AI 컬럼 매핑 실수를 예방합니다. 한글 매핑 및 출력 포맷 제어는 오직 UI 단에서 메타데이터 헬퍼를 통해 연동합니다.
+   - **AS-IS (안티패턴)**:
+     ```sql
+     SELECT plant_cd AS "공장코드", mttc_val AS "MTTC(시간)" FROM ...
+     ```
+   - **TO-BE (표준 준수)**:
+     ```sql
+     SELECT plant_cd, mttc_val FROM ...
+     ```
 
 ---
 
