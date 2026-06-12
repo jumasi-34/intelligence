@@ -49,12 +49,14 @@
 * **쿼리 헬퍼**: `QueryFilter`, `SQLConverter` 등 객체 지향적 책임을 명시합니다.
 
 ### ② 함수 명명 (Functions & Methods)
-* **표준 규칙**: 소문자 스네이크 케이스(`snake_case`)를 사용하며, 역할(Query, Preprocessing, Transformation 등)과 도메인(gmes, cqms, ctms 등)을 결합하여 가시성이 극대화된 구조로 일관성 있게 정의합니다.
+* **표준 규칙**: 소문자 스네이크 케이스(`snake_case`)를 사용하며, 아래의 통일된 명명 공식을 반드시 준수합니다.
+  - **함수 명명 공식**: `get_{system}_{domain}_{조건/설명/특별한 내용이 없으면 general}_{agg/rawdata}`
+  - 역할(Query, Preprocessing, Transformation 등)과 시스템/도메인을 결합하여 가시성이 극대화된 구조로 일관성 있게 정의합니다.
 
 #### 1) 쿼리 레이어 함수 명명 규칙 (`app/queries/`)
 쿼리 레이어 함수는 SQL 쿼리 문자열을 조립 및 생성하여 반환합니다. 데이터베이스 커넥터를 직접 다루지 않고 오직 텍스트 조립에만 관여함을 표현합니다.
 
-* **원시 데이터 조회 (`get_<도메인>_*_rawdata`)**:
+* **표준 명명 공식 적용 (`get_{system}_{domain}_{조건/설명/특별한 내용이 없으면 general}_{agg/rawdata}`)**:
   - 필터링 전 원시 데이터(Raw data)를 조회하는 메인 쿼리 함수는 반드시 `get_` 접두사와 `_rawdata` 접미사를 지정합니다.
   - 예: `get_cqms_qi_mttc_rawdata(...)`, `get_ctms_ctl_general_rawdata(...)`, `get_hope_oeapp_general_rawdata(...)`
 * **조건별 조회 (`get_<도메인>_*_by_<조건>`)**:
@@ -97,8 +99,23 @@
 * **표준 규칙**: 대문자 스네이크 케이스(`UPPER_SNAKE_CASE`)를 강제 준수합니다.
 * **비즈니스 상수 (`core/constants/`)**: JSON 맵핑 상수를 파이썬으로 바인딩할 때 무조건 대문자를 적용합니다.
   * 예: `PLANT_TO_OEQG`, `NEW_BUSINESS_DICT`, `ISSUE_AREA`
-* **테이블 경로 변수 (`core/query/query_database.py`)**: Databricks 및 Oracle 테이블 경로 지정 변수는 소문자 스네이크 케이스(`snake_case`) 및 `{시스템}_{도메인}_{contents}` 공식을 준수합니다.
-  * 예: `DatabricksTables.cqms_4m_main`
+
+### ⑤ 테이블 변수명 데이터 클래스 및 변수 명명 규칙 (Table Data Classes & Variables)
+* **테이블 데이터 클래스명 (Table Data Class Names)**:
+  - **공식**: `{데이터베이스/소스 시스템명}Tables` (파스칼 케이스, `PascalCase` 적용)
+  - **설명**: 쿼리 레이어에서 참조하는 테이블들이 속한 소스 데이터베이스 엔진명을 명시합니다.
+  - **올바른 예시**: `DatabricksTables`, `OracleTables`, `SqliteTables`
+  - **잘못된 예시**: `DBTables` (출처 모호), `Databricks_Tables` (스네이크 케이스 혼용)
+* **클래스 내부 테이블 변수명 (Internal Table Variables)**:
+  - **공식**: `{시스템}_{도메인}_{세부내용}` (소문자 스네이크 케이스, `snake_case` 적용)
+  - **설명**: JSON Key와 1:1 바인딩되는 클래스 변수명으로, 시스템명, 도메인명, 세부내용 순으로 정갈하게 명명하여 테이블의 출처와 세부 용도를 직관적으로 식별할 수 있도록 합니다.
+  - **올바른 예시**:
+    - `cqms_qi_main` (system=cqms, domain=qi, 세부내용=main)
+    - `gmes_spec_product_master` (system=gmes, domain=spec, 세부내용=product_master)
+    - `ctms_ctl_result_raw` (system=ctms, domain=ctl, 세부내용=result_raw)
+  - **잘못된 예시**:
+    - `QUALITY_MAIN` (대문자 사용 금지)
+    - `tb_cqms_quality` (불필요한 'tb_' 접두사 기입 지양 및 도메인/세부내용 구분 모호)
 
 ---
 

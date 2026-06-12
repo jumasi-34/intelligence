@@ -16,6 +16,7 @@
 
 - **독립 테스트 하네스 (`tests/`)**:
   - `tests/sql_query_test.py` 와 같이 기존 코드의 수정 없이 인메모리 테스트 기법만 활용해 서비스 레이어와 DB 클라이언트를 격리 검증합니다.
+  - 상세 테스트 격리 원칙 및 `verify_code.py` 구문 문법 정적 검증은 [testing-verification.md](file:///home/jumasi/workstation/intelligence/guide/testing-verification.md) 문서를 참조합니다.
 - **실행 원칙 (Python Path)**:
   - 모듈의 상대 경로 및 루트 패키지 임포트가 정상 동작하도록 실행 시에는 항상 `PYTHONPATH`를 루트 경로(`workstation/`)로 선언하고 실행해야 합니다.
   ```bash
@@ -48,6 +49,7 @@ graph TD
 
 ### 3) AI Hook 바인딩 흐름 (`intelligence/hook/`)
 - 비즈니스 상 특정 이벤트가 발생할 때 AI를 자동으로 동작시키는 감지기입니다.
+- 상세 품질 게이트 및 훅 아키텍처 사양은 [hooks-specification.md](file:///home/jumasi/workstation/intelligence/hook/hooks-specification.md) 문서를 전적으로 준수합니다.
 - Streamlit 페이지 진입, 특정 공장의 대량 불량 건수 데이터 수집(GMES), 주기적 백그라운드 갱신 작업(`automation/`) 완료 시점 등에 훅을 결합하여, 실시간 지능형 진단 보고서를 띄우는 이벤트를 트리거합니다.
 
 ### 4) AI Agent 핵심 구현 (`intelligence/agent/`)

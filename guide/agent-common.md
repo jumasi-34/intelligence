@@ -1,4 +1,4 @@
-# context-common.md (AI 에이전트 공통 준수 컨텍스트)
+# agent-common.md (AI 에이전트 공통 준수 가이드)
 
 이 문서는 이 프로젝트에서 활약하는 모든 AI 에이전트(Agents)가 안전하고, 예측 가능하며, 일관성 있게 작업을 수행하기 위해 반드시 준수해야 하는 **공통 동작 원칙 및 개발 표준**을 기술합니다.
 
@@ -19,10 +19,10 @@
 - **항상 금지**: `.env`, credential, production infra, 운영 DB write/destructive query, 민감 로그 원문 출력은 수정 승인 여부와 무관하게 금지합니다.
 - **프로덕션 코드 수정 시 필수**: `intelligence/runs/run_*` 아카이브, `diff.patch`, `test.log`, `risk.md`, PR 본문 Run ID, `make verify` 또는 동등한 검증 로그를 남깁니다.
 
-### 4) 컨텍스트 문서 보관 및 명명 규제 (SSOT & Prefix 원칙)
-- **컨텍스트 단일 보관**: 모든 시스템/도메인 설명 및 에이전트 준수용 컨텍스트 문서는 **오직 `intelligence/` 또는 `intelligence/context/` 폴더 내에만 보관**해야 합니다.
-- **명명 Prefix 필수 적용**: 컨텍스트 식별이 항상 직관적으로 가능하도록, 파일명 시작 부분에 반드시 `context-` 접두사를 명시하여 보관해야 합니다. (예: `context-common.md`, `context-queries.md`, `context-service.md`, `context-core.md`, `context-pages.md`)
-- **개별 생성 엄금**: `pages/`, `core/`, `service/`, `queries/` 등 실 개발 소스 디렉터리 내에 독립적인 `CONTEXT.md`를 별도로 두는 것은 전면 금지되며, 발견 시 예외 없이 `intelligence/context/context-<도메인>.md` 형식으로 이관 및 정리해야 합니다.
+### 4) 컨텍스트 문서 보관 및 구조화 원칙 (SSOT & No-Prefix 원칙)
+- **컨텍스트 구조화 보관**: 모든 시스템/도메인 설명 및 에이전트 준수용 컨텍스트 문서는 **오직 `intelligence/` 하위의 성격이 명확한 지정 폴더(`domain/`, `infra/`, `guide/`)** 내에 보관해야 합니다.
+- **명명 접두사(Prefix) 금지**: 파일명에 의미가 중복되는 불필요한 `context-` 접두사(prefix)를 붙이는 행위는 전면 배제하며, 간결하고 명확한 본래의 파일명을 사용합니다. (예: `domain-knowledge.md`, `infrastructure-summary.md`, `agent-common.md`)
+- **개별 생성 엄금**: `pages/`, `core/`, `service/`, `queries/` 등 실 개발 소스 디렉터리 내에 독립적인 `CONTEXT.md`를 별도로 두는 것은 전면 금지되며, 발견 시 예외 없이 `intelligence/` 산하 서브 폴더로 이관하고 정리해야 합니다.
 
 ### 5) AI 금지 구역 (AI Exclusion Zone) 준수
 - **접근 원천 금지**: `intelligence/note/` 및 그 하위의 모든 디렉터리와 파일은 사용자의 개인 도메인 지식 축적 공간입니다.
@@ -48,7 +48,7 @@
 
 ### 4) 서비스 vs 시각화 전처리 경계 분리 (Separation of Concerns)
 - **역할 격리 준수**: 통계 가공 및 비즈니스 룰 처리는 오직 서비스 레이어(`app/service/df_*.py`)에서만 수행하고, 차트 포맷팅, 마우스 호버(Hover Text) 결합, Top-N 처리 등 시각화 전용 포맷팅은 오직 플롯 레이어(`*_plots.py`)에서만 처리해야 합니다.
-- **기준 상세 참조**: 세부 판정 기준 및 예시는 [intelligence/context/context-preprocessing-boundary.md](file:///home/jumasi/workstation/intelligence/context/context-preprocessing-boundary.md) 문서를 절대적으로 참조하여 코드 조작을 수행해야 합니다.
+- **기준 상세 참조**: 세부 판정 기준 및 예시는 [preprocessing-boundary.md](file:///home/jumasi/workstation/intelligence/guide/preprocessing-boundary.md) 문서를 절대적으로 참조하여 코드 조작을 수행해야 합니다.
 
 ---
 
@@ -60,7 +60,7 @@
 | 레이어 | 주요 역할 및 준수 규칙 |
 | :--- | :--- |
 | **`intelligence/agent/`** | **지휘 및 추론**: 최적의 목표 달성을 위해 계획을 설계하고, 상황에 알맞은 Skill을 선택하며 추론 과정을 실행합니다. 직접적인 DB 쿼리나 UI 제어는 수행하지 않고 오직 오케스트레이션에 집중합니다. |
-| **`intelligence/context/`** | **상태 및 맥락 추적**: 에이전트의 영속 세션, 대화 기억, 분석 결과 기록을 임시 보관하거나 SQLite 및 파일 시스템에 안전하게 저장 및 로딩하는 일을 전담합니다. |
+| **`intelligence/` (지정 폴더)** | **상태 및 맥락 추적**: 도메인 지식(`domain/`), 공용 인프라(`infra/`), 개발 가이드(`guide/`)를 고밀도 연합 마크다운 파일로 영속 보관하여 에이전트 분석 맥락을 지원합니다. |
 | **`intelligence/hook/`** | **비즈니스 이벤트 감지**: 에이전트가 깨어날 타이밍(Streamlit 생명주기 진입, 백그라운드 갱신 작업 완료, 임계 품질 지표 초과 시)을 감지하고 에이전트 구동 엔진에 알리는 역할만 수행합니다. |
 | **`intelligence/skill/`** | **도구(Tools/API)**: 에이전트가 손발처럼 사용할 도구 인터페이스입니다. 함수 선언 시 상세한 Docstring과 정확한 타입 선언을 통해 LLM 에이전트가 도구의 목적 및 파라미터를 자율적으로 추론할 수 있게 설계합니다. |
 

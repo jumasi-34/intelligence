@@ -160,12 +160,14 @@
 ## ❹ 쿼리 레이어 템플릿 (`app/queries/*_query.py` 또는 `q_*.py`)
 
 - **목적**: 데이터베이스 실행은 하지 않고, 입력 파라미터를 받아 **순수 SQL 문자열(`str`)**을 동적으로 생성 및 조립합니다.
-- **주석 섹션 구성**:
+- **주석 및 함수 명명 규칙 구성**:
+  - **대통합 공식**: `get_{system}_{domain}_{조건/설명/특별한 내용이 없으면 general}_{agg/rawdata}`
+  - 실사용 파이썬 템플릿 코드는 [query_module_template.py](file:///home/jumasi/workstation/intelligence/guide/query_module_template.py) 파일을 바로 복사하여 뼈대로 사용할 수 있습니다.
 
 ```python
 """
 <도메인명> 쿼리 조립 모듈
-- 작성일: 2026-06-09
+- 작성일: 2026-06-12
 - 설명: <도메인/기능 설명> 관련 데이터베이스 조회용 순수 SQL 쿼리를 생성합니다.
 """
 
@@ -178,19 +180,60 @@
 
 
 # =========================================================================
-# SECTION 2. Dynamic Where Condition Assembly (조건절 조립)
+# SECTION 2. Style A: 단순 조회 및 단일 테이블 마스터형 (Simple Master Target)
 # =========================================================================
-# - QueryFilter.where_in(), QueryFilter.where_date_between() 등을 활용
-# - conditions = [] 리스트에 개별 조건문을 append하여 동적으로 AND 결합 수행
-# - [주의] 데이터베이스 및 테이블 경로를 임의의 텍스트로 적지 말고 중앙화 테이블 상수를 활용하십시오.
+# - JOIN이 없고 조건이 단순한 기준 마스터 테이블 조회용
+# - 예: get_gmes_spec_product_master(params)
+def get_{system}_{domain}_{조건/설명}_master(params: ParamsClass) -> str:
+    conditions = [QueryFilter.where_in("COL", params.values)]
+    where_clause = QueryFilter.build_where(conditions)
+    
+    query = f"""--sql
+    SELECT * FROM {DatabricksTables.table_name}
+    {where_clause};
+    """
+    return query
 
 
 # =========================================================================
-# SECTION 3. Pure SQL Query Building (SQL 본문 완성 및 반환)
+# SECTION 3. Style B: 다중 조인 및 가변 필터형 (Dynamic Multi-Join Target)
 # =========================================================================
-# - CTE(Common Table Expressions, WITH문)를 과도하게 분리하지 않고 Full Query 지향 설계
-# - f-string 내에 {where_clause} 및 {table_path}를 깔끔히 조립하여 순수 문자열(str) 리턴
-# - [주의] 함수 내부에서 DB 연결을 맺거나 execute하는 메서드를 절대 수립하지 마십시오.
+# - 다중 JOIN 및 동적 조건절 결합
+# - 예: get_cqms_qi_mttc_defect_rawdata(params)
+def get_{system}_{domain}_{조건/설명}_{agg/rawdata}(params: ParamsClass) -> str:
+    conditions = [
+        QueryFilter.where_in("QI.PLANT", params.plant_list),
+        QueryFilter.where_date_between(params.start_date, params.end_date, "QI.REG_DATE")
+    ]
+    where_clause = QueryFilter.build_where(conditions)
+    
+    query = f"""--sql
+    SELECT QI.*, M.M_CODE
+    FROM {DatabricksTables.cqms_quality_main} QI
+    INNER JOIN {DatabricksTables.cqms_quality_mcode} M ON QI.SEQ = M.CQMS_QUALITY_ISSUE_SEQ
+    {where_clause};
+    """
+    return query
+
+
+# =========================================================================
+# SECTION 4. Style C: 대규모 CTE 구조화형 (Complex CTE-Structured Target)
+# =========================================================================
+# - 초복잡 쿼리용, CTE(WITH 문)를 메인 함수 안에 계층적으로 단일 조립 (쪼개기 절대 금지)
+# - 예: get_ctms_ctl_daily_window_agg(params)
+def get_{system}_{domain}_{조건/설명}_{agg/rawdata}(params: ParamsClass) -> str:
+    where_clause = QueryFilter.build_where([QueryFilter.where_in("PLANT", params.plant_list)])
+    
+    query = f"""--sql
+    WITH base AS (
+        SELECT DOC_NO, PLANT FROM {DatabricksTables.ctms_result_data} {where_clause}
+    ),
+    agg_data AS (
+        SELECT PLANT, COUNT(DOC_NO) AS CNT FROM base GROUP BY PLANT
+    )
+    SELECT * FROM agg_data;
+    """
+    return query
 ```
 
 ---

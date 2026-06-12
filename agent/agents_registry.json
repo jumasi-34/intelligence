@@ -6,7 +6,7 @@
       "trigger": "사용자 요구사항 수집 및<br>PRD 설계 및 관리<br>[기획 에이전트]",
       "contexts": [
         "L2-architecture.md",
-        "context-common.md",
+        "agent-common.md",
         "prd-template.md"
       ],
       "allowed": [
@@ -33,7 +33,7 @@
       "trigger": "SQL 쿼리 설계 및<br>데이터 전처리 개발<br>[빌더 에이전트]",
       "contexts": [
         "L2-architecture.md",
-        "context-common.md",
+        "agent-common.md",
         "prd-*.md"
       ],
       "allowed": [
@@ -59,7 +59,7 @@
       "trigger": "Streamlit 화면 빌딩<br>및 Plotly 시각화<br>[빌더 에이전트]",
       "contexts": [
         "L2-architecture.md",
-        "context-common.md",
+        "agent-common.md",
         "prd-*.md"
       ],
       "allowed": [
@@ -87,7 +87,7 @@
       "trigger": "신규 테이블 등록 시<br>사전 브리핑 및 EDA<br>[분석가 서브에이전트]",
       "contexts": [
         "L2-architecture.md",
-        "context-common.md"
+        "agent-common.md"
       ],
       "allowed": [
         "본격 개발 착수 전, 사용자 및 개발 에이전트를 위한 충분하고 정교한 테이블 사전 브리핑 지원",
@@ -114,7 +114,7 @@
       "contexts": [
         "L2-naming-convention.md",
         "L2-business-constants.md",
-        "context-common.md"
+        "agent-common.md"
       ],
       "allowed": [
         "파일, 함수, 변수가 3-Layer 명명 규정을 지키는지 검증",
