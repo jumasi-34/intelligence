@@ -39,7 +39,56 @@
         ctms_ctl_result_raw: str = "hkt_system_dw.ctms.ctms_result_data"
     ```
 
-### ② 공통 상수 관리 파일과의 명확한 역할 분리
+### ❶ SQL 조립 및 DECODE 제어용 `query_metadata.json` 설계
+물리적인 테이블 경로명은 파이썬 정적 클래스(`query_database.py`)에서 전담하여 가독성과 Intellisense를 책임지는 한편, 데이터의 규칙적인 맵핑 변환(DECODE)이나 쿼리 런타임 제어 설정 등은 `app/core/query/query_metadata.json` 파일에서 동적으로 유연하게 관리하여 결합도를 최소화합니다.
+
+#### 1) `query_metadata.json` 스키마 및 메타데이터 정의
+- **`decodes`**: SQL 쿼리 조립 시 `CASE WHEN` 또는 `DECODE` 절에 사용될 핵심 업무 매핑 상수로, 파이썬 코드 변경 없이 맵핑 정보만 손쉽게 원격 제어할 수 있도록 보장합니다.
+- **`settings`**: 데이터베이스 쿼리 실행의 디폴트 조회 제한수(`default_row_limit`), 타임아웃, 캐시 타임아웃 시간 등 런타임 상수 설정을 다룹니다.
+- **`dimension_mappings` (차원 매핑)**: 시스템마다 날짜 컬럼명(`REG_DATE` vs `MRM_DATE`)이나 공장 컬럼명이 제각기 다를 때, 공통 필터 클래스에서 해당 도메인별 표준 컬럼을 인식하고 주입할 수 있도록 돕는 메타 사전입니다.
+
+#### 2) `query_metadata.json` 구성 예시 (Specification)
+```json
+{
+  "decodes": {
+    "plant_to_oeqg": {
+      "P1": "OEQG_A",
+      "P2": "OEQG_B",
+      "P3": "OEQG_C"
+    },
+    "defect_code_map": {
+      "D01": "Tread Cut",
+      "D02": "Sidewall Crack",
+      "D03": "Bead Damage"
+    }
+  },
+  "settings": {
+    "databricks": {
+      "default_row_limit": 100000,
+      "query_timeout_seconds": 180,
+      "cache_ttl_seconds": 3600
+    }
+  },
+  "dimension_mappings": {
+    "cqms_qi": {
+      "date_column": "QI.REG_DATE",
+      "plant_column": "QI.PLANT",
+      "mcode_column": "M.M_CODE"
+    },
+    "ctms_ctl": {
+      "date_column": "MRM_DATE",
+      "plant_column": "PLANT",
+      "mcode_column": "MFG_CD"
+    }
+  }
+}
+```
+
+#### 3) 파이썬 런타임 연계 바인딩 가이드
+- **DECODE 쿼리 주입**: `SQLConverter.dict_to_decode_sql(...)` 헬퍼 함수를 통해 JSON 내의 특정 디코드 변환 딕셔너리를 자동으로 SQL 문자열로 조립하여 주입합니다.
+- **차원 매핑 필터**: `QueryFilter` 내에서 `dimension_mappings` 구조를 인지하여, 도메인 정보만 주면 알맞은 컬럼명으로 AND 조건절을 동적으로 조립해 주도록 설계하여 중복 코드를 제거합니다.
+
+---
 * **규칙**: 상수가 중복되어 스파게티화되는 현상을 근절하기 위해, 기존 공통 상수 파일(`app/core/constants/business.py` 등)과 테이블 관리 파일(`query_database.py`) 간의 책임을 분명히 단일화합니다.
 * **역할 매핑 격리표**:
 
