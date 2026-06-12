@@ -18,6 +18,7 @@ from typing import List, Optional
 # from app.core.query.query_database import DatabricksTables, OracleTables
 # from app.core.query.query_helper import QueryFilter, SQLConverter
 
+
 # 💡 [참고] 테스트 검증 및 템플릿 독립 동작을 위한 임시/Mock 정의 (실제 모듈 생성 시 제거)
 @dataclass
 class TemplateFilterParams:
@@ -27,11 +28,13 @@ class TemplateFilterParams:
     mcode_list: Optional[List[str]] = None
     status_filter: Optional[bool] = False
 
+
 class DatabricksTables:
     cqms_qi_main = "hkt_system_dw.eqms.cqms_quality_issue"
     cqms_qi_mcode = "hkt_system_dw.eqms.cqms_quality_mcode"
     gmes_spec_product_master = "hkt_dw.specification.mas_d_lmastr101"
     ctms_ctl_result_raw = "hkt_system_dw.ctms.ctms_result_data"
+
 
 class QueryFilter:
     @staticmethod
@@ -61,16 +64,15 @@ class QueryFilter:
 # - (예: system=gmes, domain=spec, 조건=product_master, rawdata 타입)
 # =========================================================================
 
+
 def get_gmes_spec_product_master(params: TemplateFilterParams) -> str:
     """
     제품 사양 마스터 정보 조회 쿼리 (Style A)
     """
     # 1) 조건절 조립
-    conditions = [
-        QueryFilter.where_in("M_CODE", params.mcode_list)
-    ]
+    conditions = [QueryFilter.where_in("M_CODE", params.mcode_list)]
     where_clause = QueryFilter.build_where(conditions)
-    
+
     # 2) 최종 SQL 문자열 조립 및 반환 (f-string & --sql 주석 활용)
     query = f"""--sql
     SELECT 
@@ -94,6 +96,7 @@ def get_gmes_spec_product_master(params: TemplateFilterParams) -> str:
 # - (예: system=cqms, domain=qi, 설명=mttc_defect, rawdata 타입)
 # =========================================================================
 
+
 def get_cqms_qi_mttc_defect_rawdata(params: TemplateFilterParams) -> str:
     """
     품질 이슈 MTTC 불량 원시 데이터 조회 쿼리 (Style B)
@@ -103,10 +106,10 @@ def get_cqms_qi_mttc_defect_rawdata(params: TemplateFilterParams) -> str:
         QueryFilter.where_in("QI.PLANT", params.plant_list),
         QueryFilter.where_date_between(params.start_date, params.end_date, "QI.REG_DATE"),
         # 특정 조건 만족 시에만 동적 바인딩
-        QueryFilter.where_in("QI.STATUS", ["On-going"]) if params.status_filter else None
+        QueryFilter.where_in("QI.STATUS", ["On-going"]) if params.status_filter else None,
     ]
     where_clause = QueryFilter.build_where(conditions)
-    
+
     # 2) 최종 SQL 문자열 조립 및 반환 (가독성 높은 정렬 준수)
     query = f"""--sql
     SELECT 
@@ -133,6 +136,7 @@ def get_cqms_qi_mttc_defect_rawdata(params: TemplateFilterParams) -> str:
 # - (예: system=ctms, domain=ctl, 설명=daily_window, agg 집계 타입)
 # =========================================================================
 
+
 def get_ctms_ctl_daily_window_agg(params: TemplateFilterParams) -> str:
     """
     CTMS 일자별 통계 및 윈도우 순위 집계 쿼리 (Style C)
@@ -140,10 +144,10 @@ def get_ctms_ctl_daily_window_agg(params: TemplateFilterParams) -> str:
     # 1) 조건절 사전 수립
     conditions = [
         QueryFilter.where_in("PLANT", params.plant_list),
-        QueryFilter.where_date_between(params.start_date, params.end_date, "MRM_DATE")
+        QueryFilter.where_date_between(params.start_date, params.end_date, "MRM_DATE"),
     ]
     where_clause = QueryFilter.build_where(conditions)
-    
+
     # 2) 단일 Full Query 문자열 내에 CTE 계층 수렴 조립 (쪼개기 절대 금지)
     query = f"""--sql
     WITH base_mrm AS (

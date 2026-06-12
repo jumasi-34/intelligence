@@ -36,9 +36,8 @@ tasks:
     required_context:
       - intelligence/guide/agent-common.md
       - intelligence/guide/3layer-development-process.md
-      - intelligence/guide/testing.md
-      - intelligence/domain/cqms-summary.md
-      - intelligence/domain/cqms-checklist.md
+      - intelligence/guide/testing-verification.md
+      - intelligence/domain/domain-knowledge.md
     expected_artifacts:
       - task.md
       - context-manifest.yaml
@@ -54,9 +53,8 @@ tasks:
     required_context:
       - intelligence/guide/agent-common.md
       - intelligence/guide/3layer-development-process.md
-      - intelligence/guide/testing.md
-      - intelligence/domain/gmes-summary.md
-      - intelligence/domain/gmes-checklist.md
+      - intelligence/guide/testing-verification.md
+      - intelligence/domain/domain-knowledge.md
     expected_artifacts:
       - task.md
       - context-manifest.yaml
@@ -72,9 +70,8 @@ tasks:
     required_context:
       - intelligence/guide/agent-common.md
       - intelligence/guide/3layer-development-process.md
-      - intelligence/guide/testing.md
-      - intelligence/domain/iqm-summary.md
-      - intelligence/domain/iqm-checklist.md
+      - intelligence/guide/testing-verification.md
+      - intelligence/domain/domain-knowledge.md
     expected_artifacts:
       - task.md
       - context-manifest.yaml
@@ -90,9 +87,8 @@ tasks:
     required_context:
       - intelligence/guide/agent-common.md
       - intelligence/guide/3layer-development-process.md
-      - intelligence/guide/testing.md
-      - intelligence/domain/qrs-summary.md
-      - intelligence/domain/qrs-checklist.md
+      - intelligence/guide/testing-verification.md
+      - intelligence/domain/domain-knowledge.md
     expected_artifacts:
       - task.md
       - context-manifest.yaml
