@@ -15,68 +15,39 @@
 
 ## 2. 5대 핵심 영역별 보완 설계안
 
-### ① 테이블 메타데이터 및 DECODE 상수의 JSON 통합 관리
-* **현황**: 테이블명 및 DECODE 변환 딕셔너리가 파이썬 코드(`query_database.py`, `cqms_query.py` 등) 내부에 하드코딩되거나 파이썬 변수로 산재해 있습니다.
+### ① 테이블 메타데이터의 `query_database.py` 중앙 정적 관리
+* **현황**: 테이블명이 코드 곳곳에 산재해 가독성과 자동완성이 다소 파편화되어 있습니다.
 * **보완 설계 및 결합 원칙**:
-  - `app/core/query/query_metadata.json` 파일을 신규 정의하여, **모든 데이터베이스 테이블명**과 **SQL 쿼리 빌드 전용 DECODE 매핑 데이터**를 JSON 포맷으로 일원화 관리합니다.
-  - **1:1 변수명 매핑 수칙**: 테이블 데이터 클래스(예: `DatabricksTables`, `OracleTables`)에서 참조하는 파이썬 변수명(속성명)은 **JSON 내 테이블 키(Key)값과 완전히 일치**시킵니다.
-  - **런타임 동적 바인딩(Dynamic Binding)**: 파이썬의 `query_database.py`는 최초 로드 시점에 이 JSON을 동적으로 파싱하여 각 테이블 클래스 속성에 값을 할당(바인딩)합니다. 이를 통해 변수 누락이나 철자 불일치 에러를 방지합니다.
-  - **JSON 데이터 모델 및 매핑 예시**:
-    ```json
-    {
-      "tables": {
-        "databricks": {
-          "cqms_quality_main": "hkt_system_dw.eqms.cqms_quality_issue",
-          "product_master": "hkt_dw.specification.mas_d_lmastr101"
-        },
-        "sqlite": {
-          "login_log": "user_login"
-        }
-      },
-      "decodes": {
-        "plant_to_oeqg": {
-          "P1": "OEQG_A",
-          "P2": "OEQG_B"
-        }
-      }
-    }
-    ```
-  - **파이썬 동적 로딩 클래스 바인딩 설계(Draft)**:
+  - **정적 중앙 집중화**: 모든 데이터베이스 테이블명은 `.json` 파일에 기술하지 않고, 오직 `app/core/query/query_database.py` 내부의 정적 테이블 데이터 클래스(예: `DatabricksTables`, `SQLiteTables`)에서만 직접 정적으로 변수를 정의하고 유지 관리합니다.
+  - **IDE Intellisense & 타입 안정성 극대화**: 파이썬 정적 클래스 변수로 유지함으로써 개발 단계에서 IDE의 자동완성(Intellisense), 타입 힌트 추적, 정적 코드 분석을 완벽하게 이용할 수 있도록 보장합니다.
+  - **네이밍 규칙 엄수**: 정적 클래스 내의 변수명은 새롭게 정비된 `{시스템}_{도메인}_{세부내용}` 명명 규정(소문자 스네이크 케이스)을 준수하도록 관리합니다.
+  - **테이블 데이터 클래스 설계 구조 예시**:
     ```python
-    import json
-    import os
-
+    @dataclass
     class DatabricksTables:
-        # JSON Key와 1:1 매칭되는 변수명 선언 (Type Hint 제공용)
-        cqms_quality_main: str
-        product_master: str
-
-    # 런타임 동적 바인딩 엔진
-    def _bind_metadata():
-        metadata_path = os.path.join(os.path.dirname(__file__), "query_metadata.json")
-        if not os.path.exists(metadata_path):
-            return
-            
-        with open(metadata_path, "r", encoding="utf-8") as f:
-            data = json.load(f)
-            
-        # JSON의 databricks 키셋을 DatabricksTables 속성으로 동적 이식
-        db_tables = data.get("tables", {}).get("databricks", {})
-        for key, val in db_tables.items():
-            setattr(DatabricksTables, key, val)
-
-    _bind_metadata()
+        """
+        Databricks 테이블 경로 관리 정적 데이터 클래스
+        """
+        # CQMS
+        cqms_qi_main: str = "hkt_system_dw.eqms.cqms_quality_issue"
+        cqms_qi_mcode: str = "hkt_system_dw.eqms.cqms_quality_issue_material"
+        
+        # GMES / Specification
+        gmes_spec_product_master: str = "hkt_dw.specification.mas_d_lmastr101"
+        
+        # CTMS
+        ctms_ctl_result_raw: str = "hkt_system_dw.ctms.ctms_result_data"
     ```
 
 ### ② 공통 상수 관리 파일과의 명확한 역할 분리
-* **규칙**: 상수가 중복되어 스파게티화되는 현상을 근절하기 위해, 기존 공통 상수 파일(`app/core/constants/business.py` 등)과 신규 `query_metadata.json` 간의 책임을 날카롭게 단일화합니다.
+* **규칙**: 상수가 중복되어 스파게티화되는 현상을 근절하기 위해, 기존 공통 상수 파일(`app/core/constants/business.py` 등)과 테이블 관리 파일(`query_database.py`) 간의 책임을 분명히 단일화합니다.
 * **역할 매핑 격리표**:
 
-| 구분 | SQL 종속 상수 데이터 (`query_metadata.json`) | 서비스/UI 비즈니스 상수 데이터 (`constants/business.py`) |
+| 구분 | SQL용 테이블 경로 상수 (`query_database.py`) | 서비스/UI 비즈니스 상수 데이터 (`constants/business.py`) |
 | :--- | :--- | :--- |
-| **성격** | SQL 문법 내부 조립을 위한 정적 자원 | 서비스 비즈니스 규칙, 전처리 공식, UI 필터용 정적 자원 |
-| **대상 예시** | DB 테이블 전체 경로명, SQL DECODE 전용 매핑 딕셔너리 등 | 통계 수식 계수, 공장 도메인 매핑 상수, UI 탭 라벨 리스트 등 |
-| **상호 참조** | 서비스 비즈니스 상수가 SQL 바인딩 상수를 침범하지 않음 | 쿼리 레이어 상수나 테이블명을 서비스/UI 로직이 직접 맵핑하지 않음 |
+| **성격** | SQL 문법 내부 조립을 위한 물리적 테이블 경로 자원 | 서비스 비즈니스 규칙, 전처리 공식, UI 필터용 정적 자원 |
+| **대상 예시** | DB 테이블 전체 경로 주소 문자열 (`DatabricksTables.*` 등) | 통계 수식 계수, 공장 도메인 매핑 상수, UI 탭 라벨 리스트 등 |
+| **상호 참조** | 서비스 비즈니스 상수가 테이블 경로 바인딩을 침범하지 않음 | 테이블 상수 경로 정보를 서비스/UI 로직이 임의로 직접 재정의하지 않음 |
 
 ### ③ CTE 함수의 별도 모듈 관리 및 쪼개기 절대 금지
 * **핵심 제약**: SQL의 가독성을 높인다는 명목으로 CTE(Common Table Expressions) 구문이나 부분 쿼리들을 파이썬 함수/모듈 단위로 잘게 쪼개어 동적 결합하는 행위를 **엄격히 금지**합니다.

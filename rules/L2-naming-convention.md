@@ -108,7 +108,7 @@
   - **잘못된 예시**: `DBTables` (출처 모호), `Databricks_Tables` (스네이크 케이스 혼용)
 * **클래스 내부 테이블 변수명 (Internal Table Variables)**:
   - **공식**: `{시스템}_{도메인}_{세부내용}` (소문자 스네이크 케이스, `snake_case` 적용)
-  - **설명**: JSON Key와 1:1 바인딩되는 클래스 변수명으로, 시스템명, 도메인명, 세부내용 순으로 정갈하게 명명하여 테이블의 출처와 세부 용도를 직관적으로 식별할 수 있도록 합니다.
+  - **설명**: `app/core/query/query_database.py`의 각 테이블 데이터 클래스 내에 직접 정적 변수로 선언되는 이름으로, 시스템명, 도메인명, 세부내용 순으로 정갈하게 명명하여 테이블의 출처와 세부 용도를 직관적으로 식별할 수 있도록 합니다.
   - **올바른 예시**:
     - `cqms_qi_main` (system=cqms, domain=qi, 세부내용=main)
     - `gmes_spec_product_master` (system=gmes, domain=spec, 세부내용=product_master)
