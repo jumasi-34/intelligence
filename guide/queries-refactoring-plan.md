@@ -40,71 +40,90 @@
     ```
 
 ### 2. SQL 조립 및 DECODE 제어용 `query_metadata.json` 설계
-물리적인 테이블 경로명은 파이썬 정적 클래스(`query_database.py`)에서 전담하여 가독성과 Intellisense를 책임지는 한편, 각 테이블의 스키마 명세, 데이터 타입, 각 코드값의 의미(Value) 및 동적 맵핑 변환(DECODE) 규칙 등은 `app/core/query/query_metadata.json` 파일에서 동적으로 유연하게 관리하여 결합도를 최소화합니다.
+물리적인 테이블 경로명은 파이썬 정적 클래스(`query_database.py`)에서 전담하여 가독성과 Intellisense를 책임지는 한편, 각 테이블의 실제 DB 경로, 한글 요약 정보, 참조하는 파이썬 모듈 및 참조 함수 목록, 컬럼별 디스플레이 헤더, 데이터 타입, 디코드(Decode) 여부 및 코드값 맵핑 변환(Value) 규칙 등은 `app/core/query/query_metadata.json` 파일에서 동적으로 유연하게 관리하여 결합도를 최소화합니다.
 
 #### 1) `query_metadata.json` 스키마 및 메타데이터 정의
 - **1단계 Key**: `app/core/query/query_database.py` 내에 정의되어 있는 **테이블 변수명**(예: `cqms_quality_main`, `gmes_spec_product_master` 등). 파이썬 코드상에서 자동완성되는 명칭과 1:1 매핑되어 참조됩니다.
-- **2단계 Key**: 해당 테이블의 물리적 컬럼명(대문자 스네이크 케이스).
-- **컬럼 정보 명세 필드**:
+- **테이블 바로 아래의 요약 및 속성 정보 (2단계)**:
+  - `table_path`: 실제 데이터베이스 내 테이블 물리 경로 (예: `hkt_system_dw.eqms.cqms_quality_issue`)
+  - `description`: 테이블의 비즈니스 역할 및 전반적인 목적에 대한 한글 요약 설명
+  - `referenced_modules`: 이 테이블 정보를 임포트하거나 참조하여 실제 SQL 쿼리를 조립/수행하는 파이썬 모듈 파일 리스트 (예: `["cqms_query.py"]`)
+  - `referenced_functions`: 이 테이블의 쿼리를 구체적으로 호출하고 생성하는 **파이썬 함수명 리스트** (예: `["get_cqms_qi_general_rawdata", "get_cqms_qi_mttc_rawdata"]`) -> 데이터 수정 시 미치는 비즈니스 영향도를 함수 단위까지 정밀 역추적 가능
+  - `columns`: 테이블 내부 컬럼 정보를 통합 관리하는 하위 딕셔너리 객체
+- **`columns` 내의 컬럼 정보 명세 (3단계)**:
+  - Key: 물리적 컬럼명 (대문자 스네이크 케이스)
   - `type`: 컬럼의 데이터 타입 (예: `VARCHAR`, `DATE`, `INTEGER` 등)
   - `description`: 컬럼에 대한 비즈니스 및 기술적 한글 설명
-  - `value` (선택): 카테고리/코드성 컬럼의 경우, 실제 DB에 저장되는 물리 코드값과 그 코드값이 상징하는 실질적인 비즈니스 의미(설명)를 1:1 맵핑한 딕셔너리 객체
-  - `decode_mapping` (선택): 각 물리 코드값에 매핑되는 비즈니스 표기명이나 디코드 대상 명칭을 지정하는 딕셔너리
+  - `display_header`: 조회 결과를 Pandas 데이터프레임으로 변환하여 화면(Grid 등)에 렌더링할 때 기본 적용할 한국어 열 헤더명 (예: `"생산공장"`)
+  - `decode`: **해당 컬럼에 대한 SQL 치환(DECODE / CASE WHEN) 처리 수행 여부 (`true` / `false`)**. 상위 트리에 선언하여 코드 가독성과 빌더 판독 성능을 극대화합니다.
+  - `value` (선택): 카테고리/코드성 컬럼의 상세 의미 맵 객체.
+    - **`decode`가 `true` 인 경우**: `value`에 정의된 코드 Key-Value 사전(예: `"P1": "OEQG_A"`)을 그대로 **SQL 상에서 최종 치환할 타겟 값**으로 사용하여 디코드 쿼리를 빌드합니다.
+    - **`decode`가 `false` 인 경우 (또는 생략 시)**: `value`에 정의된 코드 Key-Value 사전(예: `"P1": "금산 1공장"`)을 단순 코드값의 비즈니스 의미 및 설명 텍스트 정보로 활용합니다.
 
 #### 2) `query_metadata.json` 구성 예시 (Specification)
 ```json
 {
   "cqms_quality_main": {
-    "PLANT": {
-      "type": "VARCHAR",
-      "description": "공장 코드",
-      "value": {
-        "P1": "금산 1공장",
-        "P2": "금산 2공장",
-        "P3": "헝가리 공장"
+    "table_path": "hkt_system_dw.eqms.cqms_quality_issue",
+    "description": "CQMS 품질 이슈 등록 및 결함 진행사항 관리 메인 테이블",
+    "referenced_modules": ["cqms_query.py"],
+    "referenced_functions": [
+      "get_cqms_qi_general_rawdata",
+      "get_cqms_qi_mttc_rawdata"
+    ],
+    "columns": {
+      "PLANT": {
+        "type": "VARCHAR",
+        "description": "공장 코드",
+        "display_header": "생산공장",
+        "decode": true,
+        "value": {
+          "P1": "OEQG_A",
+          "P2": "OEQG_B",
+          "P3": "OEQG_C"
+        }
       },
-      "decode_mapping": {
-        "P1": "OEQG_A",
-        "P2": "OEQG_B",
-        "P3": "OEQG_C"
-      }
-    },
-    "STATUS": {
-      "type": "VARCHAR",
-      "description": "진행 상태 코드",
-      "value": {
-        "OG": "진행 중 (On-going)",
-        "CP": "완료 (Completed)",
-        "PD": "보류 (Pending)"
+      "STATUS": {
+        "type": "VARCHAR",
+        "description": "진행 상태 코드",
+        "display_header": "진행상태",
+        "decode": true,
+        "value": {
+          "OG": "On-going",
+          "CP": "Completed",
+          "PD": "Pending"
+        }
       },
-      "decode_mapping": {
-        "OG": "On-going",
-        "CP": "Completed",
-        "PD": "Pending"
+      "REG_DATE": {
+        "type": "DATE",
+        "description": "등록 일자",
+        "display_header": "등록일"
       }
-    },
-    "REG_DATE": {
-      "type": "DATE",
-      "description": "등록 일자"
     }
   },
   "gmes_spec_product_master": {
-    "M_CODE": {
-      "type": "VARCHAR",
-      "description": "자재 코드"
-    },
-    "DEFECT_CODE": {
-      "type": "VARCHAR",
-      "description": "결함 코드",
-      "value": {
-        "D01": "Tread Cut (트레드 컷)",
-        "D02": "Sidewall Crack (사이드월 크랙)",
-        "D03": "Bead Damage (비드 손상)"
+    "table_path": "hkt_dw.specification.mas_d_lmastr101",
+    "description": "GMES 완제품 및 반제품 마스터 규격 마스터 테이블",
+    "referenced_modules": ["gmes_query.py"],
+    "referenced_functions": [
+      "get_gmes_spec_product_master"
+    ],
+    "columns": {
+      "M_CODE": {
+        "type": "VARCHAR",
+        "description": "자재 코드",
+        "display_header": "자재코드"
       },
-      "decode_mapping": {
-        "D01": "Tread Cut",
-        "D02": "Sidewall Crack",
-        "D03": "Bead Damage"
+      "DEFECT_CODE": {
+        "type": "VARCHAR",
+        "description": "결함 코드",
+        "display_header": "결함구분",
+        "decode": true,
+        "value": {
+          "D01": "Tread Cut",
+          "D02": "Sidewall Crack",
+          "D03": "Bead Damage"
+        }
       }
     }
   }
@@ -112,8 +131,8 @@
 ```
 
 #### 3) 파이썬 런타임 연계 바인딩 가이드
-- **동적 DECODE 쿼리 조립**: `query_metadata.json`에서 테이블 변수명과 컬럼명을 지정하여 `decode_mapping`을 읽어들인 후, `SQLConverter.dict_to_decode_sql(...)` 헬퍼 함수에 전달하면, 자동으로 `CASE WHEN [컬럼명] = 'KEY' THEN 'VALUE' ... ELSE [컬럼명] END` 또는 데이터베이스에 최적화된 `DECODE` SQL 문자열을 생성하여 주입합니다.
-- **코드값 비즈니스 의미 조회 및 검증**: 런타임 시 `value` 딕셔너리를 활용하여 특정 물리 코드의 비즈니스 의미를 로그나 UI 주석, 유효성 검사 등에 동적으로 바인딩하여 안전하게 출력하고 검증할 수 있습니다.
+- **동적 DECODE 쿼리 조립**: `query_metadata.json`에서 특정 컬럼의 속성 중 `"decode": true` 인 대상을 감지합니다. 이 조건이 충족되면 `value`에 작성되어 있는 Key-Value 쌍(예: `{"P1": "OEQG_A", ...}`)을 추출하여 `SQLConverter.dict_to_decode_sql(...)` 헬퍼에 전달하고, 자동으로 `CASE WHEN` 또는 `DECODE` SQL 문자열을 조립해 쿼리 본문에 주입합니다.
+- **코드값 비즈니스 의미 조회 및 화면 헤더 번역**: `"decode": false` 이거나 별도로 코드 정보를 단순 설명 매핑 목적으로 읽어갈 때, `value`의 코드 Key를 통해 본질적인 한글 명칭(예: `"P1"` ➔ `"금산 1공장"`)을 동적으로 화면이나 주석, 로그 등에 바인딩하여 출력합니다. 또한 `display_header` 값을 참고해 Pandas 데이터프레임의 영문 열 제목을 완전 번역하여 화면에 표출합니다.
 
 ---
 * **규칙**: 상수가 중복되어 스파게티화되는 현상을 근절하기 위해, 기존 공통 상수 파일(`app/core/constants/business.py` 등)과 테이블 관리 파일(`query_database.py`) 간의 책임을 분명히 단일화합니다.
