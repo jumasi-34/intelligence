@@ -40,7 +40,7 @@
     ```
 
 ### 2. SQL 조립 및 DECODE 제어용 `query_metadata.json` 설계
-물리적인 테이블 경로명은 파이썬 정적 클래스(`query_database.py`)에서 전담하여 가독성과 Intellisense를 책임지는 한편, 각 테이블의 스키마 명세, 데이터 타입, 카테고리 정보 및 동적 맵핑 변환(DECODE) 규칙 등은 `app/core/query/query_metadata.json` 파일에서 동적으로 유연하게 관리하여 결합도를 최소화합니다.
+물리적인 테이블 경로명은 파이썬 정적 클래스(`query_database.py`)에서 전담하여 가독성과 Intellisense를 책임지는 한편, 각 테이블의 스키마 명세, 데이터 타입, 각 코드값의 의미(Value) 및 동적 맵핑 변환(DECODE) 규칙 등은 `app/core/query/query_metadata.json` 파일에서 동적으로 유연하게 관리하여 결합도를 최소화합니다.
 
 #### 1) `query_metadata.json` 스키마 및 메타데이터 정의
 - **1단계 Key**: `app/core/query/query_database.py` 내에 정의되어 있는 **테이블 변수명**(예: `cqms_quality_main`, `gmes_spec_product_master` 등). 파이썬 코드상에서 자동완성되는 명칭과 1:1 매핑되어 참조됩니다.
@@ -48,7 +48,7 @@
 - **컬럼 정보 명세 필드**:
   - `type`: 컬럼의 데이터 타입 (예: `VARCHAR`, `DATE`, `INTEGER` 등)
   - `description`: 컬럼에 대한 비즈니스 및 기술적 한글 설명
-  - `categories` (선택): 카테고리형(공통코드, 구분자 등) 컬럼인 경우, 가질 수 있는 실제 물리 코드값들의 리스트
+  - `value` (선택): 카테고리/코드성 컬럼의 경우, 실제 DB에 저장되는 물리 코드값과 그 코드값이 상징하는 실질적인 비즈니스 의미(설명)를 1:1 맵핑한 딕셔너리 객체
   - `decode_mapping` (선택): 각 물리 코드값에 매핑되는 비즈니스 표기명이나 디코드 대상 명칭을 지정하는 딕셔너리
 
 #### 2) `query_metadata.json` 구성 예시 (Specification)
@@ -58,7 +58,11 @@
     "PLANT": {
       "type": "VARCHAR",
       "description": "공장 코드",
-      "categories": ["P1", "P2", "P3"],
+      "value": {
+        "P1": "금산 1공장",
+        "P2": "금산 2공장",
+        "P3": "헝가리 공장"
+      },
       "decode_mapping": {
         "P1": "OEQG_A",
         "P2": "OEQG_B",
@@ -68,7 +72,11 @@
     "STATUS": {
       "type": "VARCHAR",
       "description": "진행 상태 코드",
-      "categories": ["OG", "CP", "PD"],
+      "value": {
+        "OG": "진행 중 (On-going)",
+        "CP": "완료 (Completed)",
+        "PD": "보류 (Pending)"
+      },
       "decode_mapping": {
         "OG": "On-going",
         "CP": "Completed",
@@ -88,7 +96,11 @@
     "DEFECT_CODE": {
       "type": "VARCHAR",
       "description": "결함 코드",
-      "categories": ["D01", "D02", "D03"],
+      "value": {
+        "D01": "Tread Cut (트레드 컷)",
+        "D02": "Sidewall Crack (사이드월 크랙)",
+        "D03": "Bead Damage (비드 손상)"
+      },
       "decode_mapping": {
         "D01": "Tread Cut",
         "D02": "Sidewall Crack",
@@ -101,7 +113,7 @@
 
 #### 3) 파이썬 런타임 연계 바인딩 가이드
 - **동적 DECODE 쿼리 조립**: `query_metadata.json`에서 테이블 변수명과 컬럼명을 지정하여 `decode_mapping`을 읽어들인 후, `SQLConverter.dict_to_decode_sql(...)` 헬퍼 함수에 전달하면, 자동으로 `CASE WHEN [컬럼명] = 'KEY' THEN 'VALUE' ... ELSE [컬럼명] END` 또는 데이터베이스에 최적화된 `DECODE` SQL 문자열을 생성하여 주입합니다.
-- **카테고리 유효성 검증 (Validation)**: 필터링 조건 조립 전, `categories` 목록을 참조하여 입력된 파라미터가 유효한 범주 내에 속해 있는지 런타임 검증을 수행할 수 있습니다.
+- **코드값 비즈니스 의미 조회 및 검증**: 런타임 시 `value` 딕셔너리를 활용하여 특정 물리 코드의 비즈니스 의미를 로그나 UI 주석, 유효성 검사 등에 동적으로 바인딩하여 안전하게 출력하고 검증할 수 있습니다.
 
 ---
 * **규칙**: 상수가 중복되어 스파게티화되는 현상을 근절하기 위해, 기존 공통 상수 파일(`app/core/constants/business.py` 등)과 테이블 관리 파일(`query_database.py`) 간의 책임을 분명히 단일화합니다.
