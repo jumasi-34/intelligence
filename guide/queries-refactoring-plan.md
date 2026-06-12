@@ -15,7 +15,7 @@
 
 ## 2. 5대 핵심 영역별 보완 설계안
 
-### ① 테이블 메타데이터의 `query_database.py` 중앙 정적 관리
+### 1. 테이블 메타데이터의 `query_database.py` 중앙 정적 관리
 * **현황**: 테이블명이 코드 곳곳에 산재해 가독성과 자동완성이 다소 파편화되어 있습니다.
 * **보완 설계 및 결합 원칙**:
   - **정적 중앙 집중화**: 모든 데이터베이스 테이블명은 `.json` 파일에 기술하지 않고, 오직 `app/core/query/query_database.py` 내부의 정적 테이블 데이터 클래스(예: `DatabricksTables`, `SQLiteTables`)에서만 직접 정적으로 변수를 정의하고 유지 관리합니다.
@@ -39,54 +39,69 @@
         ctms_ctl_result_raw: str = "hkt_system_dw.ctms.ctms_result_data"
     ```
 
-### ❶ SQL 조립 및 DECODE 제어용 `query_metadata.json` 설계
-물리적인 테이블 경로명은 파이썬 정적 클래스(`query_database.py`)에서 전담하여 가독성과 Intellisense를 책임지는 한편, 데이터의 규칙적인 맵핑 변환(DECODE)이나 쿼리 런타임 제어 설정 등은 `app/core/query/query_metadata.json` 파일에서 동적으로 유연하게 관리하여 결합도를 최소화합니다.
+### 2. SQL 조립 및 DECODE 제어용 `query_metadata.json` 설계
+물리적인 테이블 경로명은 파이썬 정적 클래스(`query_database.py`)에서 전담하여 가독성과 Intellisense를 책임지는 한편, 각 테이블의 스키마 명세, 데이터 타입, 카테고리 정보 및 동적 맵핑 변환(DECODE) 규칙 등은 `app/core/query/query_metadata.json` 파일에서 동적으로 유연하게 관리하여 결합도를 최소화합니다.
 
 #### 1) `query_metadata.json` 스키마 및 메타데이터 정의
-- **`decodes`**: SQL 쿼리 조립 시 `CASE WHEN` 또는 `DECODE` 절에 사용될 핵심 업무 매핑 상수로, 파이썬 코드 변경 없이 맵핑 정보만 손쉽게 원격 제어할 수 있도록 보장합니다.
-- **`settings`**: 데이터베이스 쿼리 실행의 디폴트 조회 제한수(`default_row_limit`), 타임아웃, 캐시 타임아웃 시간 등 런타임 상수 설정을 다룹니다.
-- **`dimension_mappings` (차원 매핑)**: 시스템마다 날짜 컬럼명(`REG_DATE` vs `MRM_DATE`)이나 공장 컬럼명이 제각기 다를 때, 공통 필터 클래스에서 해당 도메인별 표준 컬럼을 인식하고 주입할 수 있도록 돕는 메타 사전입니다.
+- **1단계 Key**: `app/core/query/query_database.py` 내에 정의되어 있는 **테이블 변수명**(예: `cqms_quality_main`, `gmes_spec_product_master` 등). 파이썬 코드상에서 자동완성되는 명칭과 1:1 매핑되어 참조됩니다.
+- **2단계 Key**: 해당 테이블의 물리적 컬럼명(대문자 스네이크 케이스).
+- **컬럼 정보 명세 필드**:
+  - `type`: 컬럼의 데이터 타입 (예: `VARCHAR`, `DATE`, `INTEGER` 등)
+  - `description`: 컬럼에 대한 비즈니스 및 기술적 한글 설명
+  - `categories` (선택): 카테고리형(공통코드, 구분자 등) 컬럼인 경우, 가질 수 있는 실제 물리 코드값들의 리스트
+  - `decode_mapping` (선택): 각 물리 코드값에 매핑되는 비즈니스 표기명이나 디코드 대상 명칭을 지정하는 딕셔너리
 
 #### 2) `query_metadata.json` 구성 예시 (Specification)
 ```json
 {
-  "decodes": {
-    "plant_to_oeqg": {
-      "P1": "OEQG_A",
-      "P2": "OEQG_B",
-      "P3": "OEQG_C"
+  "cqms_quality_main": {
+    "PLANT": {
+      "type": "VARCHAR",
+      "description": "공장 코드",
+      "categories": ["P1", "P2", "P3"],
+      "decode_mapping": {
+        "P1": "OEQG_A",
+        "P2": "OEQG_B",
+        "P3": "OEQG_C"
+      }
     },
-    "defect_code_map": {
-      "D01": "Tread Cut",
-      "D02": "Sidewall Crack",
-      "D03": "Bead Damage"
+    "STATUS": {
+      "type": "VARCHAR",
+      "description": "진행 상태 코드",
+      "categories": ["OG", "CP", "PD"],
+      "decode_mapping": {
+        "OG": "On-going",
+        "CP": "Completed",
+        "PD": "Pending"
+      }
+    },
+    "REG_DATE": {
+      "type": "DATE",
+      "description": "등록 일자"
     }
   },
-  "settings": {
-    "databricks": {
-      "default_row_limit": 100000,
-      "query_timeout_seconds": 180,
-      "cache_ttl_seconds": 3600
-    }
-  },
-  "dimension_mappings": {
-    "cqms_qi": {
-      "date_column": "QI.REG_DATE",
-      "plant_column": "QI.PLANT",
-      "mcode_column": "M.M_CODE"
+  "gmes_spec_product_master": {
+    "M_CODE": {
+      "type": "VARCHAR",
+      "description": "자재 코드"
     },
-    "ctms_ctl": {
-      "date_column": "MRM_DATE",
-      "plant_column": "PLANT",
-      "mcode_column": "MFG_CD"
+    "DEFECT_CODE": {
+      "type": "VARCHAR",
+      "description": "결함 코드",
+      "categories": ["D01", "D02", "D03"],
+      "decode_mapping": {
+        "D01": "Tread Cut",
+        "D02": "Sidewall Crack",
+        "D03": "Bead Damage"
+      }
     }
   }
 }
 ```
 
 #### 3) 파이썬 런타임 연계 바인딩 가이드
-- **DECODE 쿼리 주입**: `SQLConverter.dict_to_decode_sql(...)` 헬퍼 함수를 통해 JSON 내의 특정 디코드 변환 딕셔너리를 자동으로 SQL 문자열로 조립하여 주입합니다.
-- **차원 매핑 필터**: `QueryFilter` 내에서 `dimension_mappings` 구조를 인지하여, 도메인 정보만 주면 알맞은 컬럼명으로 AND 조건절을 동적으로 조립해 주도록 설계하여 중복 코드를 제거합니다.
+- **동적 DECODE 쿼리 조립**: `query_metadata.json`에서 테이블 변수명과 컬럼명을 지정하여 `decode_mapping`을 읽어들인 후, `SQLConverter.dict_to_decode_sql(...)` 헬퍼 함수에 전달하면, 자동으로 `CASE WHEN [컬럼명] = 'KEY' THEN 'VALUE' ... ELSE [컬럼명] END` 또는 데이터베이스에 최적화된 `DECODE` SQL 문자열을 생성하여 주입합니다.
+- **카테고리 유효성 검증 (Validation)**: 필터링 조건 조립 전, `categories` 목록을 참조하여 입력된 파라미터가 유효한 범주 내에 속해 있는지 런타임 검증을 수행할 수 있습니다.
 
 ---
 * **규칙**: 상수가 중복되어 스파게티화되는 현상을 근절하기 위해, 기존 공통 상수 파일(`app/core/constants/business.py` 등)과 테이블 관리 파일(`query_database.py`) 간의 책임을 분명히 단일화합니다.
@@ -98,12 +113,12 @@
 | **대상 예시** | DB 테이블 전체 경로 주소 문자열 (`DatabricksTables.*` 등) | 통계 수식 계수, 공장 도메인 매핑 상수, UI 탭 라벨 리스트 등 |
 | **상호 참조** | 서비스 비즈니스 상수가 테이블 경로 바인딩을 침범하지 않음 | 테이블 상수 경로 정보를 서비스/UI 로직이 임의로 직접 재정의하지 않음 |
 
-### ③ CTE 함수의 별도 모듈 관리 및 쪼개기 절대 금지
+### 3. CTE 함수의 별도 모듈 관리 및 쪼개기 절대 금지
 * **핵심 제약**: SQL의 가독성을 높인다는 명목으로 CTE(Common Table Expressions) 구문이나 부분 쿼리들을 파이썬 함수/모듈 단위로 잘게 쪼개어 동적 결합하는 행위를 **엄격히 금지**합니다.
 * **사유**: CTE 구문이 잘게 쪼개지면 전체 SQL 구문을 조감하고 쿼리 실행 계획(Execution Plan)을 디버깅하기가 극도로 어려워집니다.
 * **수칙**: 반드시 하나의 쿼리 함수 내에서 **완성된 형태의 단일 Full Query 대형 문자열**로 일목요연하게 조립되어 가독성을 확보하도록 제어해야 합니다.
 
-### ④ SQL 유형별 표준 작성 스타일 (2~3개 관리)
+### 4. SQL 유형별 표준 작성 스타일 (2~3개 관리)
 모든 쿼리 함수를 획일화된 하나의 포맷에 끼워 맞추지 않고, SQL의 구조와 동적 조건의 복잡성에 따라 **3가지 표준 스타일**로 분류하여 정형화합니다.
 
 #### Style A: 단순 조회 및 단일 테이블형 (Simple Table Target)
@@ -168,7 +183,7 @@ def get_ctms_ctl_general_rawdata(params: CTMSProcessingParams) -> str:
     """
 ```
 
-### ⑤ 네이밍 컨벤션 표준화 (Comprehensive Naming Standards)
+### 5. 네이밍 컨벤션 표준화 (Comprehensive Naming Standards)
 쿼리 레이어 전반의 일관성 향상과 파편화 방지를 위해 6가지 영역에 대한 명명 표준을 엄밀히 선언합니다.
 
 #### 1) 테이블 변수명 데이터 클래스 및 변수명 (Table Data Classes & Variables)
