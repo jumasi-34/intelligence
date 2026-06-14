@@ -26,6 +26,7 @@
 | `common-column-metadata-design.md` | 하드코딩을 배제하고 메타데이터로부터 UI 한글명 및 소수점 설정을 동적으로 주입받는 컬럼 configs 설계 가이드 |
 | `manual-setup.md` | Oracle client 가동 환경, Miniconda 가상환경 구축 등 초동 온보딩을 위한 수동 설정 설명서 |
 | `query_module_template.py` | 쿼리 빌더 및 동적 쿼리 필터 클래스를 활용하는 쿼리 모듈 구현용 표준 파이썬 템플릿 |
+| `menu-navigation-definition.md` | CQ-BI 애플리케이션의 네비게이션 메뉴 구조와 카테고리 정의, 그리고 페이지 매핑 표준에 대한 지침 |
 
 ---
 
