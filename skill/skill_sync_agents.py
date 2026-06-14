@@ -1,11 +1,15 @@
-#!/usr/bin/env python3
+#!/home/jumasi/miniconda3/envs/goeq/bin/python
+# -*- coding: utf-8 -*-
 import json
 import os
 import re
 
-AGENT_DIR = os.path.dirname(os.path.abspath(__file__))
+# skill/ 내부에 있으므로, 상위 폴더인 intelligence/ 하위의 agent/ 디렉터리 경로를 명확히 역산
+SKILL_DIR = os.path.dirname(os.path.abspath(__file__))
+AGENT_DIR = os.path.join(os.path.dirname(SKILL_DIR), "agent")
+
 REGISTRY_PATH = os.path.join(AGENT_DIR, "agents_registry.json")
-MANIFEST_PATH = os.path.join(AGENT_DIR, "AGENT_MANIFEST.md")
+MANIFEST_PATH = os.path.join(AGENT_DIR, "GEMINI.md")
 
 # 통합 에이전트 협업 및 체이닝 다이어그램 (SSOT Mermaid)
 INTEGRATED_MERMAID = """```mermaid
@@ -36,6 +40,7 @@ flowchart TD
     PagePlotBuilder & QueryPreBuilder -->|"8. 코드 초안 제출"| CodeReviewer
     CodeReviewer -->|"9. 정적 피드백 & 리팩토링 가이드(Diff)"| QueryPreBuilder & PagePlotBuilder
     
+    %% 스크립트 실행 동선과 가드레일 제어
     CodeReviewer -->|"10. 리뷰 정합성 검증 완료"| QualityEvaluator
     QualityEvaluator -->|"11. 하네스 테스트 & 린트/PRD 정량 평가"| QualityEvaluator
     
@@ -101,7 +106,6 @@ def update_file_section(filepath, start_marker, end_marker, replacement_content)
         return False
 
     content = ""
-    # 한글 마크다운에 적합한 인코딩만 지정 (디코딩 가로채기를 막기 위해 latin1, utf-16 제거)
     encodings = ["utf-8", "cp949", "euc-kr"]
     loaded = False
     current_encoding = "utf-8"

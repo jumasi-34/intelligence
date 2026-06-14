@@ -189,6 +189,7 @@ flowchart TD
     PagePlotBuilder & QueryPreBuilder -->|"8. 코드 초안 제출"| CodeReviewer
     CodeReviewer -->|"9. 정적 피드백 & 리팩토링 가이드(Diff)"| QueryPreBuilder & PagePlotBuilder
     
+    %% 스크립트 실행 동선과 가드레일 제어
     CodeReviewer -->|"10. 리뷰 정합성 검증 완료"| QualityEvaluator
     QualityEvaluator -->|"11. 하네스 테스트 & 린트/PRD 정량 평가"| QualityEvaluator
     

@@ -1,15 +1,39 @@
-# AI Agent Orator: AGENT_MANIFEST.md
+# GEMINI.md (agent/ 로컬 가이드라인 및 인덱스)
 
-이 매니페스트는 프로젝트에 정의된 핵심 개발 에이전트들의 구동 트리거(Trigger), 역할(Role), 필수 참고 맥락(Required Context), 행위 한계(Allowed/Forbidden Actions), 그리고 검증 게이트(Verification)를 일원화하여 조망하고 라우팅하는 중앙 관리 매니페스트입니다.
+이 문서는 `intelligence/agent/` (지능 및 페르소나 레이어) 고유의 로컬 규칙과 보유 파일 정보를 신속히 인지하기 위한 마이크로 가이드라인입니다.
 
-> [!IMPORTANT]
-> 본 매니페스트는 `intelligence/agent/AGENT_MANIFEST.md` 단 한 곳에만 존재하며, 프로젝트 내 모든 에이전트 위계, 라우팅 및 통제 규칙의 **단일 진실 공급원(SSOT)**으로 동작합니다. 중복 관리를 피하기 위해 다른 경로(예: `intelligence/rules/` 등)에 임의로 복제하지 마십시오.
+본 문서는 인텔리전스 개정 표준에 의거하여 기존 `AGENT_MANIFEST.md`를 전격 흡수/통합하였으며, **프로젝트 내 모든 에이전트의 역할 명세 및 오케스트레이션 라우팅 맵의 단일 진실 공급원(SSOT)** 역할을 전담 수행합니다.
 
 ---
 
-## 1. 에이전트 라우팅 및 표준 매니페스트 (Central Routing Table)
+## 1. 로컬 핵심 제약 (Local Rules)
 
-현재 프로젝트는 **최상위 기획 및 조율 전담 에이전트(Planner Agent)**, **실제 구현을 수행하는 빌더 에이전트(Builder Agent)** 2종, 그리고 개발 무결성과 품질 정량화를 교차 지원하는 **서브에이전트(Sub-Agent)** 4종 체계로 위계를 명확히 구분하여 운영됩니다.
+* **순수 지능 격리 원칙 (No-Code Modification)**: 
+  * 본 폴더에는 어떠한 파이썬 스크립트 등 **실행 가능한 소스 코드**를 둘 수 없습니다. (실행 가능한 도구 및 스크립트는 `skill/` 로 격리되어야 함)
+  * 모든 파일은 에이전트의 정체성, 프롬프트, 위계 구성을 나타내는 마크다운(`.md`) 또는 JSON 포맷만 허용됩니다.
+* **자동 동기화 프로토콜 준수**: 
+  * 에이전트들의 역할 변경이나 메타데이터 변경 시, 반드시 `agents_registry.json`을 수정하고 `python intelligence/skill/skill_sync_agents.py` 스크립트를 실행하여 본 문서 내의 에이전트 정보 표 및 다이어그램을 일괄 자동 동기화해야 합니다. 본 파일의 렌더링 영역을 수동 수정하지 마십시오.
+
+---
+
+## 2. 활성 파일 목록 인덱스 (Active Files)
+
+| 파일명 | 파일의 본질적 역할 및 책임 (1줄 요약) |
+| :--- | :--- |
+| `agents_registry.json` | 에이전트 명세의 단일 진실 공급원 (JSON) |
+| `planner-orchestrator.md` | 최상위 기획 및 PRD 설계를 지휘하는 에이전트 상세 가이드 |
+| `builder-query-preprocessor.md` | SQL 설계 및 Pandas 데이터프레임 전처리를 수행하는 에이전트 가이드 |
+| `builder-page-plot-builder.md` | Streamlit 화면 구성 및 Plotly 시각화를 조립하는 에이전트 가이드 |
+| `analyst-table-eda.md` | 신규 테이블 등록 시 사전 정량/정성 브리핑을 지원하는 분석가 가이드 |
+| `analyst-metadata-dictionary.md` | 코드 명명 및 스키마-코드 1:1 컬럼 정합성을 검역하는 분석가 가이드 |
+| `builder-code-reviewer.md` | 파이썬 소스 코드 정적 정합성 및 Diff 개선안을 제공하는 리뷰어 가이드 |
+| `quality-evaluator.md` | 하네스 테스트 및 PRD 정량 평가를 전담하는 최종 평가자 가이드 |
+
+---
+
+## 3. 에이전트 라우팅 및 표준 매니페스트 (Central Routing Table)
+
+현재 프로젝트는 **최상위 기획 및 조율 전담 에이전트(Planner Agent)**, **실제 구현을 수행하는 빌더 에이전트(Builder Agent)**, 그리고 개발 무결성과 품질 정량화를 교차 지원하는 **서브에이전트(Sub-Agent)** 체계로 위계를 명확히 구분하여 운영됩니다.
 
 <!-- START_AGENT_TABLE -->
 | Trigger | Agent | Required Context | Allowed Actions | Forbidden Actions | Verification | Output |
@@ -25,26 +49,17 @@
 
 ---
 
-## 2. 예외 에스컬레이션 계약 (Escalation Protocol)
+## 4. 예외 에스컬레이션 계약 (Escalation Protocol)
 
 모든 에이전트는 다음 예외 조항 발생 시 즉시 자율 동작을 멈추고 사람(수동 관리자)에게 통제권을 인계해야 합니다.
 
 1. **품질 검증 실패 (`quality-evaluator` 판정 Fail)**: 평가 에이전트의 품질 스코어가 90점 미만이거나 하네스 테스트 실패 시, 개발 빌더 및 리뷰어에게 회부하여 결함을 패치하도록 자동 에스컬레이션하고 최종 병합은 사람의 승인 하에 전면 대기합니다.
 2. **보안 가이드라인 침해**: 코드 내 환경변수(DB 접속 정보, 비밀 토큰 등)가 하드코딩되거나 로그에 노출될 위험 감지 시 가차없이 실행을 중단합니다.
-3. **리스크 위험도 최고 등급 (`Risk Level: High`)**: DB 마이그레이션이 수반되거나 권한 체계가 변동되는 패치는 절대 수동 검토 전 자동 승인 처리를 금지합니다.
+3. **리스크 위험도 최고 등급 (Risk Level: High)**: DB 마이그레이션이 수반되거나 권한 체계가 변동되는 패치는 절대 수동 검토 전 자동 승인 처리를 금지합니다.
 
 ---
 
-## 3. PR 게이트 연결 규칙 (PR Gate Contract)
-
-모든 AI 생성 및 조립 코드는 검증을 통과해야 하며, 다음의 병합 정책을 고정하여 준수합니다.
-
-- **Low Risk**: `quality-evaluator` 등급이 `Pass` (90점 이상, 린트/테스트 에러 0건) 이면 즉시 병합 가능.
-- **Medium/High Risk**: `quality-evaluator`가 `Pass`를 선언하더라도, 반드시 사람(Human Contributor)의 수동 소스 리뷰 및 롤백 플랜 확인 완료 후 최종 병합 가능.
-
----
-
-## 4. 에이전트 협업 및 체이닝 (Agent Collaboration & Chaining)
+## 5. 에이전트 협업 및 체이닝 (Agent Chaining Diagram)
 
 <!-- START_AGENT_CHAINING -->
 ```mermaid
@@ -75,6 +90,7 @@ flowchart TD
     PagePlotBuilder & QueryPreBuilder -->|"8. 코드 초안 제출"| CodeReviewer
     CodeReviewer -->|"9. 정적 피드백 & 리팩토링 가이드(Diff)"| QueryPreBuilder & PagePlotBuilder
     
+    %% 스크립트 실행 동선과 가드레일 제어
     CodeReviewer -->|"10. 리뷰 정합성 검증 완료"| QualityEvaluator
     QualityEvaluator -->|"11. 하네스 테스트 & 린트/PRD 정량 평가"| QualityEvaluator
     
@@ -82,3 +98,13 @@ flowchart TD
     QualityEvaluator -->|"12. Fail (재수정 요망)"| QueryPreBuilder & PagePlotBuilder
 ```
 <!-- END_AGENT_CHAINING -->
+
+---
+
+## 6. 변경 이력 (Changelog)
+
+* **2026-06-14**:
+  * [REFACTOR] `AGENT_MANIFEST.md`를 전격 영구 폐지하고, 해당 파일이 하던 에이전트 정보 표 및 체이닝 협업 관계를 본 `agent/GEMINI.md` 로 전격 흡수/통합 완료 (문서 중복 제어 및 정비 최적화).
+  * [Feat] 에이전트와 스킬의 완전한 역할 분리 원칙에 의거하여, `sync_agents.py` 실행형 스크립트를 `skill/skill_sync_agents.py`로 물리적 이관 완료.
+  * [Refactor] `analyst-table-eda.md` 내 수동 쿼리/집계 가이드를 `skill/` 하위 스킬을 호출하도록 정향 리팩토링 완료.
+  * [Feat] 에이전트 폴더 전용 `GEMINI.md` 마이크로 가이드라인 최초 수립 및 비치.

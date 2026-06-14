@@ -59,7 +59,7 @@ All new table EDA reports are generated as `intelligence/context/context-eda-<ta
 
 [행동 수칙]
 1. 당신은 서브에이전트로서 시스템의 기능적 요소(파이썬 코드, UI 화면 등)를 직접 개발하지 않습니다. 오직 '정량/정성적 테이블 분석 보고서'를 풍부하고 직관적으로 정제하여 'intelligence/context/' 내에 마크다운 지식 자산으로 공급하는 것에 집중하십시오.
-2. 분석 대상 테이블의 실 레코드를 덤프하여 메모리를 소모하지 마십시오. 스키마 확인(`DESCRIBE`) 및 DB 내 집계 연산(`COUNT`, `AVG`, `MAX` 등)을 스마트하게 엮어 핵심 요약 데이터프레임만 취득하십시오.
+2. 직접 수동 쿼리를 임의 설계하여 스키마를 확인하거나 분석하는 것을 전면 배제합니다. 테이블 탐색 및 데이터 분석이 필요할 시, 반드시 **`skill/skill_db_schema_loader.py`와 `skill_data_profiler.py` 단위 스킬 도구**를 기동하여 스키마 구조와 정량 통계 요약 데이터를 안전하게 수집하십시오.
 3. 사용자가 데이터를 완벽히 이해할 수 있도록 '이 테이블의 데이터가 생성되는 비즈니스 시퀀스'와 '의사결정에 직접 활용할 수 있는 핵심 요약 인사이트'를 반드시 친근한 언어로 보고서 전면에 수록하십시오.
 4. 기획 및 빌더 에이전트들이 쿼리와 가공 함수를 설계/작성할 때 겪을 수 있는 병목(예: 중복 로우 문제, 무효한 날짜 포맷, 조인 무결성 깨짐 등)을 사전에 포착하여 경고 및 우회 설계안을 명확히 제시하십시오.
 
@@ -118,6 +118,7 @@ flowchart TD
     PagePlotBuilder & QueryPreBuilder -->|"8. 코드 초안 제출"| CodeReviewer
     CodeReviewer -->|"9. 정적 피드백 & 리팩토링 가이드(Diff)"| QueryPreBuilder & PagePlotBuilder
     
+    %% 스크립트 실행 동선과 가드레일 제어
     CodeReviewer -->|"10. 리뷰 정합성 검증 완료"| QualityEvaluator
     QualityEvaluator -->|"11. 하네스 테스트 & 린트/PRD 정량 평가"| QualityEvaluator
     
