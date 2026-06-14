@@ -12,9 +12,8 @@
 intelligence/
 ├── README.md                  # 본 인텔리전스 레이어 종합 안내서
 ├── agent/                     # 자율 작업 및 의사결정을 수행하는 에이전트 설계 공간
-│   ├── AGENT_MANIFEST.md      # 에이전트 협업 관계 및 역할 매니페스트
-│   ├── agents_registry.json   # 에이전트 명세 단일 진실 공급원 (JSON)
-│   └── sync_agents.py         # 레지스트리 기반 마크다운 및 매니페스트 동기화 엔진
+│   ├── GEMINI.md              # 에이전트 협업 관계 및 역할 매니페스트 통합 원장 (SSOT)
+│   └── agents_registry.json   # 에이전트 명세 단일 진실 공급원 (JSON)
 │
 ├── domain/                    # 비즈니스 도메인 지식 베이스
 │   └── domain-knowledge.md    # 6대 품질 도메인 지표 및 규칙 연합 지식 원장 (SSOT)
@@ -25,7 +24,6 @@ intelligence/
 │
 ├── guide/                     # 애플리케이션 개발 프로세스 및 핵심 가이드라인
 │   ├── 3layer-development-process.md # 3-Layer 물리 격리 및 최초 보안 규정
-│   ├── agent-common.md               # AI 에이전트 공통 준수 및 Git 커밋 표준 가이드
 │   ├── error-handling.md             # 에러 격리(Error Boundary) 및 SQLite 로깅 가이드
 │   ├── testing-verification.md       # 테스트 격리 원칙, Golden Schema 및 정적 검증 가이드
 │   └── (기타 템플릿 및 양식 문서)
@@ -50,7 +48,7 @@ intelligence/
 
 ### (1) agent/ (자율 에이전트 레이어)
 * **역할**: Planner, Builder, Analyst, Evaluator 등 구체적인 역할을 지닌 지능형 서브에이전트가 배치되어 역할을 수행합니다.
-* **동기화**: 에이전트들의 역할이나 협업 관계가 변경될 때 마크다운 가이드를 직접 수정하지 않고, `agents_registry.json`을 수정한 뒤 `python sync_agents.py` 스크립트를 기동하여 모든 상세 가이드와 `AGENT_MANIFEST.md` 표/다이어그램을 자동 동기화합니다.
+* **동기화**: 에이전트들의 역할이나 협업 관계가 변경될 때 마크다운 가이드를 직접 수정하지 않고, `agents_registry.json`을 수정한 뒤 `python skill/skill_sync_agents.py` 스크립트를 기동하여 모든 상세 가이드와 `agent/GEMINI.md` 표/다이어그램을 자동 동기화합니다.
 
 ### (2) domain/ (도메인 지식 베이스)
 * **SSOT 문서**: `domain/domain-knowledge.md`

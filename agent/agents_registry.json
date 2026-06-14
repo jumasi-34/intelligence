@@ -6,7 +6,6 @@
       "trigger": "사용자 요구사항 수집 및<br>PRD 설계 및 관리<br>[기획 에이전트]",
       "contexts": [
         "L2-architecture.md",
-        "agent-common.md",
         "prd-template.md"
       ],
       "allowed": [
@@ -23,17 +22,16 @@
         "intelligence/prd/prd-*.md"
       ],
       "connections": [
-        "builder-query-preprocessor",
-        "builder-page-plot-builder"
+        "query-preprocessor",
+        "page-plot-builder"
       ]
     },
-    "builder-query-preprocessor": {
+    "query-preprocessor": {
       "name": "Query & Preprocessing Builder Agent",
       "category": "Builder Agent",
       "trigger": "SQL 쿼리 설계 및<br>데이터 전처리 개발<br>[빌더 에이전트]",
       "contexts": [
         "L2-architecture.md",
-        "agent-common.md",
         "prd-*.md"
       ],
       "allowed": [
@@ -49,17 +47,16 @@
         "app/service/*_df.py"
       ],
       "connections": [
-        "builder-page-plot-builder",
-        "builder-code-reviewer"
+        "page-plot-builder",
+        "code-reviewer"
       ]
     },
-    "builder-page-plot-builder": {
+    "page-plot-builder": {
       "name": "Page & Plot Builder Agent",
       "category": "Builder Agent",
       "trigger": "Streamlit 화면 빌딩<br>및 Plotly 시각화<br>[빌더 에이전트]",
       "contexts": [
         "L2-architecture.md",
-        "agent-common.md",
         "prd-*.md"
       ],
       "allowed": [
@@ -78,16 +75,15 @@
         "app/core/page/config_pages.py"
       ],
       "connections": [
-        "builder-code-reviewer"
+        "code-reviewer"
       ]
     },
-    "analyst-table-eda": {
+    "table-eda": {
       "name": "Table EDA Analyst",
       "category": "Sub-Agent",
       "trigger": "신규 테이블 등록 시<br>사전 브리핑 및 EDA<br>[분석가 서브에이전트]",
       "contexts": [
-        "L2-architecture.md",
-        "agent-common.md"
+        "L2-architecture.md"
       ],
       "allowed": [
         "본격 개발 착수 전, 사용자 및 개발 에이전트를 위한 충분하고 정교한 테이블 사전 브리핑 지원",
@@ -107,14 +103,13 @@
         "planner-orchestrator"
       ]
     },
-    "analyst-metadata-dictionary": {
+    "metadata-dictionary": {
       "name": "Metadata Dictionary Analyst",
       "category": "Sub-Agent",
       "trigger": "코드 명명 정합성 검사 및<br>스키마-코드 사전 관리<br>[사전/사후 검역 서브에이전트]",
       "contexts": [
         "L2-naming-convention.md",
-        "L2-business-constants.md",
-        "agent-common.md"
+        "L2-business-constants.md"
       ],
       "allowed": [
         "파일, 함수, 변수가 3-Layer 명명 규정을 지키는지 검증",
@@ -132,16 +127,16 @@
       ],
       "connections": [
         "planner-orchestrator",
-        "builder-query-preprocessor",
-        "builder-page-plot-builder"
+        "query-preprocessor",
+        "page-plot-builder"
       ]
     },
-    "builder-code-reviewer": {
+    "code-reviewer": {
       "name": "Code Reviewer Agent",
       "category": "Sub-Agent",
       "trigger": "아키텍처 및 3-Layer<br>정적 코드 리뷰 수행<br>[리뷰어 서브에이전트]",
       "contexts": [
-        "builder-code-reviewer.md",
+        "code-reviewer.md",
         "L2-architecture.md",
         "L2-naming-convention.md"
       ],
@@ -182,8 +177,8 @@
         "intelligence/evals/evaluation-scorecard-*.md"
       ],
       "connections": [
-        "builder-query-preprocessor",
-        "builder-page-plot-builder"
+        "query-preprocessor",
+        "page-plot-builder"
       ]
     }
   }

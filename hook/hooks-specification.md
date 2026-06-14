@@ -60,10 +60,10 @@ graph TD
 시스템 내 자율 에이전트들의 실행 이력을 안전하고 투명하게 기록 및 관찰하여, AI의 오작동을 통제하고 하네스 엔지니어링의 신뢰성을 지속적으로 개선하기 위해 설계된 에이전트 실행 관찰 및 Runs 로깅 훅의 인프라 및 동작 규정입니다.
 
 ### (1) 에이전트 관찰 아키텍처 및 Runs 저장소
-에이전트가 작동할 때마다 고유한 `RUN_ID`를 발급하고, 해당 작업의 라이프사이클 전체를 모니터링하여 아래 7대 아티팩트(Artifacts)를 `ai/runs/` 하위에 영속 보관합니다.
+에이전트가 작동할 때마다 고유한 `RUN_ID`를 발급하고, 해당 작업의 라이프사이클 전체를 모니터링하여 아래 7대 아티팩트(Artifacts)를 `intelligence/runs/` 하위에 영속 보관합니다.
 
 ```
-ai/runs/
+intelligence/runs/
 └── run_YYYYMMDD_HHMMSS_[hash]/         # 각 실행별 고유 디렉터리
     ├── task.md                         # [1] 에이전트 실행 대상 작업 명세서
     ├── context-manifest.yaml           # [2] 인입 도메인 컨텍스트 & 파일 명세
@@ -106,7 +106,7 @@ class AgentRunsObserver:
         self.agent_name = agent_name
         self.domain = domain
         self.run_id = f"run_{datetime.now().strftime('%Y%m%d_%H%M%S')}_{os.urandom(3).hex()}"
-        self.run_dir = f"ai/runs/{self.run_id}"
+        self.run_dir = f"intelligence/runs/{self.run_id}"
 
     def before_agent_run(self, task_description: str):
         """에이전트 실행 전, RUN_ID 폴더를 생성하고 기본 작업 명세와 컨텍스트를 패킹합니다."""

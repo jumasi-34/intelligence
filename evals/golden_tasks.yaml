@@ -34,7 +34,7 @@ tasks:
     agent: specialist-cqms-quality
     test: tests/golden/test_cqms_flow.py
     required_context:
-      - intelligence/guide/agent-common.md
+      - intelligence/rules/L2-architecture.md
       - intelligence/guide/3layer-development-process.md
       - intelligence/guide/testing-verification.md
       - intelligence/domain/domain-knowledge.md
@@ -51,7 +51,7 @@ tasks:
     agent: specialist-gmes-factory
     test: tests/golden/test_gmes_flow.py
     required_context:
-      - intelligence/guide/agent-common.md
+      - intelligence/rules/L2-architecture.md
       - intelligence/guide/3layer-development-process.md
       - intelligence/guide/testing-verification.md
       - intelligence/domain/domain-knowledge.md
@@ -68,7 +68,7 @@ tasks:
     agent: specialist-iqm-executive
     test: tests/golden/test_iqm_dashboard_flow.py
     required_context:
-      - intelligence/guide/agent-common.md
+      - intelligence/rules/L2-architecture.md
       - intelligence/guide/3layer-development-process.md
       - intelligence/guide/testing-verification.md
       - intelligence/domain/domain-knowledge.md
@@ -85,7 +85,7 @@ tasks:
     agent: specialist-qrs-action
     test: tests/golden/test_qrs_action_flow.py
     required_context:
-      - intelligence/guide/agent-common.md
+      - intelligence/rules/L2-architecture.md
       - intelligence/guide/3layer-development-process.md
       - intelligence/guide/testing-verification.md
       - intelligence/domain/domain-knowledge.md

@@ -85,11 +85,11 @@ def generate_manifest_table(agents):
 
         verification_map = {
             "planner-orchestrator": "- `prd-template.md` 포맷 정합성 준수 검증<br>- 빌더들이 참조 가능한 3-Layer 매핑 설계 완성 여부 확인",
-            "builder-query-preprocessor": "- `make verify` 구문/린트 검사<br>- Pandas 예외처리 및 방어 연산 검증",
-            "builder-page-plot-builder": "- 3-Layer 정합성 대조<br>- 차트 렌더링 검사<br>- 네비게이션 정상 등록 확인",
-            "analyst-table-eda": "- DDL/DML 쿼리 유무 검사 (Read-Only 여부)<br>- 보고서 산출물 내 결측치, 비즈니스 맥락 분석 유효성 대조",
-            "analyst-metadata-dictionary": "- 명명 규정 위반 탐지 리포트 무결성<br>- 스키마-코드 1:1 컬럼 정합성 대조",
-            "builder-code-reviewer": "- 리뷰 리포트 규격 가독성 검토<br>- 제시한 리팩토링 가이드(Diff) 무결성 대조",
+            "query-preprocessor": "- `make verify` 구문/린트 검사<br>- Pandas 예외처리 및 방어 연산 검증",
+            "page-plot-builder": "- 3-Layer 정합성 대조<br>- 차트 렌더링 검사<br>- 네비게이션 정상 등록 확인",
+            "table-eda": "- DDL/DML 쿼리 유무 검사 (Read-Only 여부)<br>- 보고서 산출물 내 결측치, 비즈니스 맥락 분석 유효성 대조",
+            "metadata-dictionary": "- 명명 규정 위반 탐지 리포트 무결성<br>- 스키마-코드 1:1 컬럼 정합성 대조",
+            "code-reviewer": "- 리뷰 리포트 규격 가독성 검토<br>- 제시한 리팩토링 가이드(Diff) 무결성 대조",
             "quality-evaluator": "- 테스트 구동 성공 신뢰도 검증<br>- 채점 매트릭 기반 정량 스코어 계산 무결성",
         }
         verification = verification_map.get(agent_id, "- 검증 기준 준증")
