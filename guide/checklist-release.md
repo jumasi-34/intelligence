@@ -48,5 +48,20 @@
 
 ---
 
-## 4. 릴리즈 가드 에이전트 협업 수칙 (Ops Release Guard Collaboration)
+## 4. 보안 및 AI 가드레일 필수 체크리스트 (Security & AI Harnessing Guardrails)
+
+AI-assisted 변경 또는 릴리즈 PR 프로세스 상에서 아래 보안 게이트와 격리 규정을 반드시 자율 대조하고 준수해야 합니다.
+
+- [ ] **민감 정보 누출 방지**: `.env`, token, password, credential, secret key 등 모든 비밀값(Secrets)이 diff, 런타임 로그, 또는 run artifact 상에 포함되거나 노출되지 않았는가?
+- [ ] **접속 정보 출력 금지**: DB connection string과 내부 운영 API 엔드포인트 정보가 디버그 출력이나 표준 출력(stdout)으로 노출되지 않는지 점검했는가?
+- [ ] **DB 안전 트랜잭션 수호**: Databricks, Oracle, SQLite 운영 DB를 대상으로 원치 않는 데이터 변형이나 삭제(DML Write / destructive query)를 실행하지 않는 무해한 조회(Read-Only) 성격임을 보증했는가?
+- [ ] **SQL 인젝션 방지**: 사용자로부터 전달된 모든 필터 인자 및 사용자 입력을 raw SQL 문자열에 직접 결합(concat)하지 않고, 반드시 데이터클래스 파라미터 및 `QueryFilter` 헬퍼를 경유하여 안전하게 바인딩하였는가?
+- [ ] **민감 데이터 마스킹**: 개인정보, 시스템 로그, DB 세션 정보 등 보안 민감 데이터가 마스킹되거나 난독화 처리되었는가?
+- [ ] **고위험군 변경 통제 (High-Risk Sandbox)**: `db_client.py`, `login_page.py`, `.env`, 인증/권한 관련 파일의 변경은 고위험(High risk) 작업으로 격리 분류하고 특별한 검토 과정을 거쳤는가?
+- [ ] **수동 승인 이력 기재**: 고위험군 변경이 수반된 경우, 해당 변경 사항에 대해 반드시 `risk.md` 기록과 PR 본문에 최종 관리자의 명시적 수동 승인 서명을 획득했는가?
+- [ ] **임시 아티팩트 격리**: AI-assisted PR 또는 작업 중 생성된 계획서 및 임시 보고서는 절대 가이드/인프라에 남기지 않고, `intelligence/runs/run_*` 폴더에 완벽히 격리한 후 최종적으로 소거하였는가?
+
+---
+
+## 5. 릴리즈 가드 에이전트 협업 수칙 (Ops Release Guard Collaboration)
 - 본 릴리즈 체크리스트의 모든 관문과 검증 프로세스는 배포 시 [ops-release-guard.md](file:///home/jumasi/workstation/intelligence/agent/ops-release-guard.md) 에이전트가 가동되어 위배 사항을 상시 감시하고 제어해야 합니다. 릴리즈 가드는 체크리스트 전수 충족 여부를 확인한 후 최종 Sign-off 아티팩트를 발행합니다.
