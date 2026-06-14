@@ -138,7 +138,12 @@
       "contexts": [
         "code-reviewer.md",
         "L2-architecture.md",
-        "L2-naming-convention.md"
+        "L2-naming-convention.md",
+        "checklist/checklist-release.md",
+        "checklist/checklist-security.md",
+        "checklist/checklist-architecture.md",
+        "checklist/checklist-coding-standard.md",
+        "checklist/checklist-git.md"
       ],
       "allowed": [
         "빌더가 완성한 파이썬 소스 코드 정적 정합성 및 잠재 버그 분석",

@@ -31,6 +31,7 @@
 | **리뷰 산출물 저장소** | `intelligence/verification/review-report-*.md` | - 검증한 코드 파일별 정적 리뷰 결과 및 개선 코드 제안 저장 |
 | **프로덕션 검토 대상** | `app/queries/`<br>`app/service/`<br>`app/pages/` | - 빌더 에이전트가 작성한 모든 레이어의 소스 코드 정적 분석 |
 | **아키텍처 표준 참조** | `intelligence/rules/L2-architecture.md`<br>`intelligence/rules/L2-naming-convention.md`<br>`intelligence/rules/L3-*.md` | - 각 레이어별 표준 규칙 및 명명법을 리뷰 기준으로 삼음 |
+| **체크리스트 필독/대조** | `intelligence/checklist/checklist-*.md` | - 5대 마스터 체크리스트(릴리즈, 보안, 아키텍처, 코딩, Git) 항목과의 100% 매칭 여부 필수 대조 |
 
 ---
 
@@ -53,4 +54,16 @@
 
 ## 4. 에이전트 협업 및 체이닝 (Agent Collaboration & Chaining)
 
-본 에이전트의 구체적인 기동 협업 다이어그램(Chaining Mermaid), 예외 에스컬레이션 수칙(Escalation Protocol), 그리고 이모지 사용 전면 금지와 같은 공통 세이프티 제약은 지능 연합 원장인 [agent/GEMINI.md](file:///home/jumasi/workstation/intelligence/agent/GEMINI.md)에 통합 기재되어 전역 관리됩니다. 개발 및 협업 시 이를 참고하여 구동하십시오.
+본 에이전트의 구체적인 기동 협업 다이어그램(Chaining Mermaid), 예외 에스컬레이션 수칙(Escalation Protocol), 그리고 이모지 사용 전면 금지와 같은 공통 세이프티 제약은 지능 연합 원장인 [agent/GEMINI.md](intelligence/agent/GEMINI.md)에 통합 기재되어 전역 관리됩니다. 개발 및 협업 시 이를 참고하여 구동하십시오.
+
+---
+
+## 5. 5대 마스터 체크리스트 상시 강제 대조 프로세스 (Checklist-Driven Review)
+
+코드 리뷰어는 코드 정적 분석 및 리뷰 리포트 작성 시, 아래의 5대 마스터 체크리스트 항목들을 **무조건 1순위로 대조 및 점검**하여 결과를 리포트에 반영해야 합니다.
+
+1. **배포 안전성 검토**: `checklist/checklist-release.md` 의 전제 조항 충족 확인
+2. **자율 구동 보안 검토**: `checklist/checklist-security.md` 의 DB 조회 계정 권한 및 하드코딩 여부 점검
+3. **아키텍처 격리 검토**: `checklist/checklist-architecture.md` 의 3-Layer 경계 및 의존성 규칙 확인
+4. **코딩 및 데이터 표준 검토**: `checklist/checklist-coding-standard.md` 의 명명, 파라미터 데이터클래스 바인딩, 동적 컬럼 맵핑 및 이모지 전면 금지 수칙 검사
+5. **Git 형상관리 검토**: `checklist/checklist-git.md` 의 커밋 메시지 규격 및 동시 푸시 준수 여부 대조
