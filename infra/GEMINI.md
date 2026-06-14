@@ -24,6 +24,7 @@
 | `pages-specification.md` | Streamlit 페이지 구성 및 물리 렌더링 레이아웃 인터페이스 명세서 |
 | `core-specification.md` | DB 커넥터 및 공통 소스 모듈인 `app/core/` 하위 컴포넌트 연동 규격 |
 | `automation-log-specification.md` | 시스템 자동 가동을 위한 로깅 레벨 및 로깅 파일 저장 관리 인터페이스 명세서 |
+| `hooks-specification.md` | 다차원 라이프사이클 이벤트 인터셉터 아키텍처 및 인터페이스 규격 정의서 |
 
 ---
 

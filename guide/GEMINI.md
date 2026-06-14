@@ -24,8 +24,6 @@
 | `error-handling.md` | 사용자 경험 및 에이전트 자율 분석 가독성을 고도화하기 위한 다중 레이어 통합 에러 처리 가이드 |
 | `testing-verification.md` | 기능을 훼손하지 않는 인메모리 mocking 기법 기반의 독립 테스트 하네스 기획 및 검증 표준서 |
 | `common-column-metadata-design.md` | 하드코딩을 배제하고 메타데이터로부터 UI 한글명 및 소수점 설정을 동적으로 주입받는 컬럼 configs 설계 가이드 |
-| `checklist-release.md` | 코드 릴리즈 전 반드시 체크해야 하는 정합성 수칙 및 자가 진단 가이드라인 |
-| `checklist-security.md` | 컨텍스트 및 시스템 데이터 유출 방지를 위한 최소 권한 및 보안 검토 목록 가이드라인 |
 | `manual-setup.md` | Oracle client 가동 환경, Miniconda 가상환경 구축 등 초동 온보딩을 위한 수동 설정 설명서 |
 | `query_module_template.py` | 쿼리 빌더 및 동적 쿼리 필터 클래스를 활용하는 쿼리 모듈 구현용 표준 파이썬 템플릿 |
 

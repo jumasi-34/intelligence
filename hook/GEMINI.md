@@ -21,7 +21,7 @@
 
 | 파일명 | 파일의 본질적 역할 및 책임 (1줄 요약) |
 | :--- | :--- |
-| `[infra/hooks-specification.md](file:///home/jumasi/workstation/intelligence/infra/hooks-specification.md)` | 다차원 라이프사이클 이벤트 인터셉터 아키텍처 및 인터페이스 규격 정의서 (**infra/ 레이어 보관**) |
+| `[hooks-specification.md](intelligence/infra/hooks-specification.md)` | 다차원 라이프사이클 이벤트 인터셉터 아키텍처 및 인터페이스 규격 정의서 (**infra/ 레이어 보관**) |
 | `agent_runs_observer.py` | 에이전트 자율 작업(Agent Run)의 라이프사이클 이벤트를 관측하고 후속 조치를 트리거하는 분석 인터셉터 |
 | `agent_runs_analyzer.py` | 누적된 에이전트 실행 로그(runs) 이벤트를 수집하여 이상 동작 유무를 판별하는 훅 모듈 |
 | `release_ops_hooks.py` | 코드 릴리즈 및 인프라 프로덕션 배포 단계의 품질 게이트 승인 이벤트를 가로채 가드레일을 구동하는 훅 |
