@@ -20,6 +20,7 @@ intelligence/
 │
 ├── infra/                     # 공용 인프라스트럭처 사양 및 데이터베이스 메타데이터
 │   ├── infrastructure-summary.md # 5대 핵심 인프라 영역 공용 연합 요약서 (SSOT)
+│   ├── hooks-specification.md # 3단계 품질 게이트 및 릴리즈 훅 규격서 (SSOT)
 │   └── (기타 스키마 검증 및 메타데이터 관리 스크립트)
 │
 ├── guide/                     # 애플리케이션 개발 프로세스 및 핵심 가이드라인
@@ -29,7 +30,6 @@ intelligence/
 │   └── (기타 템플릿 및 양식 문서)
 │
 ├── hook/                      # 시스템 이벤트 훅 및 트리거 로직 공간
-│   ├── hooks-specification.md # 3단계 품질 게이트 및 릴리즈 훅 규격서 (SSOT)
 │   └── (훅 감지기 및 모니터링용 파이썬 스크립트)
 │
 ├── rules/                     # 에이전트 행동 및 설계 규정 저장소
@@ -64,7 +64,7 @@ intelligence/
   * `guide/testing-verification.md`: 원천 데이터베이스를 오염시키지 않는 인메모리 테스트 기법(Mocking), 골든 스키마 준수 및 `verify_code.py` 정적 코드 컴파일 검증 기동 방법을 다룹니다.
 
 ### (5) hook/ (이벤트 훅 레이어)
-* **SSOT 문서**: `hook/hooks-specification.md`
+* **SSOT 문서**: `infra/hooks-specification.md`
 * **내용**: 커밋과 푸시 시 문법 오류를 잡는 3단계 로컬 품질 게이트 사양부터, 에이전트 실행 시 7대 아티팩트를 보존하는 Runs Observer, 장애 상황을 분석하고 롤백 대책을 수동으로 수립하는 4대 릴리즈 운영 훅까지 아우릅니다.
 
 ### (6) rules/ (규정 및 가이드라인)

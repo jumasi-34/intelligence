@@ -17,15 +17,43 @@
 
 | 파일명 | 파일의 본질적 역할 및 책임 (1줄 요약) |
 | :--- | :--- |
-| `README.md` | 추상 정책 룰 엔진 설계 및 다차원 가드레일 연동 인터페이스 개발 가이드 |
 | *(구현 대기)* `emoji_checker.py` | 소스코드 및 문서 자산 내 유니코드 이모지 탑재 위반 여부를 검증하는 무결성 검사기 |
 | *(구현 대기)* `schema_validator.py` | 구조 자산(SQLite, Databricks 등)이 골든 정합 스키마 표준에 부합하는지 비교하는 정적 검사기 |
 | *(구현 대기)* `commit_msg_validator.py` | 표준 Git 커밋 태그 및 한국어 작성 정책 무결성을 판단하는 검사기 |
 
 ---
 
-## 3. 변경 이력 (Changelog)
+## 3. 검사기 작성 예시 (Template)
+
+가드레일 검사기는 아래와 같이 실패 시 비정상 종료 코드(`sys.exit(1)`)를 반환하도록 작성해야 합니다.
+
+```python
+#!/home/jumasi/miniconda3/envs/goeq/bin/python
+# -*- coding: utf-8 -*-
+import sys
+
+def run_check():
+    # 1. 검사 대상 로직 수행
+    violation_found = False
+    
+    # 2. 규칙 위반 시 에러 출력 및 sys.exit(1)
+    if violation_found:
+        print("[ERROR] 규정 위반이 감지되었습니다.")
+        sys.exit(1)
+        
+    # 3. 통과 시 정상 종료
+    print("[SUCCESS] 가드레일 통과")
+    sys.exit(0)
+
+if __name__ == "__main__":
+    run_check()
+```
+
+---
+
+## 4. 변경 이력 (Changelog)
 
 * **2026-06-14**:
+  * [REFACTOR] 하위폴더 중복 `README.md` 제거 수칙에 맞춰 가이드라인 통합 및 `README.md` 참조 제거.
   * [REFACTOR] `guardrail/` 레이어 정의를 단순 코드 정적 분석에서 '추상 정책 및 무결성 검증 룰 엔진'으로 승격하고, 입출력 독립성 및 아키텍처 가이드라인을 로컬 규칙에 추가.
   * [Feat] 가드레일 폴더 전용 `GEMINI.md` 최초 비치.
