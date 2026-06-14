@@ -72,7 +72,7 @@
 AI 에이전트의 오작동 및 사용자의 교정 피드백이 발생할 경우, 인텔리전스 내의 규칙과 가이드라인을 자가 정제하고 영속화하기 위해 다음의 3단계 문서화 프로세스를 즉각적으로 실행해야 합니다.
 
 ### ① 역동기화 및 자체 피드백 로그 기록 수칙
-오작동 감지 시, [reverse-sync-prevention.md](file:///home/jumasi/workstation/intelligence/runs/reverse-sync-prevention.md) 파일 하단의 테이블에 아래의 7개 명세 항목을 준수하여 마크다운 표의 행(Row)으로 즉시 기록합니다.
+오작동 감지 시, [reverse-sync-prevention.md](intelligence/runs/reverse-sync-prevention.md) 파일 하단의 테이블에 아래의 7개 명세 항목을 준수하여 마크다운 표의 행(Row)으로 즉시 기록합니다.
 1. **발생 일시**: `YYYY-MM-DD HH:MM:SS` 형태로 기록합니다.
 2. **RUN ID**: 실수가 발생한 실행 고유 ID 또는 AI 대화 세션 고유 ID를 기록합니다.
 3. **에이전트**: 오류를 일으킨 AI 에이전트의 구체적 명칭(예: `Antigravity`, `MockPageBuilder` 등)을 기록합니다.
