@@ -75,6 +75,32 @@
         "app/core/page/config_pages.py"
       ],
       "connections": [
+        "ui-styler-polisher"
+      ]
+    },
+    "ui-styler-polisher": {
+      "name": "UI Styler & Visual Polisher Agent",
+      "category": "Builder Agent",
+      "trigger": "Streamlit 페이지 빌딩 후<br>디자인 일관성 보정 및 스타일 리터칭<br>[비주얼 스타일러 에이전트]",
+      "contexts": [
+        "L2-architecture.md",
+        "L2-naming-convention.md"
+      ],
+      "allowed": [
+        "페이지 내 CSS 인젝션 구문의 Minified 포맷팅 및 빈 줄/주석 제거 자동 패치",
+        "Plotly 차트 오브젝트에 대한 `apply_premium_chart_theme` 연동 누락 보정",
+        "UI 내 모든 유니코드 이모지를 구글 Material Symbols로 자동 리팩토링",
+        "글래스모피즘(Glassmorphism) 및 다크 앰비언트 공통 테마 정합성 보강"
+      ],
+      "forbidden": [
+        "비즈니스 로직(`*_df.py`)이나 DB 쿼리 생성 모듈 직접 수정 엄격 금지",
+        "페이지의 데이터 흐름 구조나 상태 전이(State Machine) 비즈니스 조건 변경 금지"
+      ],
+      "outputs": [
+        "app/pages/*_page.py",
+        "app/pages/*_plots.py"
+      ],
+      "connections": [
         "code-reviewer"
       ]
     },

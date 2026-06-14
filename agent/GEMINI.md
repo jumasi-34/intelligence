@@ -28,6 +28,7 @@
 | `metadata-dictionary.md` | 코드 명명 및 스키마-코드 1:1 컬럼 정합성을 검역하는 분석가 가이드 |
 | `code-reviewer.md` | 파이썬 소스 코드 정적 정합성 및 Diff 개선안을 제공하는 리뷰어 가이드 |
 | `quality-evaluator.md` | 하네스 테스트 및 PRD 정량 평가를 전담하는 최종 평가자 가이드 |
+| `ui-styler-polisher.md` | UI/차트 디자인 일관성과 미학적 리터칭을 수행하는 스타일러 가이드 |
 
 ---
 
