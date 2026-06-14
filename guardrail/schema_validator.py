@@ -13,7 +13,7 @@ import sys
 import json
 import sqlite3
 import argparse
-from typing import List, Dict, Any, Tuple
+from typing import List, Dict, Any
 
 # 기본 골든 스키마 파일 경로
 DEFAULT_METADATA_PATH = "app/core/db/database-metadata.json"
@@ -73,7 +73,7 @@ def map_type_to_sqlite(gold_type: str) -> str:
 
 def validate_schema(metadata_path: str, db_dir: str) -> List[str]:
     """골든 메타데이터와 실제 SQLite DB 간 정합성을 검사합니다."""
-    violations = []
+    violations: List[str] = []
 
     try:
         metadata = load_golden_metadata(metadata_path)
@@ -88,12 +88,13 @@ def validate_schema(metadata_path: str, db_dir: str) -> List[str]:
         return violations
 
     for item in sqlite_meta:
-        var_name = item.get("variable_name")
+        var_name = item.get("variable_name") or ""
         sqlite_type = item.get("sqlite_type") or "ops"  # 기본값 ops 데이터베이스 설정
-        table_name = item.get("table_path") or var_name
+        table_name_raw = item.get("table_path") or var_name
+        table_name = str(table_name_raw) if table_name_raw else ""
 
         # Databricks 경로 형태(hkt_dw.schema.table)인 경우 마지막 테이블명만 추출
-        if "." in table_name:
+        if table_name and "." in table_name:
             table_name = table_name.split(".")[-1]
 
         # SQLite 파일명 결합
@@ -117,14 +118,14 @@ def validate_schema(metadata_path: str, db_dir: str) -> List[str]:
         for gold_col in gold_columns:
             col_name = gold_col.get("name", "").upper()
             gold_type = gold_col.get("type", "")
-            expected_sqlite_type = map_type_to_sqlite(gold_type)
+            map_type_to_sqlite(gold_type)
 
             if col_name not in real_columns:
                 violations.append(
                     f"[{db_filename}] 테이블 '{table_name}' 내에 정의된 골든 컬럼 '{col_name}'이 실제 SQLite 데이터베이스에 존재하지 않습니다."
                 )
             else:
-                real_type = real_columns[col_name]
+                real_columns[col_name]
                 # SQLite는 동적 타이핑이 강해서 타입 명칭이 정확히 일치하지 않아도 호환성이 맞으면 통과하도록 유연화
                 # 예: VARCHAR <-> TEXT, INT <-> INTEGER 등
                 # 가령 실제 타입 명칭에 TEXT, VARCHAR, REAL, DOUBLE 등이 포함되어 호환되는지 체크

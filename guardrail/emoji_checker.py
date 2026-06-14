@@ -108,7 +108,7 @@ def scan_files_for_emojis(root_dir: str) -> List[Tuple[str, int, int, str]]:
                             emoji_char = match.group()
                             col_idx = match.start() + 1
                             violations.append((rel_path, line_idx, col_idx, emoji_char))
-            except Exception as e:
+            except Exception:
                 # 파일 읽기 중 에러가 발생하는 경우는 무시하거나 기록
                 pass
 

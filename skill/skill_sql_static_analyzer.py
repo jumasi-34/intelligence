@@ -12,7 +12,7 @@ import os
 import sys
 import re
 import argparse
-from typing import List, Dict, Any, Tuple
+from typing import List, Dict, Any
 
 # 정적 분석 정규식 패턴들
 # 1. 한글 AS Alias (예: AS "공장코드", AS '품질', AS 한글 등)
@@ -98,7 +98,7 @@ def analyze_query_file(filepath: str) -> List[Dict[str, Any]]:
 
 def scan_queries_folder(root_dir: str) -> Dict[str, List[Dict[str, Any]]]:
     """queries 폴더 내부의 모든 쿼리 파일을 정적 스캔합니다."""
-    report = {}
+    report: Dict[str, List[Dict[str, Any]]] = {}
     queries_dir = os.path.join(root_dir, "app", "queries")
 
     if not os.path.exists(queries_dir):
