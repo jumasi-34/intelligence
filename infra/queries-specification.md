@@ -175,4 +175,4 @@ def get_{system}_{domain}_rawdata(params: SomeParams) -> str:
 
 ## 함수 카탈로그
 
-→ [`CATALOG.md`](CATALOG.md) 참조
+→ 각 모듈 파일(`app/queries/{system}_query.py`) 내 소스코드 및 Docstring 참조

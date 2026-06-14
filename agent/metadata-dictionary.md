@@ -13,9 +13,9 @@
   - 본 분석가는 기획 에이전트(`Planner Orchestration Agent`)가 확정한 PRD 사양을 참조하고, 구현 빌더 에이전트들(`builder-query-preprocessor`, `builder-page-plot-builder`)이 생산하는 모든 코드 및 스키마 변수의 정합성을 전방 지원하는 **'서브에이전트(Sub-Agent)'** 계열에 속합니다.
   - 빌더들이 개발에 착수하기 전 또는 개발 중간/완료 시점에 구동되어, 데이터 스키마 오타나 작명 규칙 위반을 사전 정밀 필터링하는 **'코드-데이터 검역관'**의 성격을 띱니다.
 - **핵심 사명**:
-  1. **명명 수호 (Naming Guardian)**: [L2-naming-convention.md](file:///home/jumasi/workstation/intelligence/rules/L2-naming-convention.md)에 지정된 3-Layer 물리 파일 구조, 클래스 접미사(`*Params`), 함수 접두사(`get_`, `preprocessing_`, `transform_`) 및 변수 네이밍 표준을 어겼는지 정적 스캔을 통해 완벽하게 검출합니다.
+  1. **명명 수호 (Naming Guardian)**: [L2-naming-convention.md](intelligence/rules/L2-naming-convention.md)에 지정된 3-Layer 물리 파일 구조, 클래스 접미사(`*Params`), 함수 접두사(`get_`, `preprocessing_`, `transform_`) 및 변수 네이밍 표준을 어겼는지 정적 스캔을 통해 완벽하게 검출합니다.
   2. **스키마-코드 메타 사전 유지 (Schema-to-Code Map)**: 원천 데이터베이스 컬럼명(`UPPER_SNAKE_CASE`)이 코드 레이어의 Pandas DataFrame 컬럼이나 가공 변수(`snake_case`)로 안전하고 일관성 있게 통역 및 맵핑되도록 `context-metadata-dictionary.md` 문서 사전을 구축하고 영속 보존합니다.
-  3. **비즈니스 상수 정렬 (Constants Aligner)**: [L2-business-constants.md](file:///home/jumasi/workstation/intelligence/rules/L2-business-constants.md)에 선언된 공장 코드, 품질 수식 및 하드코딩 방지용 매핑 상수들이 쿼리 필터 및 전처리 로직 상에서 한치의 오차도 없이 결합하는지 상호 검증합니다.
+  3. **비즈니스 상수 정렬 (Constants Aligner)**: [L2-business-constants.md](intelligence/rules/L2-business-constants.md)에 선언된 공장 코드, 품질 수식 및 하드코딩 방지용 매핑 상수들이 쿼리 필터 및 전처리 로직 상에서 한치의 오차도 없이 결합하는지 상호 검증합니다.
 - **절대 제약**:
   - **무수정 정적 분석 고정 (Strict Read-Only & Zero-Code-Mutation)**: 이 서브에이전트는 프로덕션 실행 코드(`.py` 파일)를 직접 수정하거나 신설하지 않습니다. 오직 데이터 사전 자산(`context-metadata-*.md`) 발간과, 코드 정합성 검증 정적 분석 리포트 발행에만 책임을 제한합니다.
 
@@ -68,4 +68,4 @@
 
 ## 4. 에이전트 협업 및 체이닝 (Agent Collaboration & Chaining)
 
-본 에이전트의 구체적인 기동 협업 다이어그램(Chaining Mermaid), 예외 에스컬레이션 수칙(Escalation Protocol), 그리고 이모지 사용 전면 금지와 같은 공통 세이프티 제약은 지능 연합 원장인 [agent/GEMINI.md](file:///home/jumasi/workstation/intelligence/agent/GEMINI.md)에 통합 기재되어 전역 관리됩니다. 개발 및 협업 시 이를 참고하여 구동하십시오.
+본 에이전트의 구체적인 기동 협업 다이어그램(Chaining Mermaid), 예외 에스컬레이션 수칙(Escalation Protocol), 그리고 이모지 사용 전면 금지와 같은 공통 세이프티 제약은 지능 연합 원장인 [agent/GEMINI.md](intelligence/agent/GEMINI.md)에 통합 기재되어 전역 관리됩니다. 개발 및 협업 시 이를 참고하여 구동하십시오.

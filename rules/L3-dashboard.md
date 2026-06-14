@@ -13,7 +13,7 @@
 
 ## 2. 금지 규칙 (Strict Guardrails)
 > [!IMPORTANT]
-> 레이어 간 상호 작용 및 고수준 의존성 격벽 제약 조건은 단일 진실 공급원(SSOT)인 **[L2-architecture.md](file:///home/jumasi/workstation/intelligence/rules/L2-architecture.md)**의 규칙을 엄격히 준수합니다.
+> 레이어 간 상호 작용 및 고수준 의존성 격벽 제약 조건은 단일 진실 공급원(SSOT)인 **[L2-architecture.md](intelligence/rules/L2-architecture.md)**의 규칙을 엄격히 준수합니다.
 
 1. **인라인 시각화 드로잉 금지 (No Inline Plotly)**:
    - UI 메인 파일(`*_page.py`) 내부에 수백 줄의 Plotly 차트 드로잉 코드를 작성하지 않습니다. 차트 작성 책임은 1:1 대칭 매핑 관계인 시각화 파일(`*_plots.py`)로 온전히 위임합니다.

@@ -162,7 +162,7 @@
 - **목적**: 데이터베이스 실행은 하지 않고, 입력 파라미터를 받아 **순수 SQL 문자열(`str`)**을 동적으로 생성 및 조립합니다.
 - **주석 및 함수 명명 규칙 구성**:
   - **대통합 공식**: `get_{system}_{domain}_{조건/설명/특별한 내용이 없으면 general}_{agg/rawdata}`
-  - 실사용 파이썬 템플릿 코드는 [query_module_template.py](file:///home/jumasi/workstation/intelligence/guide/query_module_template.py) 파일을 바로 복사하여 뼈대로 사용할 수 있습니다.
+  - 실사용 파이썬 템플릿 코드는 [query_module_template.py](intelligence/guide/query_module_template.py) 파일을 바로 복사하여 뼈대로 사용할 수 있습니다.
 
 ```python
 """

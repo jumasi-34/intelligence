@@ -146,7 +146,7 @@ def section_with_filter():
   - **공통 컴포넌트 필수 적용**: `core/plot/viz_plotly_design.py` 내의 `get_default_trace_config(chart_type)` 및 `get_default_layout_config(chart_type)`를 `**trace_config`, `**layout_config` 형태로 반드시 상속받아 차트의 구조를 설계해야 합니다.
   - **테마 컬러 및 폰트 바인딩**: `core/common_design_parameter.py`의 `colors` 객체 및 `create_plotly_font_dict`를 사용하여 일괄 타이포그래피와 브랜드 팔레트를 보장합니다. 투명 처리는 `viz_helper.get_transparent_colors` 공통 함수를 통합니다.
   - **풍부한 호버 인터랙션 설계 (Hover-First Design)**: 차트를 신규 생성하거나 기존 차트를 리팩토링할 때는 **항상 유저 친화적인 마우스 호버(Hover) 툴팁을 필수로 설계 및 반영**해야 합니다. 단순 수치 출력에 그치지 않고, 가독성을 고려한 굵은 텍스트(`<b>`), 줄바꿈(`<br>`), 단위 명시 및 유의미한 결합 메타데이터(예: 비율, 공장 코드, 이전 기간 대비 증감 등)가 정돈된 텍스트 템플릿(`hovertemplate="%{text}<extra></extra>"`) 형태로 직관적으로 출력되도록 시각화 전처리를 수행해야 합니다.
-  - **전처리 경계 엄격 분리**: 시각화 전용 전처리(Hover text 조립, 단순 Visual top-N 슬라이싱)를 제외한 모든 데이터 통계 공식 연산은 서비스 레이어(`service/df_*.py`)에서 선행 연산 및 `@st.cache_data` 캐싱 처리 완료 후 순수 DataFrame 형태로 전달받아야 합니다. ([context-preprocessing-boundary.md](file:///home/jumasi/workstation/intelligence/context/context-preprocessing-boundary.md) 표준 준수)
+  - **전처리 경계 엄격 분리**: 시각화 전용 전처리(Hover text 조립, 단순 Visual top-N 슬라이싱)를 제외한 모든 데이터 통계 공식 연산은 서비스 레이어(`service/df_*.py`)에서 선행 연산 및 `@st.cache_data` 캐싱 처리 완료 후 순수 DataFrame 형태로 전달받아야 합니다. ([preprocessing-boundary.md](intelligence/guide/preprocessing-boundary.md) 표준 준수)
   - **인터랙티브 차트로 단일화**: Matplotlib를 사용한 레거시 정적 플롯(예: 레이더 차트)은 점진적으로 Plotly의 대화형 차트(`go.Scatterpolar` 등)로 전면 변환 및 통합합니다.
 
 
@@ -170,7 +170,7 @@ def section_with_filter():
 
 이를 완전히 방지하고 서비스의 회복 탄력성(Robustness)을 유지하기 위해 예외 격리 방어 설계 표준을 준수해야 합니다. 이에 대한 완벽하고 구체적인 아키텍처 및 세부 설계는 아래 가이드라인 문서를 참조하십시오.
 
-> ** 핵심 설계 상세 가이드**: [context-error-safe-rendering.md](file:///home/jumasi/workstation/intelligence/context/context-error-safe-rendering.md)
+> ** 핵심 설계 상세 가이드**: [error-handling.md](intelligence/guide/error-handling.md)
 
 ### 1. 시각화 컴포넌트 렌더링 단위 격리 (Try-Catch Wrapping)
 * **[안티패턴] 안티패턴**: `st.plotly_chart(draw_some_chart(df))` 처럼 플롯 드로잉 함수를 안전장치 없이 날것으로 호출하여 한 영역의 장애가 페이지 전체를 마비시키는 행위.

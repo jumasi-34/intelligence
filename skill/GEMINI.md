@@ -21,9 +21,10 @@
 | :--- | :--- |
 | `skill_sync_agents.py` | 에이전트 레지스트리 데이터를 바탕으로 매니페스트 및 문서를 자동 정비하는 스킬 |
 | `skill_generate_korean_metadata.py` | 데이터베이스 물리 스키마 정보와 비즈니스 공통 상수를 분석하여 메타데이터 파일 및 사양서를 재생성하는 스킬 |
-| *(구현 대기)* `skill_sql_static_analyzer.py` | SQL 쿼리 빌더가 반환하는 문법 및 5대 불변 규칙 정적 검사기 스킬 |
+| `skill_sql_static_analyzer.py` | SQL 쿼리 빌더가 반환하는 문법 및 5대 불변 규칙 정적 검사기 스킬 |
 | *(구현 대기)* `skill_db_schema_loader.py` | Databricks, Oracle 등 원천 운영 디비의 테이블 스키마 및 컬럼 정보 로더 스킬 |
 | *(구현 대기)* `skill_data_profiler.py` | 가공 완료된 데이터프레임의 결측치 및 통계적 수치 분포 리포팅 스킬 |
+
 
 ---
 
@@ -31,6 +32,6 @@
 
 * **2026-06-14**:
   * [REFACTOR] 하위폴더 중복 `README.md` 제거 수칙에 맞춰 가이드라인 통합 및 `README.md` 제거.
-  * [Feat] 기존 `infra/generate_korean_metadata_json.py` 메타데이터 자동화 추출 분석기를 본 폴더 아래 [skill_generate_korean_metadata.py](file:///home/jumasi/workstation/intelligence/skill/skill_generate_korean_metadata.py)로 Shebang 정렬 및 스킬 명명 규칙에 맞춰 이관 완료.
-  * [Feat] 에이전트와 스킬 역할 분리를 위해, 기존 `agent/sync_agents.py`를 본 폴더 아래 [skill_sync_agents.py](file:///home/jumasi/workstation/intelligence/skill/skill_sync_agents.py)로 성공적으로 경로 및 Shebang을 정렬하여 이관 완료.
+  * [Feat] 기존 `infra/generate_korean_metadata_json.py` 메타데이터 자동화 추출 분석기를 본 폴더 아래 [skill_generate_korean_metadata.py](intelligence/skill/skill_generate_korean_metadata.py)로 Shebang 정렬 및 스킬 명명 규칙에 맞춰 이관 완료.
+  * [Feat] 에이전트와 스킬 역할 분리를 위해, 기존 `agent/sync_agents.py`를 본 폴더 아래 [skill_sync_agents.py](intelligence/skill/skill_sync_agents.py)로 성공적으로 경로 및 Shebang을 정렬하여 이관 완료.
   * [Feat] 스킬 폴더 전용 `GEMINI.md` 마이크로 가이드라인 최초 수립 및 비치.

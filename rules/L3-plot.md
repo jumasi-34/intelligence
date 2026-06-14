@@ -13,7 +13,7 @@
 
 ## 2. 금지 규칙 (Strict Guardrails)
 > [!IMPORTANT]
-> 레이어 간 상호 작용 및 고수준 의존성 격벽 제약 조건은 단일 진실 공급원(SSOT)인 **[L2-architecture.md](file:///home/jumasi/workstation/intelligence/rules/L2-architecture.md)**의 규칙을 엄격히 준수합니다.
+> 레이어 간 상호 작용 및 고수준 의존성 격벽 제약 조건은 단일 진실 공급원(SSOT)인 **[L2-architecture.md](intelligence/rules/L2-architecture.md)**의 규칙을 엄격히 준수합니다.
 
 1. **Streamlit 레이아웃 요소 호출 금지 (No Streamlit Layout in Plots)**:
    - `*_plots.py` 내부에서는 `st.write`, `st.columns`, `st.sidebar`, `st.metric` 등 화면 레이아웃 및 UI 요소를 렌더링하는 함수를 절대 호출할 수 없습니다. 오직 순수 시각화 차트 객체만을 생성하여 반환해야 합니다.

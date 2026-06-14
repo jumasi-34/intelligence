@@ -13,7 +13,7 @@
 
 ## 2. 금지 규칙 (Strict Guardrails)
 > [!IMPORTANT]
-> 레이어 간 상호 작용 및 고수준 의존성 격벽 제약 조건은 단일 진실 공급원(SSOT)인 **[L2-architecture.md](file:///home/jumasi/workstation/intelligence/rules/L2-architecture.md)**의 규칙을 엄격히 준수합니다.
+> 레이어 간 상호 작용 및 고수준 의존성 격벽 제약 조건은 단일 진실 공급원(SSOT)인 **[L2-architecture.md](intelligence/rules/L2-architecture.md)**의 규칙을 엄격히 준수합니다.
 
 1. **Inplace Mutation 금지 (No Inplace)**:
    - 데이터프레임 가공 시 `inplace=True` 옵션 사용을 금지하며, 원본 데이터의 불변성을 유지하고 사이드 이펙트를 원천 차단합니다.

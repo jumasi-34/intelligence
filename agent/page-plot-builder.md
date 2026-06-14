@@ -66,4 +66,4 @@
 
 ## 4. 에이전트 협업 및 체이닝 (Agent Collaboration & Chaining)
 
-본 에이전트의 구체적인 기동 협업 다이어그램(Chaining Mermaid), 예외 에스컬레이션 수칙(Escalation Protocol), 그리고 이모지 사용 전면 금지와 같은 공통 세이프티 제약은 지능 연합 원장인 [agent/GEMINI.md](file:///home/jumasi/workstation/intelligence/agent/GEMINI.md)에 통합 기재되어 전역 관리됩니다. 개발 및 협업 시 이를 참고하여 구동하십시오.
+본 에이전트의 구체적인 기동 협업 다이어그램(Chaining Mermaid), 예외 에스컬레이션 수칙(Escalation Protocol), 그리고 이모지 사용 전면 금지와 같은 공통 세이프티 제약은 지능 연합 원장인 [agent/GEMINI.md](intelligence/agent/GEMINI.md)에 통합 기재되어 전역 관리됩니다. 개발 및 협업 시 이를 참고하여 구동하십시오.

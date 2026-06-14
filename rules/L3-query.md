@@ -13,7 +13,7 @@
 
 ## 2. 금지 규칙 (Strict Guardrails)
 > [!IMPORTANT]
-> 레이어 간 상호 작용 및 고수준 의존성 격벽 제약 조건은 단일 진실 공급원(SSOT)인 **[L2-architecture.md](file:///home/jumasi/workstation/intelligence/rules/L2-architecture.md)**의 규칙을 엄격히 준수합니다.
+> 레이어 간 상호 작용 및 고수준 의존성 격벽 제약 조건은 단일 진실 공급원(SSOT)인 **[L2-architecture.md](intelligence/rules/L2-architecture.md)**의 규칙을 엄격히 준수합니다.
 
 1. **SQL 실행 권한 제거**:
    - 쿼리 레이어 내부에서 어떠한 형태든 직접 DB 연결을 성립하거나 실행 메서드를 가동해서는 안 됩니다.

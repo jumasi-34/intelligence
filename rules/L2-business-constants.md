@@ -36,7 +36,7 @@
 ```
 
 ### [Step 1] JSON 파일에 상수 정의
-[app/core/constants/business_constants.json](file:///home/jumasi/workstation/app/core/constants/business_constants.json) 파일 내에 원하는 구조(대문자 Key 권장)로 상수를 정의합니다.
+[app/core/constants/business_constants.json](app/core/constants/business_constants.json) 파일 내에 원하는 구조(대문자 Key 권장)로 상수를 정의합니다.
 
 * **주의 사항**: JSON 문법을 완벽히 준수해야 하며, 마지막 요소 뒤에 쉼표(`,`)를 남겨두는 Syntax Error(Trailing Comma)가 발생하지 않도록 각별히 유의합니다.
 * **예시 (신규 DICT 추가)**:
@@ -52,7 +52,7 @@
   ```
 
 ### [Step 2] 파이썬 상수 바인딩 및 내보내기 (Export)
-[app/core/constants/business.py](file:///home/jumasi/workstation/app/core/constants/business.py) 파일에서 JSON 파싱 결과인 `_data` 딕셔너리로부터 상수를 바인딩하고 모듈 외부에서 import할 수 있도록 `__all__`에 등록합니다.
+[app/core/constants/business.py](app/core/constants/business.py) 파일에서 JSON 파싱 결과인 `_data` 딕셔너리로부터 상수를 바인딩하고 모듈 외부에서 import할 수 있도록 `__all__`에 등록합니다.
 
 1. **상수 선언 및 바인딩 (대문자 스네이크 케이스 준수)**:
    ```python

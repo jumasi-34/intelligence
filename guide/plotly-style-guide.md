@@ -15,7 +15,7 @@
 
 ### 1.2. 인라인 폰트 및 스타일 수치 하드코딩
 * **현황**: 특정 플롯에서 디자인 토큰을 무시하고 `color="black"`, `size=16`, `family="Inter"` 등 원시 문자열/정수값을 직접 레이아웃에 주입하고 있습니다.
-  > **안티패턴 예시 ([data_analysis_plots.py:L98-101](file:///home/jumasi/workstation/pages/_20_analysis/data_analysis_plots.py#L98-101))**
+  > **안티패턴 예시 ([data_analysis_plots.py:L98-101](app/pages/_20_analysis/data_analysis_plots.py#L98-101))**
   > ```python
   > layout = go.Layout(
   >     title=dict(text="Product History", font=dict(color="black", size=16)),
@@ -171,7 +171,7 @@ def draw_good_chart(df: pd.DataFrame) -> go.Figure:
 
 코드의 자유도를 강제로 규제하고 점진적으로 통합하기 위해, 다음 단계의 프로세스를 적용할 것을 제안합니다.
 
-1. **규격 문서 공유**: 본 [PLOTLY_STYLE_GUIDE.md](file:///home/jumasi/workstation/PLOTLY_STYLE_GUIDE.md) 가이드를 프로젝트 협업 채널(혹은 깃허브 PR 가이드)에 등재하고 팀원들에게 규칙을 안내합니다.
+1. **규격 문서 공유**: 본 [plotly-style-guide.md](plotly-style-guide.md) 가이드를 프로젝트 협업 채널(혹은 깃허브 PR 가이드)에 등재하고 팀원들에게 규칙을 안내합니다.
 2. **코드 리뷰 체크리스트 도입**: 모든 Pull Request 검토 시 아래 **시각화 3대 금지 체크리스트**를 충족하는지 검사합니다.
    * `get_default_layout_config`을 사용하지 않고 처음부터 독단적인 `go.Layout()` 딕셔너리를 구축했는가? (불허)
    * 컬러 헥사 코드나 `'black'`, `'white'` 같은 인라인 문자열이 들어있는가? (불허)

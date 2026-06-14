@@ -17,9 +17,10 @@
 
 | 파일명 | 파일의 본질적 역할 및 책임 (1줄 요약) |
 | :--- | :--- |
-| *(구현 대기)* `emoji_checker.py` | 소스코드 및 문서 자산 내 유니코드 이모지 탑재 위반 여부를 검증하는 무결성 검사기 |
-| *(구현 대기)* `schema_validator.py` | 구조 자산(SQLite, Databricks 등)이 골든 정합 스키마 표준에 부합하는지 비교하는 정적 검사기 |
-| *(구현 대기)* `commit_msg_validator.py` | 표준 Git 커밋 태그 및 한국어 작성 정책 무결성을 판단하는 검사기 |
+| `emoji_checker.py` | 소스코드 및 문서 자산 내 유니코드 이모지 탑재 위반 여부를 검증하는 무결성 검사기 |
+| `schema_validator.py` | 구조 자산(SQLite, Databricks 등)이 골든 정합 스키마 표준에 부합하는지 비교하는 정적 검사기 |
+| `commit_msg_validator.py` | 표준 Git 커밋 태그 및 한국어 작성 정책 무결성을 판단하는 검사기 |
+
 
 ---
 
