@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Intelligence Console - CQMS Intelligence Control Panel</title>
+    <!-- Google Web Fonts & Material Symbols -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@300;400;500;600;700;800&family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0&display=swap" rel="stylesheet">
+    <!-- Main Style Sheet -->
+    <link rel="stylesheet" href="assets/style.css">
+    <!-- Marked.js for rendering markdown dynamically -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script>
+        // Global JavaScript Error Boundary to display errors clearly
+        window.addEventListener('error', function(e) {
+            var banner = document.getElementById('debug-error-banner');
+            if (!banner) {
+                banner = document.createElement('div');
+                banner.id = 'debug-error-banner';
+                banner.style.position = 'fixed';
+                banner.style.bottom = '20px';
+                banner.style.right = '20px';
+                banner.style.width = '380px';
+                banner.style.backgroundColor = 'rgba(239, 68, 68, 0.95)';
+                banner.style.color = '#ffffff';
+                banner.style.padding = '16px';
+                banner.style.borderRadius = '8px';
+                banner.style.boxShadow = '0 10px 25px rgba(0,0,0,0.5)';
+                banner.style.zIndex = '99999';
+                banner.style.fontFamily = 'monospace';
+                banner.style.fontSize = '12px';
+                banner.style.lineHeight = '1.5';
+                banner.style.whiteSpace = 'pre-wrap';
+                banner.style.borderLeft = '4px solid #ffffff';
+                document.body.appendChild(banner);
+            }
+            banner.textContent = '⚠️ JS Error Detected:\n' + e.message + '\nFile: ' + e.filename.split('/').pop() + ':' + e.lineno + ':' + e.colno;
+        });
+    </script>
+</head>
+<body class="dark-theme">
+    <div class="app-container">
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo-wrapper">
+                    <span class="material-symbols-outlined logo-icon">shield_with_heart</span>
+                    <div class="logo-text">
+                        <h1>Intelligence</h1>
+                        <span class="sub-logo">Console v1.0</span>
+                    </div>
+                </div>
+            </div>
+            
+            <nav class="sidebar-menu">
+                <a href="#overview" class="menu-item active" data-tab="overview">
+                    <span class="material-symbols-outlined">dashboard</span>
+                    <span class="menu-label">Overview</span>
+                </a>
+                <a href="#architecture" class="menu-item" data-tab="architecture">
+                    <span class="material-symbols-outlined">hub</span>
+                    <span class="menu-label">Architecture Map</span>
+                </a>
+                <a href="#agents" class="menu-item" data-tab="agents">
+                    <span class="material-symbols-outlined">smart_toy</span>
+                    <span class="menu-label">Agent Registry</span>
+                </a>
+                <a href="#domain" class="menu-item" data-tab="domain">
+                    <span class="material-symbols-outlined">menu_book</span>
+                    <span class="menu-label">Domain Knowledge</span>
+                </a>
+                <a href="#rules" class="menu-item" data-tab="rules">
+                    <span class="material-symbols-outlined">gavel</span>
+                    <span class="menu-label">Rules & Guardrails</span>
+                </a>
+                <a href="#runs" class="menu-item" data-tab="runs">
+                    <span class="material-symbols-outlined">history</span>
+                    <span class="menu-label">Runs & Hooks</span>
+                </a>
+            </nav>
+
+            <div class="sidebar-footer">
+                <div class="build-info">
+                    <span class="build-label">Last Build:</span>
+                    <span id="build-time" class="build-value">Loading...</span>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="main-content">
+            <!-- Header -->
+            <header class="content-header">
+                <div class="header-left">
+                    <h2 id="current-tab-title">Overview</h2>
+                    <p id="current-tab-desc" class="header-subtitle">시스템 종합 현황 및 주요 메트릭 지표</p>
+                </div>
+                <div class="header-right" style="display: flex; gap: 16px; align-items: center;">
+                    <button id="btn-rebuild" class="rebuild-btn">
+                        <span class="material-symbols-outlined">sync</span>
+                        <span>실시간 리빌드</span>
+                    </button>
+                    <div class="global-search-bar">
+                        <span class="material-symbols-outlined search-icon">search</span>
+                        <input type="text" id="global-search-input" placeholder="전체 문서 및 지식 검색...">
+                    </div>
+                </div>
+            </header>
+
+            <!-- Dynamic Tab Content Wrapper -->
+            <div class="tab-content-container">
+                
+                <!-- Tab 1: Overview -->
+                <section id="tab-overview" class="tab-section active">
+                    <!-- Metric Grid -->
+                    <div class="metrics-grid">
+                        <div class="metric-card neon-blue">
+                            <div class="metric-header">
+                                <span class="material-symbols-outlined metric-icon">description</span>
+                                <span class="metric-title">수집 문서 수</span>
+                            </div>
+                            <div class="metric-body">
+                                <span id="metric-docs" class="metric-value">-</span>
+                                <span class="metric-unit">개</span>
+                            </div>
+                        </div>
+                        <div class="metric-card neon-purple">
+                            <div class="metric-header">
+                                <span class="material-symbols-outlined metric-icon">support_agent</span>
+                                <span class="metric-title">활성 에이전트</span>
+                            </div>
+                            <div class="metric-body">
+                                <span id="metric-agents" class="metric-value">-</span>
+                                <span class="metric-unit">명</span>
+                            </div>
+                        </div>
+                        <div class="metric-card neon-amber">
+                            <div class="metric-header">
+                                <span class="material-symbols-outlined metric-icon">policy</span>
+                                <span class="metric-title">시스템 규칙</span>
+                            </div>
+                            <div class="metric-body">
+                                <span id="metric-rules" class="metric-value">-</span>
+                                <span class="metric-unit">개</span>
+                            </div>
+                        </div>
+                        <div class="metric-card neon-emerald">
+                            <div class="metric-header">
+                                <span class="material-symbols-outlined metric-icon">published_with_changes</span>
+                                <span class="metric-title">운영 실행 이력</span>
+                            </div>
+                            <div class="metric-body">
+                                <span id="metric-runs" class="metric-value">-</span>
+                                <span class="metric-unit">회</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="dashboard-row">
+                        <!-- Left: Recent Docs -->
+                        <div class="dashboard-col col-7">
+                            <div class="content-card">
+                                <div class="card-header">
+                                    <h3 class="card-title">
+                                        <span class="material-symbols-outlined header-icon">schedule</span>최근 업데이트 문서
+                                    </h3>
+                                </div>
+                                <div class="card-body">
+                                    <ul id="recent-docs-list" class="recent-docs-list">
+                                        <div class="loading-spinner"></div>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Right: Safety Panel (Fixed Static Information) -->
+                        <div class="dashboard-col col-5">
+                            <div class="content-card safety-panel">
+                                <div class="card-header">
+                                    <h3 class="card-title text-error">
+                                        <span class="material-symbols-outlined header-icon">gavel</span>Safety Guardrails (안전 수칙)
+                                    </h3>
+                                </div>
+                                <div class="card-body">
+                                    <div class="safety-item">
+                                        <span class="material-symbols-outlined safety-icon error-icon">lock</span>
+                                        <div class="safety-desc">
+                                            <strong>임의 코드 수정 제한 (Safety Lock)</strong>
+                                            <p>사용자의 직접적인 서면 동의 및 명시적 요청이 있을 때까지 기존 프로덕션 코드 수정을 금지합니다.</p>
+                                        </div>
+                                    </div>
+                                    <div class="safety-item">
+                                        <span class="material-symbols-outlined safety-icon error-icon">visibility_off</span>
+                                        <div class="safety-desc">
+                                            <strong>private note 접근 차단 (Exclusion)</strong>
+                                            <p>개인 메모가 저장된 `intelligence/note/` 영역은 에이전트의 조회, 파싱, 색인이 원천 금지됩니다.</p>
+                                        </div>
+                                    </div>
+                                    <div class="safety-item">
+                                        <span class="material-symbols-outlined safety-icon error-icon">cancel</span>
+                                        <div class="safety-desc">
+                                            <strong>코드 내 이모지 사용 전면 금지</strong>
+                                            <p>모든 UI, 페이지 및 주석 등에 유니코드 이모지 사용을 엄격히 제한하고 Material Symbols로 표준화합니다.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Tab 2: Architecture Map -->
+                <section id="tab-architecture" class="tab-section">
+                    <div class="architecture-grid" id="architecture-grid">
+                        <!-- Rendered by JS -->
+                    </div>
+                </section>
+
+                <!-- Tab 3: Agent Registry -->
+                <section id="tab-agents" class="tab-section">
+                    <div class="agents-container">
+                        <div class="agents-sidebar" id="agents-sidebar">
+                            <!-- Rendered by JS: List of Agents -->
+                        </div>
+                        <div class="agent-detail-view" id="agent-detail-view">
+                            <div class="empty-state">
+                                <span class="material-symbols-outlined large-icon">smart_toy</span>
+                                <p>왼쪽 에이전트 목록을 선택하시면 상세 역할과 관계를 보실 수 있습니다.</p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Tab 4: Domain Knowledge -->
+                <section id="tab-domain" class="tab-section">
+                    <div class="domain-container">
+                        <div class="domain-tree" id="domain-tree">
+                            <!-- Rendered by JS: Knowledge Hierarchy Tree -->
+                        </div>
+                        <div class="domain-viewer" id="domain-viewer">
+                            <div class="empty-state" id="domain-empty-state">
+                                <span class="material-symbols-outlined large-icon">find_in_page</span>
+                                <p>왼쪽 도메인 지식 트리를 탐색하거나 검색하여 상세 문서를 열람하세요.</p>
+                            </div>
+                            <div class="document-render-area css-markdown-body" id="document-render-area" style="display: none;">
+                                <div class="doc-header">
+                                    <h2 id="doc-title">Document Title</h2>
+                                    <div class="doc-meta">
+                                        <span class="doc-badge" id="doc-category">Category</span>
+                                        <span class="doc-update"><span class="material-symbols-outlined">schedule</span> <span id="doc-mtime">-</span></span>
+                                    </div>
+                                </div>
+                                <hr class="doc-divider">
+                                <div class="doc-content-body" id="doc-content-body">
+                                    <!-- Rendered Markdown Content -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Tab 5: Rules & Guardrails -->
+                <section id="tab-rules" class="tab-section">
+                    <div class="rules-container">
+                        <div class="rules-matrix" id="rules-matrix">
+                            <!-- Rendered by JS: Cards showing different rules files -->
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Tab 6: Runs & Hooks -->
+                <section id="tab-runs" class="tab-section">
+                    <div class="runs-container">
+                        <div class="runs-left col-8">
+                            <div class="content-card">
+                                <div class="card-header">
+                                    <h3 class="card-title">
+                                        <span class="material-symbols-outlined header-icon">timeline</span>에이전트 실행 타임라인
+                                    </h3>
+                                </div>
+                                <div class="card-body">
+                                    <div class="timeline" id="runs-timeline">
+                                        <!-- Rendered by JS -->
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="runs-right col-4">
+                            <div class="content-card hook-card">
+                                <div class="card-header">
+                                    <h3 class="card-title">
+                                        <span class="material-symbols-outlined header-icon">sync_alt</span>System Hooks
+                                    </h3>
+                                </div>
+                                <div class="card-body">
+                                    <ul class="hook-list">
+                                        <li class="hook-item success">
+                                            <span class="material-symbols-outlined hook-status">check_circle</span>
+                                            <div class="hook-info">
+                                                <strong>Git Pre-commit Hook</strong>
+                                                <p>커밋 전 스타일 가이드 및 가드레일 자동 검사 통과</p>
+                                            </div>
+                                        </li>
+                                        <li class="hook-item success">
+                                            <span class="material-symbols-outlined hook-status">check_circle</span>
+                                            <div class="hook-info">
+                                                <strong>Verify Code Spec</strong>
+                                                <p>3-Layer 및 SQL 표준 룰 유효성 상시 검증 활성화</p>
+                                            </div>
+                                        </li>
+                                        <li class="hook-item warning">
+                                            <span class="material-symbols-outlined hook-status">warning</span>
+                                            <div class="hook-info">
+                                                <strong>Dual-Push Check</strong>
+                                                <p>로컬 <-> 원격 서버 레포 동기화 시 비동기 딜레이 감지</p>
+                                            </div>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+                
+            </div>
+        </main>
+    </div>
+
+    <!-- Main JavaScript File -->
+    <script src="assets/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,53 @@
+name: Deploy Intelligence Console to GitHub Pages
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      # Only run if relevant files inside the intelligence repository or workflow itself are changed
+      - 'dashboard/**'
+      - 'scripts/**'
+      - 'agent/**'
+      - 'rules/**'
+      - 'domain/**'
+      - 'guide/**'
+      - 'workflow/**'
+      - 'skill/**'
+      - 'checklist/**'
+      - 'guardrail/**'
+      - '.github/workflows/deploy-dashboard.yml'
+  workflow_dispatch: # Allows manual trigger from the GitHub Actions UI
+
+# Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
+permissions:
+  contents: write
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # Fetches all history for git metadata
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Compile Intelligence Console Data
+        run: |
+          python scripts/build_dashboard.py
+
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./dashboard
+          publish_branch: gh-pages
+          force_orphan: true
+          user_name: 'github-actions[bot]'
+          user_email: 'github-actions[bot]@users.noreply.github.com'
+          commit_message: 'deploy: [RULE] 인텔리전스 콘솔 빌드 및 GitHub Pages 자동 배포'

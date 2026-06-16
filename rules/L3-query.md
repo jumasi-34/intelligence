@@ -51,3 +51,11 @@
   - 예: `get_gmes_production_by_plant(...)`
 * **기준 정보 및 마스터 조회**: `get_<도메인>_*_master(...)` 또는 `_standard(...)`
   - 예: `get_gmes_spec_product_master(...)`
+
+---
+
+## 5. Databricks 과금 방지 및 무분별한 쿼리 요청 차단 수칙 (Cost Control Guardrails)
+1. **개발 중 실서버 쿼리 원천 금지**: 단순 UI 배치 변경, 변환 비즈니스 로직 수정 시 실제 Databricks에 접속하지 말고 `local.data/` 하위의 Parquet/CSV 덤프 데이터를 활용하여 Mocking 테스트를 진행하십시오.
+2. **개발용 LIMIT 강제 바인딩**: 검증용으로 작성하는 쿼리 및 테스트 쿼리에는 데이터 풀 스캔을 막기 위해 반드시 `LIMIT 100` ~ `LIMIT 1000`을 강제 주입하여 샘플 데이터만 조회하도록 제한하십시오.
+3. **Streamlit 캐시 무결성 유지**: 데이터 수집 서비스 함수는 무조건 `@st.cache_data`를 적용하고, 캐시 키 매개변수에 매번 바뀌는 변수(예: `datetime.now()`)를 바인딩하여 캐시가 깨지는 현상을 완벽히 방지하십시오.
+
