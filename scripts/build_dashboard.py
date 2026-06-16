@@ -14,7 +14,7 @@ import re
 from datetime import datetime
 
 # Paths
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__))) # workstation/intelligence
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))  # workstation/intelligence
 DASHBOARD_DIR = os.path.join(BASE_DIR, "dashboard")
 DATA_DIR = os.path.join(DASHBOARD_DIR, "data")
 
@@ -29,7 +29,7 @@ CATEGORIES = {
     "workflow": "비즈니스 프로세스 및 작업 흐름 가이드",
     "skill": "에이전트 도구 및 자동화 스크립트 명세",
     "checklist": "품질 보증 및 작업 검증 체크리스트",
-    "guardrail": "에이전트 제약 및 안전 가드레일 명세"
+    "guardrail": "에이전트 제약 및 안전 가드레일 명세",
 }
 
 # Subdirectories to scan (explicitly white-listed)
@@ -48,8 +48,9 @@ SECRET_PATTERNS = [
     r"session[-_]?token",
     r"private[-_]?key",
     r"aws[-_]?access",
-    r"databricks[-_]?token"
+    r"databricks[-_]?token",
 ]
+
 
 def scan_for_secrets(content, filepath):
     """Simple safety check to block builds if potential secrets are detected in public-facing JSON."""
@@ -64,10 +65,11 @@ def scan_for_secrets(content, filepath):
             return True
     return False
 
+
 def parse_markdown(filepath, relative_path, category):
     """Parses a markdown file to extract title, summary, front-matter and clean text content."""
     try:
-        with open(filepath, 'r', encoding='utf-8') as f:
+        with open(filepath, "r", encoding="utf-8") as f:
             content = f.read()
     except Exception as e:
         print(f"Error reading file {filepath}: {e}")
@@ -82,11 +84,11 @@ def parse_markdown(filepath, relative_path, category):
     front_matter_match = re.match(r"^---\s*\n(.*?)\n---\s*\n", content, re.DOTALL)
     if front_matter_match:
         front_matter_text = front_matter_match.group(1)
-        cleaned_content = content[front_matter_match.end():]
+        cleaned_content = content[front_matter_match.end() :]
         # Quick key-value parse for YAML
-        for line in front_matter_text.split('\n'):
-            if ':' in line:
-                k, v = line.split(':', 1)
+        for line in front_matter_text.split("\n"):
+            if ":" in line:
+                k, v = line.split(":", 1)
                 meta[k.strip()] = v.strip().strip('"').strip("'")
 
     # Extract Title (First # Title)
@@ -105,7 +107,11 @@ def parse_markdown(filepath, relative_path, category):
     summary = meta.get("summary")
     if not summary:
         # Grab first non-header, non-empty line
-        lines = [line.strip() for line in cleaned_content.split('\n') if line.strip() and not line.strip().startswith('#') and not line.strip().startswith('---')]
+        lines = [
+            line.strip()
+            for line in cleaned_content.split("\n")
+            if line.strip() and not line.strip().startswith("#") and not line.strip().startswith("---")
+        ]
         if lines:
             summary = lines[0]
             if len(summary) > 180:
@@ -115,7 +121,7 @@ def parse_markdown(filepath, relative_path, category):
 
     # Stat info
     stat = os.stat(filepath)
-    mtime = datetime.fromtimestamp(stat.st_mtime).strftime('%Y-%m-%d %H:%M:%S')
+    mtime = datetime.fromtimestamp(stat.st_mtime).strftime("%Y-%m-%d %H:%M:%S")
 
     return {
         "title": title,
@@ -125,8 +131,9 @@ def parse_markdown(filepath, relative_path, category):
         "content": cleaned_content,
         "updated_at": mtime,
         "size_bytes": stat.st_size,
-        "tags": meta.get("tags", "").split(",") if meta.get("tags") else []
+        "tags": meta.get("tags", "").split(",") if meta.get("tags") else [],
     }
+
 
 def build_dashboard_data():
     print("==================================================")
@@ -138,7 +145,7 @@ def build_dashboard_data():
     os.makedirs(DATA_DIR, exist_ok=True)
 
     documents = []
-    
+
     # 1. Scan and index markdown documents
     for category in SCAN_DIRS:
         category_path = os.path.join(BASE_DIR, category)
@@ -151,7 +158,7 @@ def build_dashboard_data():
             # Enforce AI Exclusion Zone
             if any(ex in root.split(os.sep) for ex in EXCLUDE_DIRS):
                 continue
-                
+
             for file in files:
                 if file.endswith(".md"):
                     full_path = os.path.join(root, file)
@@ -165,7 +172,7 @@ def build_dashboard_data():
     agents_registry_path = os.path.join(BASE_DIR, "agent", "agents_registry.json")
     if os.path.exists(agents_registry_path):
         try:
-            with open(agents_registry_path, 'r', encoding='utf-8') as f:
+            with open(agents_registry_path, "r", encoding="utf-8") as f:
                 agents_data = json.load(f)
             print("[INFO] Agents Registry loaded successfully.")
         except Exception as e:
@@ -183,11 +190,9 @@ def build_dashboard_data():
                     full_path = os.path.join(root, file)
                     rel_path = os.path.relpath(full_path, BASE_DIR)
                     # We can categorize rules, e.g. L1 Git, L2 Architecture, etc.
-                    rules_data.append({
-                        "name": file,
-                        "path": rel_path,
-                        "type": "json" if file.endswith(".json") else "md"
-                    })
+                    rules_data.append(
+                        {"name": file, "path": rel_path, "type": "json" if file.endswith(".json") else "md"}
+                    )
 
     # 4. Compile Runs Timeline
     runs_timeline = []
@@ -199,26 +204,23 @@ def build_dashboard_data():
             if os.path.isdir(item_path) and item.startswith("run_"):
                 # Parse run folder info
                 stat = os.stat(item_path)
-                mtime = datetime.fromtimestamp(stat.st_mtime).strftime('%Y-%m-%d %H:%M:%S')
-                runs_timeline.append({
-                    "run_id": item,
-                    "created_at": mtime,
-                    "status": "completed",  # Placeholder or parsed from log
-                    "files_changed": len(os.listdir(item_path))
-                })
+                mtime = datetime.fromtimestamp(stat.st_mtime).strftime("%Y-%m-%d %H:%M:%S")
+                runs_timeline.append(
+                    {
+                        "run_id": item,
+                        "created_at": mtime,
+                        "status": "completed",  # Placeholder or parsed from log
+                        "files_changed": len(os.listdir(item_path)),
+                    }
+                )
 
     # 5. Build Architecture Overview Map
-    architecture_map = {
-        "categories": []
-    }
+    architecture_map = {"categories": []}
     for cat_key, cat_desc in CATEGORIES.items():
         cat_docs = [doc for doc in documents if doc["category"] == cat_key]
-        architecture_map["categories"].append({
-            "key": cat_key,
-            "name": cat_key.capitalize(),
-            "description": cat_desc,
-            "doc_count": len(cat_docs)
-        })
+        architecture_map["categories"].append(
+            {"key": cat_key, "name": cat_key.capitalize(), "description": cat_desc, "doc_count": len(cat_docs)}
+        )
 
     # Save compiled JSON files
     files_to_save = {
@@ -226,13 +228,13 @@ def build_dashboard_data():
         "agents.json": agents_data,
         "rules.json": rules_data,
         "runs.json": runs_timeline,
-        "architecture.json": architecture_map
+        "architecture.json": architecture_map,
     }
 
     for filename, content in files_to_save.items():
         out_path = os.path.join(DATA_DIR, filename)
         try:
-            with open(out_path, 'w', encoding='utf-8') as f:
+            with open(out_path, "w", encoding="utf-8") as f:
                 json.dump(content, f, ensure_ascii=False, indent=2)
             print(f"[SAVE] Saved: {out_path}")
         except Exception as e:
@@ -240,16 +242,17 @@ def build_dashboard_data():
 
     # Generate metadata build info
     meta_info = {
-        "last_build_time": datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
+        "last_build_time": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
         "total_documents": len(documents),
-        "categories_stats": {cat: len([d for d in documents if d["category"] == cat]) for cat in SCAN_DIRS}
+        "categories_stats": {cat: len([d for d in documents if d["category"] == cat]) for cat in SCAN_DIRS},
     }
-    with open(os.path.join(DATA_DIR, "build_meta.json"), 'w', encoding='utf-8') as f:
+    with open(os.path.join(DATA_DIR, "build_meta.json"), "w", encoding="utf-8") as f:
         json.dump(meta_info, f, ensure_ascii=False, indent=2)
 
     print("==================================================")
     print("[SUCCESS] Build Completed Successfully!")
     print("==================================================")
+
 
 if __name__ == "__main__":
     build_dashboard_data()
