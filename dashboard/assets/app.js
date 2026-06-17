@@ -31,23 +31,6 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-    // Configure Custom Renderer for Marked.js to intercept mermaid code blocks
-    if (typeof marked !== "undefined") {
-        const renderer = {
-            code(code, infostring) {
-                const lang = (infostring || '').match(/^\S*/)[0];
-                if (lang === 'mermaid') {
-                    const codeText = typeof code === 'object' ? code.text : code;
-                    return `<div class="mermaid">${codeText}</div>`;
-                }
-                const codeText = typeof code === 'object' ? code.text : code;
-                const escapedCode = codeText.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
-                return `<pre><code class="language-${lang}">${escapedCode}</code></pre>`;
-            }
-        };
-        marked.use({ renderer });
-    }
-
     // DOM Elements
     const elements = {
         buildTime: document.getElementById("build-time"),
@@ -587,19 +570,51 @@ document.addEventListener("DOMContentLoaded", () => {
         
         // Render markdown with marked.js
         if (typeof marked !== "undefined" && marked.parse) {
-            elements.docContentBody.innerHTML = marked.parse(doc.content);
+            let htmlContent = marked.parse(doc.content);
 
-            // Render Mermaid diagrams if present and library is loaded
-            if (typeof mermaid !== "undefined" && elements.docContentBody.querySelector('.mermaid')) {
+            // Create an in-memory DOM container for robust post-processing
+            const tempDiv = document.createElement('div');
+            tempDiv.innerHTML = htmlContent;
+
+            // Universally capture markdown code blocks containing mermaid
+            const mermaidBlocks = tempDiv.querySelectorAll('pre code.language-mermaid, pre code.mermaid, pre.language-mermaid code, pre.mermaid');
+            mermaidBlocks.forEach(block => {
+                // Fetch the raw mermaid text content
+                let rawMermaid = block.textContent || block.innerText || "";
+                
+                // If it's a pre block, we might have nested code tags
+                if (block.tagName.toLowerCase() === 'pre') {
+                    const nestedCode = block.querySelector('code');
+                    if (nestedCode) {
+                        rawMermaid = nestedCode.textContent || nestedCode.innerText || "";
+                    }
+                }
+
+                // Create a standard premium styled mermaid container
+                const mermaidContainer = document.createElement('div');
+                mermaidContainer.className = 'mermaid';
+                mermaidContainer.textContent = rawMermaid.trim();
+
+                // Find the outermost element to replace (usually pre)
+                const outerElement = block.closest('pre') || block;
+                outerElement.replaceWith(mermaidContainer);
+            });
+
+            // Set final processed content to the DOM
+            elements.docContentBody.innerHTML = tempDiv.innerHTML;
+
+            // Render Mermaid diagrams using the loaded library
+            const renderNodes = elements.docContentBody.querySelectorAll('.mermaid');
+            if (typeof mermaid !== "undefined" && renderNodes.length > 0) {
                 try {
                     // Reset processed attribute so it redraws cleanly on repeat clicks
-                    elements.docContentBody.querySelectorAll('.mermaid').forEach(el => {
+                    renderNodes.forEach(el => {
                         el.removeAttribute('data-processed');
                         el.setAttribute('id', 'mermaid-' + Math.random().toString(36).substring(2, 11));
                     });
                     const currentTheme = document.body.classList.contains('light-theme') ? 'default' : 'dark';
                     mermaid.initialize({ theme: currentTheme });
-                    mermaid.init(undefined, elements.docContentBody.querySelectorAll('.mermaid'));
+                    mermaid.init(undefined, renderNodes);
                 } catch (err) {
                     console.error("Mermaid parsing error:", err);
                 }
