@@ -12,7 +12,7 @@ import os
 import json
 import re
 from datetime import datetime
-from typing import Dict, Any
+from typing import Dict, Any, List
 
 # Paths
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))  # workstation/intelligence
@@ -196,7 +196,7 @@ def build_dashboard_data():
                     )
 
     # 4. Compile Runs Timeline
-    runs_timeline = []
+    runs_timeline: List[Dict[str, Any]] = []
 
     # A. Parse reverse-sync-prevention.md
     rca_file_path = os.path.join(BASE_DIR, "runs", "reverse-sync-prevention.md")
