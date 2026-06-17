@@ -197,7 +197,7 @@ def build_dashboard_data():
 
     # 4. Compile Runs Timeline
     runs_timeline = []
-    
+
     # A. Parse reverse-sync-prevention.md
     rca_file_path = os.path.join(BASE_DIR, "runs", "reverse-sync-prevention.md")
     if os.path.exists(rca_file_path):
@@ -217,18 +217,20 @@ def build_dashboard_data():
                         error_type = parts[4].replace("**", "").strip()
                         rca = parts[5]
                         action = parts[6]
-                        
-                        runs_timeline.append({
-                            "run_id": run_id,
-                            "created_at": timestamp,
-                            "status": "failed",
-                            "agent": agent,
-                            "domain": domain,
-                            "error_type": error_type,
-                            "rca": rca,
-                            "action": action,
-                            "is_rca_audit": True
-                        })
+
+                        runs_timeline.append(
+                            {
+                                "run_id": run_id,
+                                "created_at": timestamp,
+                                "status": "failed",
+                                "agent": agent,
+                                "domain": domain,
+                                "error_type": error_type,
+                                "rca": rca,
+                                "action": action,
+                                "is_rca_audit": True,
+                            }
+                        )
         except Exception as e:
             print(f"[ERROR] Failed to parse reverse-sync-prevention.md: {e}")
 
@@ -248,10 +250,10 @@ def build_dashboard_data():
                             "created_at": mtime,
                             "status": "completed",
                             "files_changed": len(os.listdir(item_path)),
-                            "is_rca_audit": False
+                            "is_rca_audit": False,
                         }
                     )
-                    
+
     # Sort all runs by timestamp in descending order
     runs_timeline.sort(key=lambda x: x["created_at"], reverse=True)
 
