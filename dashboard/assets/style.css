@@ -982,9 +982,60 @@ body.dark-theme {
 
 /* Rules & Guardrails Cards */
 .rules-container {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+.rules-matrix {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: 24px;
+}
+
+/* Rules Matrix & Intro Panel Premium Layout */
+.rules-intro-panel {
+    background: linear-gradient(135deg, rgba(30, 41, 59, 0.4), rgba(15, 23, 42, 0.6));
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: var(--radius-lg);
+    padding: 24px;
+    display: flex;
+    gap: 20px;
+    align-items: center;
+}
+
+.intro-icon-area {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background-color: rgba(99, 102, 241, 0.15);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.intro-g-icon {
+    font-size: 32px;
+    color: var(--color-blue);
+}
+
+.badge-l1 { background-color: rgba(20, 184, 166, 0.15) !important; color: #14b8a6 !important; border: 1px solid rgba(20, 184, 166, 0.3) !important; }
+.badge-l2 { background-color: rgba(245, 158, 11, 0.15) !important; color: #f59e0b !important; border: 1px solid rgba(245, 158, 11, 0.3) !important; }
+.badge-l3 { background-color: rgba(59, 130, 246, 0.15) !important; color: #3b82f6 !important; border: 1px solid rgba(59, 130, 246, 0.3) !important; }
+.badge-constitution { background: linear-gradient(90deg, rgba(236, 72, 153, 0.2), rgba(234, 179, 8, 0.2)) !important; color: #f472b6 !important; border: 1px solid #ea580c !important; font-weight: 700 !important; }
+
+/* Light Theme Overrides for Rules Panel */
+body.light-theme .rules-intro-panel {
+    background: linear-gradient(135deg, rgba(30, 41, 59, 0.03), rgba(15, 23, 42, 0.06));
+    border: 1px solid var(--border-color);
+}
+
+body.light-theme .intro-icon-area {
+    background-color: rgba(29, 78, 216, 0.08);
+}
+
+body.light-theme .intro-g-icon {
+    color: var(--color-blue);
 }
 
 .rule-card {
@@ -1402,7 +1453,7 @@ body.light-theme .hook-item {
     background-color: rgba(15, 23, 42, 0.02);
 }
 
-body.light-theme .rules-matrix-card {
+body.light-theme .rule-card {
     background-color: #ffffff;
     box-shadow: 0 4px 12px rgba(15, 23, 42, 0.03);
 }
@@ -1430,19 +1481,72 @@ body.light-theme .doc-content-body blockquote {
     background-color: rgba(29, 78, 216, 0.03);
 }
 
-body.light-theme .doc-content-body table {
-    border-collapse: collapse;
+/* Premium Table Rendering Styles inside Markdown detail views */
+.doc-content-body .table-wrapper {
     width: 100%;
-    margin-bottom: 16px;
+    overflow-x: auto;
+    margin-bottom: 24px;
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    background-color: rgba(255, 255, 255, 0.01);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
 }
 
-body.light-theme .doc-content-body th, 
-body.light-theme .doc-content-body td {
-    border: 1px solid #e2e8f0;
-    padding: 8px 12px;
+.doc-content-body table {
+    border-collapse: collapse;
+    width: 100%;
+    min-width: 650px; /* Force minimum width to prevent column squishing */
+    font-size: 13px;
+    text-align: left;
+}
+
+.doc-content-body th {
+    background-color: rgba(255, 255, 255, 0.04);
+    color: var(--text-primary);
+    font-weight: 600;
+    border-bottom: 2px solid var(--border-color);
+    padding: 12px 16px;
+    white-space: nowrap; /* Avoid header wrapping */
+}
+
+.doc-content-body td {
+    border-bottom: 1px solid var(--border-color);
+    padding: 12px 16px;
+    color: var(--text-secondary);
+    line-height: 1.6;
+    word-break: keep-all; /* Keep text readable */
+    word-wrap: break-word;
+}
+
+.doc-content-body tr:nth-child(even) {
+    background-color: rgba(255, 255, 255, 0.01);
+}
+
+.doc-content-body tr:hover {
+    background-color: rgba(255, 255, 255, 0.025);
+}
+
+/* Light theme overrides for tables */
+body.light-theme .doc-content-body .table-wrapper {
+    background-color: #ffffff;
+    box-shadow: 0 4px 10px rgba(15, 23, 42, 0.02);
+    border-color: #e2e8f0;
 }
 
 body.light-theme .doc-content-body th {
+    background-color: #f8fafc;
+    border-bottom: 2px solid #e2e8f0;
+}
+
+body.light-theme .doc-content-body td {
+    border-bottom: 1px solid #e2e8f0;
+}
+
+body.light-theme .doc-content-body tr:nth-child(even) {
+    background-color: #fafafa;
+}
+
+body.light-theme .doc-content-body tr:hover {
     background-color: #f1f5f9;
 }
 

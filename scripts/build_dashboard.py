@@ -197,23 +197,63 @@ def build_dashboard_data():
 
     # 4. Compile Runs Timeline
     runs_timeline = []
+    
+    # A. Parse reverse-sync-prevention.md
+    rca_file_path = os.path.join(BASE_DIR, "runs", "reverse-sync-prevention.md")
+    if os.path.exists(rca_file_path):
+        try:
+            with open(rca_file_path, "r", encoding="utf-8") as f:
+                lines = f.readlines()
+            for line in lines:
+                line = line.strip()
+                if line.startswith("|") and not line.startswith("| 발생 일시") and not line.startswith("|---"):
+                    parts = [c.strip() for c in line.split("|")[1:-1]]
+                    if len(parts) >= 7:
+                        # Extract table fields
+                        timestamp = parts[0]
+                        run_id = parts[1].replace("`", "").strip()
+                        agent = parts[2]
+                        domain = parts[3]
+                        error_type = parts[4].replace("**", "").strip()
+                        rca = parts[5]
+                        action = parts[6]
+                        
+                        runs_timeline.append({
+                            "run_id": run_id,
+                            "created_at": timestamp,
+                            "status": "failed",
+                            "agent": agent,
+                            "domain": domain,
+                            "error_type": error_type,
+                            "rca": rca,
+                            "action": action,
+                            "is_rca_audit": True
+                        })
+        except Exception as e:
+            print(f"[ERROR] Failed to parse reverse-sync-prevention.md: {e}")
+
+    # B. Scan run_ dirs in runs directory
     runs_path = os.path.join(BASE_DIR, "runs")
     if os.path.exists(runs_path):
-        # Scan run_ dirs in runs directory
         for item in sorted(os.listdir(runs_path), reverse=True):
             item_path = os.path.join(runs_path, item)
             if os.path.isdir(item_path) and item.startswith("run_"):
-                # Parse run folder info
                 stat = os.stat(item_path)
                 mtime = datetime.fromtimestamp(stat.st_mtime).strftime("%Y-%m-%d %H:%M:%S")
-                runs_timeline.append(
-                    {
-                        "run_id": item,
-                        "created_at": mtime,
-                        "status": "completed",  # Placeholder or parsed from log
-                        "files_changed": len(os.listdir(item_path)),
-                    }
-                )
+                # Avoid duplicate entries
+                if not any(r.get("run_id") == item for r in runs_timeline):
+                    runs_timeline.append(
+                        {
+                            "run_id": item,
+                            "created_at": mtime,
+                            "status": "completed",
+                            "files_changed": len(os.listdir(item_path)),
+                            "is_rca_audit": False
+                        }
+                    )
+                    
+    # Sort all runs by timestamp in descending order
+    runs_timeline.sort(key=lambda x: x["created_at"], reverse=True)
 
     # 5. Build Architecture Overview Map
     architecture_map: Dict[str, Any] = {"categories": []}
