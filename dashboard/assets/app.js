@@ -222,6 +222,12 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         });
 
+        // Reset scroll position to top smoothly on tab transition to avoid jitter
+        const container = document.querySelector(".tab-content-container");
+        if (container) {
+            container.scrollTop = 0;
+        }
+
         // Track URL Hash
         window.location.hash = tabId;
     }

@@ -103,6 +103,7 @@ body.dark-theme {
 /* Sidebar Styling */
 .sidebar {
     width: var(--sidebar-width);
+    flex-shrink: 0;
     background-color: var(--bg-secondary);
     border-right: 1px solid var(--border-color);
     backdrop-filter: blur(16px);
@@ -280,6 +281,7 @@ body.dark-theme {
 .tab-content-container {
     padding: 40px;
     overflow-y: auto;
+    scrollbar-gutter: stable;
     flex-grow: 1;
 }
 
