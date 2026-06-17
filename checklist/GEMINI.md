@@ -1,4 +1,4 @@
-# GEMINI.md (checklist/ 로컬 가이드라인 및 인덱스)
+# checklist/ 규정
 
 이 문서는 `intelligence/checklist/` (품질 검사 및 체크리스트 레이어) 고유의 로컬 규칙과 보유 파일 정보를 신속히 인지하기 위한 마이크로 가이드라인입니다.
 

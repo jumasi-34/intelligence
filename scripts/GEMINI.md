@@ -1,4 +1,4 @@
-# GEMINI.md (scripts/ 로컬 가이드라인 및 인덱스)
+# scripts/ 규정
 
 이 문서는 `intelligence/scripts/` (인텔리전스 콘솔 빌드 및 웹서버 구동 레이어) 고유의 로컬 규칙과 파일 정보를 신속히 인지하기 위한 가이드라인입니다.
 

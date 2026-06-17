@@ -1,4 +1,4 @@
-# GEMINI.md (workflow/ 로컬 가이드라인 및 인덱스)
+# workflow/ 규정
 
 이 문서는 `intelligence/workflow/` (실행형 다단계 협업 프로세스 레이어) 고유의 로컬 규칙과 보유 파일 정보를 신속히 인지하기 위한 마이크로 가이드라인입니다.
 

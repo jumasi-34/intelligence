@@ -1,4 +1,4 @@
-# GEMINI.md (guardrail/ 로컬 가이드라인 및 인덱스)
+# guardrail/ 규정
 
 이 문서는 `intelligence/guardrail/` (추상 정책 및 무결성 검증 룰 엔진 레이어) 고유의 로컬 규칙과 파일 정보를 신속히 인지하기 위한 마이크로 가이드라인입니다.
 
