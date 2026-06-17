@@ -931,6 +931,12 @@ body.dark-theme {
     color: var(--text-secondary);
 }
 
+.doc-content-body strong,
+.doc-content-body b {
+    font-weight: 700 !important;
+    color: var(--text-primary) !important;
+}
+
 .doc-content-body ul, 
 .doc-content-body ol {
     margin-bottom: 16px;
