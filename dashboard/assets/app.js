@@ -443,29 +443,53 @@ document.addEventListener("DOMContentLoaded", () => {
         
         const docsToRender = docsFilter || state.documents;
         
-        // Group docs by category
-        const grouped = {};
+        // Group docs by category, but extract GEMINI.md as the Constitution
+        const grouped = { "constitution": [] };
+        
         docsToRender.forEach(doc => {
-            if (!grouped[doc.category]) grouped[doc.category] = [];
-            grouped[doc.category].push(doc);
+            const isGemini = doc.title.toLowerCase().includes("gemini.md") || 
+                             (doc.path && doc.path.toLowerCase().endsWith("gemini.md"));
+                             
+            if (isGemini) {
+                grouped["constitution"].push(doc);
+            } else {
+                if (!grouped[doc.category]) grouped[doc.category] = [];
+                grouped[doc.category].push(doc);
+            }
         });
 
-        Object.keys(grouped).forEach(cat => {
+        // Ensure "constitution" is rendered FIRST
+        const categories = Object.keys(grouped).filter(c => c !== "constitution");
+        if (grouped["constitution"].length > 0) {
+            categories.unshift("constitution");
+        }
+
+        categories.forEach(cat => {
+            if (grouped[cat].length === 0) return;
+            
             const catNode = document.createElement("div");
             catNode.className = "tree-node";
+            if (cat === "constitution") {
+                catNode.classList.add("constitution-group");
+            }
             
             // Icon assignment
             let icon = "folder";
-            if (cat === "agent") icon = "support_agent";
+            let catDisplayName = cat.toUpperCase();
+            
+            if (cat === "constitution") {
+                icon = "gavel";
+                catDisplayName = "SYSTEM CONSTITUTION (시스템 헌법)";
+            } else if (cat === "agent") icon = "support_agent";
             else if (cat === "domain") icon = "menu_book";
             else if (cat === "infra") icon = "cloud";
             else if (cat === "guide") icon = "help_center";
             else if (cat === "rules") icon = "policy";
             
             catNode.innerHTML = `
-                <div class="tree-node-header font-heading">
+                <div class="tree-node-header font-heading ${cat === "constitution" ? "constitution-cat-header" : ""}">
                     <span class="material-symbols-outlined tree-node-icon">${icon}</span>
-                    <span>${cat.toUpperCase()}</span>
+                    <span>${catDisplayName}</span>
                 </div>
                 <div class="tree-children" id="tree-children-${cat}"></div>
             `;
@@ -476,8 +500,18 @@ document.addEventListener("DOMContentLoaded", () => {
                 const docNode = document.createElement("div");
                 docNode.className = "tree-node-header";
                 docNode.style.paddingLeft = "10px";
+                
+                const isGemini = doc.title.toLowerCase().includes("gemini.md") || 
+                                 (doc.path && doc.path.toLowerCase().endsWith("gemini.md"));
+                
+                let docIcon = "description";
+                if (isGemini) {
+                    docNode.classList.add("constitution-node");
+                    docIcon = "verified_user"; // Gold shield for Constitution
+                }
+                
                 docNode.innerHTML = `
-                    <span class="material-symbols-outlined tree-node-icon" style="color: var(--text-muted)">description</span>
+                    <span class="material-symbols-outlined tree-node-icon">${docIcon}</span>
                     <span>${escapeHtml(doc.title)}</span>
                 `;
                 

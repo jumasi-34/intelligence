@@ -812,6 +812,41 @@ body.dark-theme {
     border-left: 1px dashed var(--border-color);
 }
 
+/* Constitution (GEMINI.md) Special Premium Styling - The Sacred Law of the System */
+.constitution-group {
+    border-bottom: 1px solid rgba(245, 158, 11, 0.15);
+    padding-bottom: 8px;
+    margin-bottom: 12px;
+}
+.constitution-cat-header {
+    color: var(--color-amber) !important;
+    font-weight: 700 !important;
+    text-shadow: 0 0 8px var(--color-amber-glow);
+}
+.tree-node-header.constitution-node {
+    color: var(--color-amber) !important;
+    font-weight: 600 !important;
+    border-left: 2px dashed rgba(245, 158, 11, 0.4);
+    background-color: rgba(245, 158, 11, 0.03);
+    margin-bottom: 4px;
+    border-radius: var(--radius-sm);
+    transition: var(--transition-smooth);
+}
+.tree-node-header.constitution-node .tree-node-icon {
+    color: var(--color-amber) !important;
+}
+.tree-node-header.constitution-node:hover {
+    background-color: rgba(245, 158, 11, 0.08) !important;
+    border-left-color: var(--color-amber);
+    box-shadow: 0 0 10px var(--color-amber-glow);
+}
+.tree-node-header.constitution-node.active {
+    background-color: rgba(245, 158, 11, 0.15) !important;
+    border-left: 3px solid var(--color-amber) !important;
+    color: var(--color-amber) !important;
+    box-shadow: 0 0 15px var(--color-amber-glow);
+}
+
 .domain-viewer {
     flex-grow: 1;
     background-color: var(--bg-secondary);
