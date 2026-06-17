@@ -18,6 +18,36 @@ document.addEventListener("DOMContentLoaded", () => {
         searchQuery: ""
     };
 
+    // Initialize Mermaid Configuration
+    if (typeof mermaid !== "undefined") {
+        mermaid.initialize({
+            startOnLoad: false,
+            theme: 'dark',
+            securityLevel: 'loose',
+            flowchart: {
+                useMaxWidth: true,
+                htmlLabels: true
+            }
+        });
+    }
+
+    // Configure Custom Renderer for Marked.js to intercept mermaid code blocks
+    if (typeof marked !== "undefined") {
+        const renderer = {
+            code(code, infostring) {
+                const lang = (infostring || '').match(/^\S*/)[0];
+                if (lang === 'mermaid') {
+                    const codeText = typeof code === 'object' ? code.text : code;
+                    return `<div class="mermaid">${codeText}</div>`;
+                }
+                const codeText = typeof code === 'object' ? code.text : code;
+                const escapedCode = codeText.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+                return `<pre><code class="language-${lang}">${escapedCode}</code></pre>`;
+            }
+        };
+        marked.use({ renderer });
+    }
+
     // DOM Elements
     const elements = {
         buildTime: document.getElementById("build-time"),
@@ -183,6 +213,17 @@ document.addEventListener("DOMContentLoaded", () => {
                     localStorage.setItem("theme", "light");
                 }
                 updateThemeIcon();
+
+                // Redraw mermaid diagrams if present in the active document view to match theme colors
+                if (state.activeDoc && typeof mermaid !== "undefined" && document.querySelector('.mermaid')) {
+                    try {
+                        const currentTheme = document.body.classList.contains('light-theme') ? 'default' : 'dark';
+                        mermaid.initialize({ theme: currentTheme });
+                        viewDocument(state.activeDoc);
+                    } catch (err) {
+                        console.error("Failed to re-render Mermaid after theme switch:", err);
+                    }
+                }
             });
         }
     }
@@ -547,6 +588,22 @@ document.addEventListener("DOMContentLoaded", () => {
         // Render markdown with marked.js
         if (typeof marked !== "undefined" && marked.parse) {
             elements.docContentBody.innerHTML = marked.parse(doc.content);
+
+            // Render Mermaid diagrams if present and library is loaded
+            if (typeof mermaid !== "undefined" && elements.docContentBody.querySelector('.mermaid')) {
+                try {
+                    // Reset processed attribute so it redraws cleanly on repeat clicks
+                    elements.docContentBody.querySelectorAll('.mermaid').forEach(el => {
+                        el.removeAttribute('data-processed');
+                        el.setAttribute('id', 'mermaid-' + Math.random().toString(36).substring(2, 11));
+                    });
+                    const currentTheme = document.body.classList.contains('light-theme') ? 'default' : 'dark';
+                    mermaid.initialize({ theme: currentTheme });
+                    mermaid.init(undefined, elements.docContentBody.querySelectorAll('.mermaid'));
+                } catch (err) {
+                    console.error("Mermaid parsing error:", err);
+                }
+            }
         } else {
             elements.docContentBody.innerHTML = `<pre>${escapeHtml(doc.content)}</pre>`;
         }
