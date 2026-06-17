@@ -41,6 +41,16 @@
     </script>
 </head>
 <body class="dark-theme">
+    <script>
+        // Immediately check and apply saved theme preference to prevent FOUC (Flash of Unstyled Content)
+        (function() {
+            const savedTheme = localStorage.getItem('theme') || 'dark';
+            if (savedTheme === 'light') {
+                document.body.classList.remove('dark-theme');
+                document.body.classList.add('light-theme');
+            }
+        })();
+    </script>
     <div class="app-container">
         <!-- Sidebar Navigation -->
         <aside class="sidebar">
@@ -98,6 +108,9 @@
                     <p id="current-tab-desc" class="header-subtitle">시스템 종합 현황 및 주요 메트릭 지표</p>
                 </div>
                 <div class="header-right" style="display: flex; gap: 16px; align-items: center;">
+                    <button id="btn-theme-toggle" class="theme-toggle-btn" title="화면 테마 변경 (다크/라이트)">
+                        <span id="theme-toggle-icon" class="material-symbols-outlined">light_mode</span>
+                    </button>
                     <button id="btn-rebuild" class="rebuild-btn">
                         <span class="material-symbols-outlined">sync</span>
                         <span>실시간 리빌드</span>
@@ -220,7 +233,22 @@
 
                 <!-- Tab 3: Agent Registry -->
                 <section id="tab-agents" class="tab-section">
-                    <div class="agents-container">
+                    <!-- Sub Tab Navigation -->
+                    <div class="agent-sub-header">
+                        <div class="sub-tab-bar">
+                            <button class="sub-tab-btn active" data-subtab="list">
+                                <span class="material-symbols-outlined">assignment</span>
+                                <span>역할 명세서</span>
+                            </button>
+                            <button class="sub-tab-btn" data-subtab="mapping">
+                                <span class="material-symbols-outlined">hub</span>
+                                <span>코워크 협업 관계도</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Panel 1: Agent List & Details -->
+                    <div id="agent-list-panel" class="agents-container active">
                         <div class="agents-sidebar" id="agents-sidebar">
                             <!-- Rendered by JS: List of Agents -->
                         </div>
@@ -228,6 +256,120 @@
                             <div class="empty-state">
                                 <span class="material-symbols-outlined large-icon">smart_toy</span>
                                 <p>왼쪽 에이전트 목록을 선택하시면 상세 역할과 관계를 보실 수 있습니다.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Panel 2: Agent Corework Mapping Canvas -->
+                    <div id="agent-mapping-panel" class="agents-mapping-container">
+                        <div class="mapping-instructions">
+                            <span class="material-symbols-outlined">info</span>
+                            <span>에이전트 카드를 클릭하면 해당 에이전트의 구체적인 협업 동선(코워크 흐름)이 네온 하이라이트로 집중 조명됩니다.</span>
+                        </div>
+                        <div class="mapping-workspace">
+                            <div class="mapping-canvas" id="mapping-canvas">
+                                <!-- SVG Connector Lines Canvas -->
+                                <svg class="mapping-svg" id="mapping-svg">
+                                    <defs>
+                                        <marker id="arrow" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                                            <path d="M 0 1 L 10 5 L 0 9 z" fill="currentColor" />
+                                        </marker>
+                                    </defs>
+                                </svg>
+                                
+                                <!-- Columns of the flow -->
+                                <div class="mapping-column" data-stage="analysis">
+                                    <div class="stage-header">STAGE 1: 분석 및 표준 관리</div>
+                                    <div id="map-node-table-eda" class="map-node neon-blue" data-agent="table-eda">
+                                        <div class="node-title">Table EDA Analyst</div>
+                                        <div class="node-role">분석가 서브에이전트</div>
+                                    </div>
+                                    <div id="map-node-metadata-dictionary" class="map-node neon-blue" data-agent="metadata-dictionary">
+                                        <div class="node-title">Metadata Dictionary</div>
+                                        <div class="node-role">표준/사전 관리 검역</div>
+                                    </div>
+                                </div>
+                                
+                                <div class="mapping-column" data-stage="planning">
+                                    <div class="stage-header">STAGE 2: 요구사항 설계</div>
+                                    <div id="map-node-planner-orchestrator" class="map-node neon-purple" data-agent="planner-orchestrator">
+                                        <div class="node-title">Planner Orchestrator</div>
+                                        <div class="node-role">기획 컨트롤 타워</div>
+                                    </div>
+                                </div>
+                                
+                                <div class="mapping-column" data-stage="engineering">
+                                    <div class="stage-header">STAGE 3: 핵심 코드 개발</div>
+                                    <div id="map-node-query-preprocessor" class="map-node neon-amber" data-agent="query-preprocessor">
+                                        <div class="node-title">Query & Preprocessor</div>
+                                        <div class="node-role">SQL 및 전처리 빌더</div>
+                                    </div>
+                                    <div id="map-node-page-plot-builder" class="map-node neon-amber" data-agent="page-plot-builder">
+                                        <div class="node-title">Page & Plot Builder</div>
+                                        <div class="node-role">UI 및 시각화 빌더</div>
+                                    </div>
+                                </div>
+                                
+                                <div class="mapping-column" data-stage="polishing">
+                                    <div class="stage-header">STAGE 4: 시각적 리터칭</div>
+                                    <div id="map-node-ui-styler-polisher" class="map-node neon-emerald" data-agent="ui-styler-polisher">
+                                        <div class="node-title">UI Styler & Polisher</div>
+                                        <div class="node-role">디자인 표준화/정제</div>
+                                    </div>
+                                </div>
+                                
+                                <div class="mapping-column" data-stage="evaluation">
+                                    <div class="stage-header">STAGE 5: 품질 검증 & 피드백</div>
+                                    <div id="map-node-code-reviewer" class="map-node neon-red" data-agent="code-reviewer">
+                                        <div class="node-title">Code Reviewer</div>
+                                        <div class="node-role">코드 정적 검증</div>
+                                    </div>
+                                    <div id="map-node-quality-evaluator" class="map-node neon-red" data-agent="quality-evaluator">
+                                        <div class="node-title">Quality Evaluator</div>
+                                        <div class="node-role">하네스 구동/최종 통과</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Sidebar / Drawer inside the mapping to show selected node corework detail -->
+                            <div class="mapping-detail-sidebar" id="mapping-detail-sidebar">
+                                <div class="mapping-detail-empty" id="mapping-detail-empty">
+                                    <span class="material-symbols-outlined large-icon">hub</span>
+                                    <p>왼쪽 에이전트 노드를 클릭하면 해당 노드의 실시간 코워크(협업 관계 및 데이터 흐름) 명세가 여기에 노출됩니다.</p>
+                                </div>
+                                <div class="mapping-detail-content" id="mapping-detail-content" style="display: none;">
+                                    <h3 id="map-detail-title">Agent Name</h3>
+                                    <div class="detail-badge" id="map-detail-category">Planner Agent</div>
+                                    
+                                    <div class="mapping-info-group">
+                                        <div class="info-label">실행 트리거 (Trigger)</div>
+                                        <div class="info-value" id="map-detail-trigger">Trigger description</div>
+                                    </div>
+                                    
+                                    <div class="mapping-info-group">
+                                        <div class="info-label">참조 리소스 (Contexts)</div>
+                                        <div class="info-list" id="map-detail-contexts"></div>
+                                    </div>
+
+                                    <div class="mapping-info-group">
+                                        <div class="info-label">생성 산출물 (Outputs)</div>
+                                        <div class="info-list" id="map-detail-outputs"></div>
+                                    </div>
+
+                                    <div class="mapping-info-group">
+                                        <div class="info-label">코워크 협업 체인 (Co-work Flow)</div>
+                                        <div class="flow-chains">
+                                            <div class="flow-chain-incoming">
+                                                <div class="chain-label">참조 수집 대상 (Incoming)</div>
+                                                <div class="chain-items" id="map-detail-incoming"></div>
+                                            </div>
+                                            <div class="flow-chain-outgoing">
+                                                <div class="chain-label">협업 전파 대상 (Outgoing)</div>
+                                                <div class="chain-items" id="map-detail-outgoing"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>

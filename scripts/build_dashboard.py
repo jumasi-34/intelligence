@@ -12,6 +12,7 @@ import os
 import json
 import re
 from datetime import datetime
+from typing import Dict, Any
 
 # Paths
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))  # workstation/intelligence
@@ -215,7 +216,7 @@ def build_dashboard_data():
                 )
 
     # 5. Build Architecture Overview Map
-    architecture_map = {"categories": []}
+    architecture_map: Dict[str, Any] = {"categories": []}
     for cat_key, cat_desc in CATEGORIES.items():
         cat_docs = [doc for doc in documents if doc["category"] == cat_key]
         architecture_map["categories"].append(

@@ -50,7 +50,9 @@ document.addEventListener("DOMContentLoaded", () => {
         docContentBody: document.getElementById("doc-content-body"),
         rulesMatrix: document.getElementById("rules-matrix"),
         runsTimeline: document.getElementById("runs-timeline"),
-        btnRebuild: document.getElementById("btn-rebuild")
+        btnRebuild: document.getElementById("btn-rebuild"),
+        btnThemeToggle: document.getElementById("btn-theme-toggle"),
+        themeToggleIcon: document.getElementById("theme-toggle-icon")
     };
 
     // Tab Configurations
@@ -123,6 +125,7 @@ document.addEventListener("DOMContentLoaded", () => {
         renderOverview();
         renderArchitectureMap();
         renderAgentRegistry();
+        initializeAgentMapping();
         renderDomainTree();
         renderRulesMatrix();
         renderRunsTimeline();
@@ -156,6 +159,32 @@ document.addEventListener("DOMContentLoaded", () => {
 
         // Search listener
         elements.globalSearch.addEventListener("input", handleGlobalSearch);
+
+        // Theme Toggle control
+        if (elements.btnThemeToggle && elements.themeToggleIcon) {
+            function updateThemeIcon() {
+                const isLight = document.body.classList.contains("light-theme");
+                elements.themeToggleIcon.textContent = isLight ? "dark_mode" : "light_mode";
+                elements.btnThemeToggle.setAttribute("title", isLight ? "다크 모드로 변경" : "라이트 모드로 변경");
+            }
+
+            // Sync icon on startup
+            updateThemeIcon();
+
+            elements.btnThemeToggle.addEventListener("click", () => {
+                const body = document.body;
+                if (body.classList.contains("light-theme")) {
+                    body.classList.remove("light-theme");
+                    body.classList.add("dark-theme");
+                    localStorage.setItem("theme", "dark");
+                } else {
+                    body.classList.remove("dark-theme");
+                    body.classList.add("light-theme");
+                    localStorage.setItem("theme", "light");
+                }
+                updateThemeIcon();
+            });
+        }
     }
 
     // 3. Tab Navigation control
@@ -298,7 +327,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     <span class="material-symbols-outlined" style="font-size: 18px">smart_toy</span>
                     ${escapeHtml(agent.name)}
                 </div>
-                <div class="agent-selector-role">${escapeHtml(agent.role || 'AI Agent')}</div>
+                <div class="agent-selector-role">${escapeHtml(agent.category || 'AI Agent')}</div>
             `;
             
             div.addEventListener("click", () => {
@@ -324,29 +353,73 @@ document.addEventListener("DOMContentLoaded", () => {
                 </div>
                 <div class="agent-meta">
                     <h3>${escapeHtml(agent.name)}</h3>
-                    <p>${escapeHtml(agent.role || '전문화된 자율 코딩 AI')}</p>
+                    <p class="agent-category-label">${escapeHtml(agent.category || 'AI Agent')}</p>
                 </div>
             </div>
             
             <div class="agent-detail-section">
-                <h4>에이전트 역할 정의 (Description)</h4>
-                <p>${escapeHtml(agent.description || '이 에이전트는 프로젝트 개발 및 정제 작업을 자율적으로 수행합니다.')}</p>
+                <h4>실행 트리거 및 역할 (Trigger & Responsibility)</h4>
+                <p>${agent.trigger || '사용자 요청 시 자율 작업을 트리거합니다.'}</p>
             </div>
 
             <div class="agent-detail-section">
-                <h4>책임 및 실행 범위 (Scope & Responsibility)</h4>
-                <p>${escapeHtml(agent.scope || '지정되지 않음')}</p>
+                <h4>허용된 작업 범위 (Allowed Scope)</h4>
+                <ul class="scope-list" id="agent-allowed-list"></ul>
             </div>
 
             <div class="agent-detail-section">
-                <h4>관련 연계 규칙 및 참조 문서 (Guidelines)</h4>
+                <h4>엄격 제한 및 금지 조항 (Forbidden Actions)</h4>
+                <ul class="scope-list forbidden" id="agent-forbidden-list"></ul>
+            </div>
+
+            <div class="agent-detail-section">
+                <h4>생성 산출물 (Outputs)</h4>
+                <div class="tag-container" id="agent-outputs-tags"></div>
+            </div>
+
+            <div class="agent-detail-section">
+                <h4>관련 연계 규칙 및 참조 문서 (Contexts)</h4>
                 <div class="tag-container" id="agent-rules-tags"></div>
             </div>
         `;
 
+        const allowedContainer = document.getElementById("agent-allowed-list");
+        if (agent.allowed && agent.allowed.length > 0) {
+            agent.allowed.forEach(item => {
+                const li = document.createElement("li");
+                li.textContent = item;
+                allowedContainer.appendChild(li);
+            });
+        } else {
+            allowedContainer.innerHTML = `<li>지정된 사항 없음</li>`;
+        }
+
+        const forbiddenContainer = document.getElementById("agent-forbidden-list");
+        if (agent.forbidden && agent.forbidden.length > 0) {
+            agent.forbidden.forEach(item => {
+                const li = document.createElement("li");
+                li.textContent = item;
+                forbiddenContainer.appendChild(li);
+            });
+        } else {
+            forbiddenContainer.innerHTML = `<li>지정된 사항 없음</li>`;
+        }
+
+        const outputsContainer = document.getElementById("agent-outputs-tags");
+        if (agent.outputs && agent.outputs.length > 0) {
+            agent.outputs.forEach(item => {
+                const badge = document.createElement("span");
+                badge.className = "tag-badge output-badge";
+                badge.textContent = item;
+                outputsContainer.appendChild(badge);
+            });
+        } else {
+            outputsContainer.innerHTML = `<span class="tag-badge">지정된 사항 없음</span>`;
+        }
+
         const tagContainer = document.getElementById("agent-rules-tags");
-        if (agent.rules && agent.rules.length > 0) {
-            agent.rules.forEach(rule => {
+        if (agent.contexts && agent.contexts.length > 0) {
+            agent.contexts.forEach(rule => {
                 const badge = document.createElement("span");
                 badge.className = "tag-badge";
                 badge.textContent = rule;
@@ -356,6 +429,7 @@ document.addEventListener("DOMContentLoaded", () => {
             tagContainer.innerHTML = `<span class="tag-badge">기본 가드레일</span>`;
         }
     }
+
 
     // 7. Tab 4: Domain Knowledge Tree & Navigation
     function renderDomainTree(docsFilter = null) {
@@ -511,6 +585,353 @@ document.addEventListener("DOMContentLoaded", () => {
             `;
             elements.runsTimeline.appendChild(item);
         });
+    }
+
+    // 11. Agent Corework Interactive Mapping Logic
+    function initializeAgentMapping() {
+        const subTabBtns = document.querySelectorAll(".sub-tab-btn");
+        const listPanel = document.getElementById("agent-list-panel");
+        const mappingPanel = document.getElementById("agent-mapping-panel");
+        const mappingCanvas = document.getElementById("mapping-canvas");
+        const mappingSvg = document.getElementById("mapping-svg");
+
+        if (!subTabBtns || !listPanel || !mappingPanel) return;
+
+        // Sub-tab switching
+        subTabBtns.forEach(btn => {
+            btn.addEventListener("click", () => {
+                subTabBtns.forEach(b => b.classList.remove("active"));
+                btn.classList.add("active");
+
+                const subtab = btn.getAttribute("data-subtab");
+                if (subtab === "list") {
+                    listPanel.classList.add("active");
+                    mappingPanel.classList.remove("active");
+                } else if (subtab === "mapping") {
+                    listPanel.classList.remove("active");
+                    mappingPanel.classList.add("active");
+                    // Trigger line drawing after layout stabilizes
+                    setTimeout(drawMappingConnections, 50);
+                }
+            });
+        });
+
+        // SVG Connector Drawing
+        function drawMappingConnections() {
+            if (!mappingPanel.classList.contains("active")) return;
+            
+            // Clear old paths
+            const paths = mappingSvg.querySelectorAll("path:not(defs path)");
+            paths.forEach(p => p.remove());
+
+            const canvasRect = mappingCanvas.getBoundingClientRect();
+            const agentsObj = state.agents ? state.agents.agents : {};
+            const connections = [];
+
+            // Pre-calculate outgoing and incoming counts for each node
+            const outgoingCounts = {};
+            const outgoingCurrentIndex = {};
+            const incomingCounts = {};
+            const incomingCurrentIndex = {};
+
+            Object.keys(agentsObj).forEach(sourceId => {
+                outgoingCounts[sourceId] = 0;
+                outgoingCurrentIndex[sourceId] = 0;
+                
+                const connectedIds = agentsObj[sourceId].connections || [];
+                connectedIds.forEach(targetId => {
+                    if (!incomingCounts[targetId]) {
+                        incomingCounts[targetId] = 0;
+                        incomingCurrentIndex[targetId] = 0;
+                    }
+                    outgoingCounts[sourceId]++;
+                    incomingCounts[targetId]++;
+                });
+            });
+
+            // Gather connection structures with offsets
+            Object.keys(agentsObj).forEach(sourceId => {
+                const sourceNode = document.getElementById(`map-node-${sourceId}`);
+                if (!sourceNode) return;
+
+                const connectedIds = agentsObj[sourceId].connections || [];
+                connectedIds.forEach(targetId => {
+                    const targetNode = document.getElementById(`map-node-${targetId}`);
+                    if (!targetNode) return;
+
+                    const srcIdx = outgoingCurrentIndex[sourceId]++;
+                    const tgtIdx = incomingCurrentIndex[targetId]++;
+
+                    connections.push({
+                        sourceId,
+                        targetId,
+                        sourceNode,
+                        targetNode,
+                        srcIdx,
+                        tgtIdx,
+                        srcTotal: outgoingCounts[sourceId],
+                        tgtTotal: incomingCounts[targetId]
+                    });
+                });
+            });
+
+            connections.forEach(conn => {
+                const sourceRect = conn.sourceNode.getBoundingClientRect();
+                const targetRect = conn.targetNode.getBoundingClientRect();
+
+                // Compute vertical distribution Y offsets for source and target
+                let y1Offset = sourceRect.height / 2;
+                if (conn.srcTotal > 1) {
+                    y1Offset = sourceRect.height * (0.2 + 0.6 * (conn.srcIdx / (conn.srcTotal - 1)));
+                }
+
+                let y2Offset = targetRect.height / 2;
+                if (conn.tgtTotal > 1) {
+                    y2Offset = targetRect.height * (0.2 + 0.6 * (conn.tgtIdx / (conn.tgtTotal - 1)));
+                }
+
+                const isSameColumn = Math.abs(sourceRect.left - targetRect.left) < 50;
+                const isFeedback = sourceRect.left > targetRect.left && !isSameColumn;
+
+                let x1, y1, x2, y2;
+                let cp1_x, cp1_y, cp2_x, cp2_y;
+                let pathClass = "";
+
+                if (isSameColumn) {
+                    // 1. Same Column Connection (e.g. vertical flow within the same stage)
+                    // Draw a smooth arc outward on the right side of the nodes
+                    x1 = (sourceRect.left - canvasRect.left) + sourceRect.width;
+                    y1 = (sourceRect.top - canvasRect.top) + y1Offset;
+                    x2 = (targetRect.left - canvasRect.left) + targetRect.width;
+                    y2 = (targetRect.top - canvasRect.top) + y2Offset;
+
+                    // Arch outward to the right
+                    const dx = 60;
+                    cp1_x = x1 + dx;
+                    cp1_y = y1 + 10;
+                    cp2_x = x2 + dx;
+                    cp2_y = y2 - 10;
+                    pathClass = "same-column-path";
+                } else if (isFeedback) {
+                    // 2. Feedback Connection (e.g. evaluation back to planning/engineering)
+                    // Start from the LEFT edge of source, and end at the RIGHT edge of target.
+                    // Loop gracefully downwards to bypass forward flows.
+                    x1 = (sourceRect.left - canvasRect.left);
+                    y1 = (sourceRect.top - canvasRect.top) + y1Offset;
+                    x2 = (targetRect.left - canvasRect.left) + targetRect.width;
+                    y2 = (targetRect.top - canvasRect.top) + y2Offset;
+
+                    const distance = Math.abs(x1 - x2);
+                    cp1_x = x1 - distance * 0.25;
+                    // Lower arch bypass: go deeper depending on distance
+                    const bypassDepth = Math.max(90, distance * 0.15);
+                    cp1_y = y1 + bypassDepth;
+                    cp2_x = x2 + distance * 0.25;
+                    cp2_y = y2 + bypassDepth;
+                    pathClass = "feedback-path";
+                } else {
+                    // 3. Normal Forward Connection
+                    x1 = (sourceRect.left - canvasRect.left) + sourceRect.width;
+                    y1 = (sourceRect.top - canvasRect.top) + y1Offset;
+                    x2 = (targetRect.left - canvasRect.left);
+                    y2 = (targetRect.top - canvasRect.top) + y2Offset;
+
+                    const distance = Math.abs(x2 - x1);
+                    cp1_x = x1 + distance * 0.4;
+                    cp1_y = y1;
+                    cp2_x = x2 - distance * 0.4;
+                    cp2_y = y2;
+                    pathClass = "forward-path";
+                }
+
+                const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+                const d = `M ${x1} ${y1} C ${cp1_x} ${cp1_y}, ${cp2_x} ${cp2_y}, ${x2} ${y2}`;
+                
+                path.setAttribute("d", d);
+                path.setAttribute("marker-end", "url(#arrow)");
+                path.setAttribute("data-source", conn.sourceId);
+                path.setAttribute("data-target", conn.targetId);
+                if (pathClass) {
+                    path.classList.add(pathClass);
+                }
+                
+                mappingSvg.appendChild(path);
+            });
+        }
+
+        window.addEventListener("resize", drawMappingConnections);
+
+        // Interactive Highlights & Sidebar Details
+        const mapNodes = document.querySelectorAll(".map-node");
+        const detailEmpty = document.getElementById("mapping-detail-empty");
+        const detailContent = document.getElementById("mapping-detail-content");
+
+        mapNodes.forEach(node => {
+            node.addEventListener("click", (e) => {
+                e.stopPropagation();
+                const agentId = node.getAttribute("data-agent");
+                const agentsObj = state.agents ? state.agents.agents : {};
+                const agentData = agentsObj[agentId];
+
+                if (!agentData) return;
+
+                if (node.classList.contains("active")) {
+                    resetHighlights();
+                    return;
+                }
+
+                mapNodes.forEach(n => {
+                    n.classList.remove("active");
+                    n.classList.add("dimmed");
+                });
+                node.classList.remove("dimmed");
+                node.classList.add("active");
+
+                const paths = mappingSvg.querySelectorAll("path");
+                paths.forEach(path => {
+                    const source = path.getAttribute("data-source");
+                    const target = path.getAttribute("data-target");
+
+                    path.classList.remove("active-path");
+                    path.style.removeProperty("--active-flow-color");
+
+                    if (source === agentId || target === agentId) {
+                        path.classList.add("active-path");
+                        let strokeColor = "var(--color-blue)";
+                        if (node.classList.contains("neon-purple")) strokeColor = "var(--color-purple)";
+                        else if (node.classList.contains("neon-amber")) strokeColor = "var(--color-amber)";
+                        else if (node.classList.contains("neon-emerald")) strokeColor = "var(--color-emerald)";
+                        else if (node.classList.contains("neon-red")) strokeColor = "var(--color-error)";
+                        
+                        path.style.setProperty("--active-flow-color", strokeColor);
+                    }
+                });
+
+                showNodeDetails(agentId, agentData);
+            });
+        });
+
+        mappingCanvas.addEventListener("click", resetHighlights);
+
+        function resetHighlights() {
+            mapNodes.forEach(n => n.classList.remove("active", "dimmed"));
+            const paths = mappingSvg.querySelectorAll("path");
+            paths.forEach(path => {
+                path.classList.remove("active-path");
+                path.style.removeProperty("--active-flow-color");
+            });
+            if (detailEmpty && detailContent) {
+                detailEmpty.style.display = "flex";
+                detailContent.style.display = "none";
+            }
+        }
+
+        function showNodeDetails(id, agent) {
+            if (!detailEmpty || !detailContent) return;
+
+            detailEmpty.style.display = "none";
+            detailContent.style.display = "flex";
+
+            document.getElementById("map-detail-title").textContent = agent.name;
+            const catBadge = document.getElementById("map-detail-category");
+            catBadge.textContent = agent.category;
+            
+            catBadge.className = "detail-badge";
+            if (agent.category.includes("Planner")) catBadge.classList.add("planner");
+            else if (agent.category.includes("Builder")) catBadge.classList.add("builder");
+            else catBadge.classList.add("sub-agent");
+
+            document.getElementById("map-detail-trigger").innerHTML = agent.trigger;
+
+            const contextsContainer = document.getElementById("map-detail-contexts");
+            contextsContainer.innerHTML = "";
+            if (agent.contexts && agent.contexts.length > 0) {
+                agent.contexts.forEach(ctx => {
+                    const tag = document.createElement("span");
+                    tag.className = "info-item-tag";
+                    tag.textContent = ctx;
+                    contextsContainer.appendChild(tag);
+                });
+            } else {
+                contextsContainer.innerHTML = `<span class="info-value">지정된 정보 없음</span>`;
+            }
+
+            const outputsContainer = document.getElementById("map-detail-outputs");
+            outputsContainer.innerHTML = "";
+            if (agent.outputs && agent.outputs.length > 0) {
+                agent.outputs.forEach(out => {
+                    const tag = document.createElement("span");
+                    tag.className = "info-item-tag";
+                    tag.textContent = out;
+                    outputsContainer.appendChild(tag);
+                });
+            } else {
+                outputsContainer.innerHTML = `<span class="info-value">지정된 정보 없음</span>`;
+            }
+
+            const incomingContainer = document.getElementById("map-detail-incoming");
+            const outgoingContainer = document.getElementById("map-detail-outgoing");
+
+            incomingContainer.innerHTML = "";
+            outgoingContainer.innerHTML = "";
+
+            const agentsObj = state.agents ? state.agents.agents : {};
+
+            const incomingAgents = [];
+            Object.keys(agentsObj).forEach(otherId => {
+                const conns = agentsObj[otherId].connections || [];
+                if (conns.includes(id)) {
+                    incomingAgents.push({ id: otherId, name: agentsObj[otherId].name });
+                }
+            });
+
+            if (incomingAgents.length > 0) {
+                incomingAgents.forEach(other => {
+                    const tag = document.createElement("span");
+                    tag.className = "chain-tag";
+                    tag.textContent = other.name.replace(" Agent", "");
+                    setChainTagColor(tag, other.id);
+                    incomingContainer.appendChild(tag);
+                });
+            } else {
+                incomingContainer.innerHTML = `<span class="info-value" style="font-size: 11px;">수집 인풋 없음</span>`;
+            }
+
+            const outgoingIds = agent.connections || [];
+            if (outgoingIds.length > 0) {
+                outgoingIds.forEach(otherId => {
+                    const other = agentsObj[otherId];
+                    if (other) {
+                        const tag = document.createElement("span");
+                        tag.className = "chain-tag";
+                        tag.textContent = other.name.replace(" Agent", "");
+                        setChainTagColor(tag, otherId);
+                        outgoingContainer.appendChild(tag);
+                    }
+                });
+            } else {
+                outgoingContainer.innerHTML = `<span class="info-value" style="font-size: 11px;">전파 아웃풋 없음</span>`;
+            }
+        }
+
+        function setChainTagColor(el, id) {
+            const node = document.getElementById(`map-node-${id}`);
+            if (!node) return;
+
+            let bg = "rgba(59, 130, 246, 0.1)", color = "var(--color-blue)", border = "rgba(59, 130, 246, 0.2)";
+            if (node.classList.contains("neon-purple")) {
+                bg = "rgba(168, 85, 247, 0.1)"; color = "var(--color-purple)"; border = "rgba(168, 85, 247, 0.2)";
+            } else if (node.classList.contains("neon-amber")) {
+                bg = "rgba(245, 158, 11, 0.1)"; color = "var(--color-amber)"; border = "rgba(245, 158, 11, 0.2)";
+            } else if (node.classList.contains("neon-emerald")) {
+                bg = "rgba(16, 185, 129, 0.1)"; color = "var(--color-emerald)"; border = "rgba(16, 185, 129, 0.2)";
+            } else if (node.classList.contains("neon-red")) {
+                bg = "rgba(239, 68, 68, 0.1)"; color = "var(--color-error)"; border = "rgba(239, 68, 68, 0.2)";
+            }
+            el.style.setProperty("--chain-bg", bg);
+            el.style.setProperty("--chain-color", color);
+            el.style.setProperty("--chain-border", border);
+        }
     }
 
     // 10. Global search handler (fuzzy filter tree elements)
