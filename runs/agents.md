@@ -53,5 +53,5 @@ intelligence/runs/
 
 * **2026-06-14**:
   * [REFACTOR] 하위폴더 중복 `README.md` 제거 수칙에 맞춰 가이드라인 통합 및 `README.md` 제거.
-  * [REFACTOR] `runs/` 레이어의 로컬 가이드라인인 본 `GEMINI.md` 최초 비치 완료.
+  * [REFACTOR] `runs/` 레이어의 로컬 가이드라인인 본 `agents.md` 최초 비치 완료.
   * [Feat] 기존 `guide/` 폴더 내에 부적절하게 방치되어 있던 로그 자산인 `reverse-sync-prevention.md`를 본 폴더 하위로 완전히 이관 및 안착 처리 완료.

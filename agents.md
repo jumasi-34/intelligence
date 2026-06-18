@@ -2,7 +2,7 @@
 
 이 문서는 `intelligence/` (인텔리전스 및 에이전트 확장 레이어) 하위의 각 폴더별 역할 경계(Boundary), 상호 관계, 그리고 **스킬(SKILL)**, **가드레일(GUARDRAIL)**, **워크플로우(WORKFLOW)**, **훅(HOOK)** 폴더의 운영 규정을 정의하는 인텔리전스 전용 단일 진실 공급원(SSOT) 표준입니다.
 
-루트 디렉터리의 [GEMINI.md](GEMINI.md)가 시스템 전체의 '행동 제약 및 대원칙'을 담당한다면, 본 문서는 **인텔리전스 레이어 내부의 데이터 흐름 및 폴더 구조를 통제하는 기술 명세**를 담당합니다.
+루트 디렉터리의 [agents.md](agents.md)가 시스템 전체의 '행동 제약 및 대원칙'을 담당한다면, 본 문서는 **인텔리전스 레이어 내부의 데이터 흐름 및 폴더 구조를 통제하는 기술 명세**를 담당합니다.
 
 ---
 
@@ -116,12 +116,12 @@ sequenceDiagram
 1. **단방향 하향 참조**: 상위 레이어는 하위 레이어를 읽고 참조할 수 있으나, 하위 레이어(`prd/`, `domain/`, `infra/`)는 절대로 상위 레이어(`agent/`, `rules/`)에 대한 지식을 가지거나 상호참조해서는 안 됩니다.
 2. **실행과 선언의 격리**: `domain/`과 `infra/`는 비즈니스/기술의 정적 정의 및 명세(선언)만 포함하며, 이를 가공하거나 가공 코드를 검사하는 파이썬 스크립트(실행)는 반드시 `skill/` 또는 `guardrail/`로 귀속시켜야 합니다.
 3. **가드레일 의무화 (No Bypass)**: 새로 수립되는 모든 정량적 규칙 및 명 convention 제약은 반드시 `guardrail/`에 정적 검사 스크립트로 구현되어 `hook/`에 마운트되어야만 규칙으로서 실질적인 효력을 지닙니다.
-4. **폴더별 로컬 GEMINI.md 비치 및 AI 신속 인지 규정 (Micro-Guideline)**:
-   - `agent/`, `skill/`, `guardrail/`, `workflow/`, `hook/` 등 모든 핵심 서브폴더 하위에는 전용 `GEMINI.md` 파일을 비치합니다.
-   - 각 로컬 `GEMINI.md`는 **[1. 로컬 핵심 제약(Local Rules) | 2. 파일 목록 인덱스 및 1줄 설명(Active Files) | 3. 변경 이력(Changelog)]**의 표준 3단계 구조를 가집니다.
-   - 폴더 내 파일 추가/수정/삭제 시 **반드시 로컬 GEMINI.md 내의 Active Files 및 Changelog를 동시 업데이트**하여 AI가 폴더 전체를 전수 스캔하지 않고도 단 1초 만에 상황을 파악하도록 보장해야 합니다.
+4. **폴더별 로컬 agents.md 비치 및 AI 신속 인지 규정 (Micro-Guideline)**:
+   - `agent/`, `skill/`, `guardrail/`, `workflow/`, `hook/` 등 모든 핵심 서브폴더 하위에는 전용 `agents.md` 파일을 비치합니다.
+   - 각 로컬 `agents.md`는 **[1. 로컬 핵심 제약(Local Rules) | 2. 파일 목록 인덱스 및 1줄 설명(Active Files) | 3. 변경 이력(Changelog)]**의 표준 3단계 구조를 가집니다.
+   - 폴더 내 파일 추가/수정/삭제 시 **반드시 로컬 agents.md 내의 Active Files 및 Changelog를 동시 업데이트**하여 AI가 폴더 전체를 전수 스캔하지 않고도 단 1초 만에 상황을 파악하도록 보장해야 합니다.
 5. **실시간 오작동 자가 정제 및 GEMINI Sync Loop 수칙 (Self-Refinement Loop)**:
    - AI 에이전트가 작업 중 발생한 모든 오작동(구문 오류, 무결성 제약 위반, 요구 사항 불충분 등) 또는 사용자의 교정 피드백을 수용한 경우, 문제 원인을 상세 규명하여 사용자에게 피드백을 전달합니다.
    - 분석 결과는 [.agents/context/checklist/reverse-sync-prevention.md](.agents/context/checklist/reverse-sync-prevention.md) 내에 근본 원인(RCA) 및 재발방지책 형태로 즉시 추가 기재합니다.
    - 해당 오류를 영구적으로 예방할 수 있도록 `intelligence/rules/` 및 `intelligence/guide/` 산하의 가이드라인을 자율 검토 및 보강합니다.
-   - 오류 발생 대상 폴더의 로컬 `GEMINI.md` 내 `[1. 로컬 핵심 제약(Local Rules)]` 조항에 방어용 예외 규칙을 신설 및 업데이트하고, `[3. 변경 이력(Changelog)]`에 수정 사항을 빠짐없이 명문화하여 향후 다른 에이전트들의 오작동을 즉시 차단하는 자가 피드백 루프를 수립합니다.
+   - 오류 발생 대상 폴더의 로컬 `agents.md` 내 `[1. 로컬 핵심 제약(Local Rules)]` 조항에 방어용 예외 규칙을 신설 및 업데이트하고, `[3. 변경 이력(Changelog)]`에 수정 사항을 빠짐없이 명문화하여 향후 다른 에이전트들의 오작동을 즉시 차단하는 자가 피드백 루프를 수립합니다.
