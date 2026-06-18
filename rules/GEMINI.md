@@ -20,6 +20,7 @@
 | `L1-git.md` | 커밋 메시지 머리말 태그 규정, 한국어 작성 표준 및 동시 푸시(Dual Push) 원칙 표준 |
 | `L2-architecture.md` | UI - 비즈니스 서비스 - SQL 쿼리 간 결합도 제어 및 아키텍처 아웃라인 총괄 대원칙 |
 | `L2-business-constants.md` | 물리 공장 코드(Plant Code), 핵심 비즈니스 상수 정적 매핑 및 이중화 방지 표준 |
+| `L2-color-system.md` | IBM Carbon 시각화 철학 기반의 대시보드 및 플롯 컬러 시스템 표준 설계 규정 |
 | `L2-context-readability.md` | 문서 인덱스 자동화, 중복 명 접두사 배제 및 AI 컨텍스트 가독성 최적화 수칙 |
 | `L2-naming-convention.md` | 물리 및 논리 계층의 파일명, 클래스명, 함수명 및 SQL 전처리 전반의 네이밍 표준 수칙 |
 | `L2-sync-policy.md` | 로컬(WSL)과 원격(Ubuntu) 간의 자산 및 가동 데이터 Push/Pull 단방향 동기화 및 Rsync 제약 규정 |

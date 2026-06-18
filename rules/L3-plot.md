@@ -25,10 +25,12 @@
 ## 3. 시각화 개발 3대 표준
 1. **시각화 전처리 샌드박스 경계 (Preprocessing Boundary)**:
    - 마우스 호버(Hover)용 툴팁 텍스트 조립, 플롯 디자인에 맞춘 Top-N 자르기 및 `Others` 그룹화, 그래프 축 포맷팅(Tickformat) 등 **시각화 레이아웃에 직접 결속된 포맷팅 가공**만 플롯 레이어 내에서 수행합니다.
-2. **컬러 코드 중앙화 및 테마 바인딩**:
-   - 차트 마커나 라인 색상 지정 시 하드코딩된 임의의 헥사(Hex) 코드를 사용하지 않습니다.
-   - 반드시 `app/core/common_design_parameter.py` 또는 `viz_plotly_design` 테마 컬러 변수를 가져와 바인딩함으로써 프로젝트 전반의 고급스럽고 일관된 룩앤필(Premium Look & Feel)을 보장해야 합니다.
-3. **인터렉티브 호버 옵션 최적화**:
+2. **의미 중심의 차트 시맨틱 토큰 의무화 및 Carbon DV 철학 준수**:
+   - 차트 마커나 라인 색상 지정 시 하드코딩된 임의의 헥사(Hex) 코드를 사용하는 것을 절대 금지하며, 단순 물리 컬러 토큰의 무분별한 직접 참조 또한 배제합니다.
+   - 데이터 시각화의 모든 색상 사용 표준은 최상위 디자인 표준인 **[L2-color-system.md](intelligence/rules/L2-color-system.md)**를 단일 진실 공급원(SSOT)으로 삼아 준수합니다.
+   - 연도별 트렌드 분석 등 데이터 위계가 존재하는 차트는 계층형 시맨틱 차트 토큰(`chart_series_primary`, `chart_series_secondary`, `chart_series_tertiary`)을 반드시 대입하여 IBM Carbon Data Visualization의 계층화 철학을 따릅니다.
+   - 규격선 및 임계선은 도메인 전용 토큰(`spec_limit`, `control_limit`, `target_line` 등)을 매핑하여 비즈니스 의미론을 명확히 전달합니다.
+3. **인터랙티브 호버 옵션 최적화**:
    - 정적 이미지 차트가 아닌, 사용자 마우스 오버 시 풍부하고 직관적인 데이터를 제공하도록 `hover_data` 혹은 `hovertemplate` 옵션을 미려하게 커스텀 구성합니다.
    - 이때 가독성과 유지보수 편의성을 수호하기 위해 호버(Tooltip) 템플릿 명세는 외부 공통 설정을 참조하지 않고, 개별 시각화 함수 내에 직접 하드코딩(f-string 및 HTML 태그 사용)하여 명시적으로 제어합니다.
 

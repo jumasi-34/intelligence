@@ -17,8 +17,11 @@
 
 1. **인라인 시각화 드로잉 금지 (No Inline Plotly)**:
    - UI 메인 파일(`*_page.py`) 내부에 수백 줄의 Plotly 차트 드로잉 코드를 작성하지 않습니다. 차트 작성 책임은 1:1 대칭 매핑 관계인 시각화 파일(`*_plots.py`)로 온전히 위임합니다.
-2. **인라인 스타일 하드코딩 금지**:
-   - 페이지 내부에서 원시 CSS나 HTML 태그를 사용해 개별 요소를 스타일링하는 행위를 금지합니다.
+2. **인라인 스타일 하드코딩 및 시맨틱 컬러 매핑 의무화**:
+   - 페이지 내부에서 원시 CSS나 HTML 태그를 사용해 개별 요소를 스타일링하는 행위를 전면 금지합니다.
+   - 모든 색상 사용 표준은 최상위 디자인 표준인 **[L2-color-system.md](intelligence/rules/L2-color-system.md)**를 단일 진실 공급원(SSOT)으로 삼아 준수합니다.
+   - UI 페이지 내의 표 배경, 통계 카드, 경고 표시 등에 색상을 바인딩할 때, 개별 Hex 코드를 하드코딩하거나 프리미티브 토큰(`colors.light_gray` 등)을 임의 대입하지 않고, 반드시 아키텍처에 맞게 추상화된 **Streamlit UI 시맨틱 계층**을 엄격히 준수합니다. (예: 테이블 배경은 `colors.app_surface_muted` 적용, 경고는 `colors.status_warning` 연동)
+   - **Primary 주황색 고정 및 용도 엄격 제약**: 앱 브랜드 및 주요 액션 컬러는 주황색 계열(`app_primary`, `app_primary_hover` 등)로 고정되며, 이는 오직 주요 조작 버튼, 메뉴의 활성(Active) 선택 상태, 주요 수치 강조 등으로 제한되어 적용되어야 합니다.
 3. **이모지 사용 전면 금지 및 Google Material Symbols 제한적 허용 (Strict Emoji-Free Design)**:
    - UI 페이지, 탭 라벨, 마크다운 텍스트, 버튼, 토스트, 에러/경고 메시지 및 소스 코드 내 주석을 포함한 모든 영역에서 일반 유니코드 이모지(Emoji)의 직접 사용을 엄격히 금지합니다.
    - 화면 디자인 상 반드시 아이콘을 사용해야 하는 경우에는 오직 Streamlit이 기본 지원하는 Google Material 아이콘 구문 (`:material/icon_name:`)만 사용해야 합니다.
