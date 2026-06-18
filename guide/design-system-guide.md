@@ -225,3 +225,32 @@ fig = apply_shadcn_style_to_figure(fig, title="생산성 트렌드", height=400)
 ---
 
 > **Note**: 본 가이드의 single source of truth인 `core/constants/ui.py`를 정기적으로 검토하여 공장 공통 테마 및 클라이언트 품질 등급 컬러의 업데이트 여부를 싱크해야 합니다.
+
+---
+
+## 7. 폰트 시스템 표준화 및 일관성 개선 계획 (Font System Standardization & Alignment Plan)
+
+> [!NOTE]
+> 본 섹션은 OEquality BI 프로젝트 전반에 걸쳐 제각각 파편화되어 정의 및 하드코딩되어 있는 폰트 시스템(Font Family, Weights, Sizes)을 근본적으로 정비하고, `app/core/constants/ui.py`를 단일 진실 공급원(SSOT)으로 삼아 완벽히 일관성을 수호하기 위한 구조화된 개선 계획을 명시합니다.
+
+### 7.1. 현황 및 파편화 문제점 분석 (As-Is Assessment)
+1. **디자인 시스템(SSOT)의 구조적 모순**: 
+   - `app/core/constants/ui.py`의 `Icons` 클래스(아이콘 전용 명세) 안에 `font_family` 문자열 속성이 기형적으로 삽입되어, 이로 인해 `styles.py` 등에서 `icons.font_family`를 기형적으로 상속해 사용하는 기형적 참조 패턴이 유지되어 왔습니다.
+2. **개별 페이지 및 컴포넌트 내 폰트 하드코딩**:
+   - `iqm_plus_main_page.py` 에서 `'Inter'`, `'Outfit'` 폰트를 수동 하드코딩 적용.
+   - `metadata_manager_page.py` 에서 `'Pretendard'`, `'Inter'` 폰트를 하드코딩하여 사용.
+   - `app/core/ui/components.py` 내부에 `font_family="Inter, -apple-system, ..."`를 직접 문자열 하드코딩 적용.
+3. **글로벌 CSS (`styles.py`) 내 폰트 정의 혼선**:
+   - `sans-serif !important`, `"Geist", "Geist Fallback", sans-serif !important` 등 단일화되지 못한 다중 스택이 산발적으로 산재하여 화면 영역별로 렌더링 자형이 엇갈리는 현상 발생.
+
+### 7.2. 개선 아키텍처 디자인 (Target Architecture)
+- 물리 폰트 선언 및 가독성 폰트 스택 정의를 `ui.py` 내의 신설 `Fonts` 데이터클래스로 완전 통합하고, `Icons` 내부의 `font_family` 변수는 제거합니다.
+- 영문/숫자 가독성은 `Inter` 및 `Geist` 조합, 한국어 가독성은 한국어 표준 `Pretendard` 조합, 그리고 타이틀 강조 디자인은 프리미엄 `Outfit` 조합으로 각각 시맨틱 폰트 스택을 고도화하여 통제합니다.
+
+### 7.3. 단계별 마이그레이션 로드맵 (Action Roadmap)
+- **Phase 1: ui.py 내 통합 Fonts 토큰 시스템 정의**
+  - `Fonts` 데이터클래스를 신설하고 글로벌 `fonts` 인스턴스를 공유하며, 레거시 크래시 방지용 과도기적 별칭(Alias) 지정.
+- **Phase 2: 공통 UI CSS 및 스타일 모듈 개편**
+  - `styles.py` 및 `components.py` 내의 `icons.font_family`를 `fonts.primary` 등으로 전량 전환 및 중복 CSS 삭제.
+- **Phase 3: 개별 대시보드 내 인라인 폰트 스타일 제거**
+  - `app/pages/` 하위에서 개별 수동 적용된 `font-family` 인라인 마크다운 스타일 구문을 전량 삭제하고 `fonts` 토큰 또는 글로벌 공통 클래스로 대체 적용.
