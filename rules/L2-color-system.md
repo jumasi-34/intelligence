@@ -134,21 +134,21 @@ Plotly 영역은 정밀 데이터를 시각 분석하는 데이터 캔버스로,
 ### 2.4 IBM Carbon Categorical Palette 적용 규칙 (Categorical Palettes)
 - **[공식 14-색 시퀀스]**: 다중 범주형 데이터(Categorical) 시각화 시, neighboring 색상 간의 시각적 식별성과 웹 접근성(WCAG) 규격을 보장하기 위해 반드시 아래 정의된 **IBM Carbon 14-색 공식 sequence**를 엄격히 준수하여 적용해야 합니다.
 - **[강제 순서 적용]**: 범주 수에 따라 단일 색상을 오버라이드하거나 전체 목록을 주입할 경우, 임의로 순서를 뒤섞거나 특정 색상만 단독 발췌하여 사용하는 행위를 금지하며, 무조건 1번부터 순차적으로 주입해야 합니다.
-- **[Alert 컬러와의 격리]**: `carbon_categorical_5` (Red 50, `#fa4d56`) 등은 일반 범주 시각화에만 사용하며, 에러나 통과 실패 등 상태 경고(Alert)를 강조할 때는 이 범주색이 아닌 `status_error` (`#dc2626`) 또는 `spec_limit` (`#b91c1c`)과 같은 전용 상태 시맨틱 토큰을 사용해 기능적 의미를 완전히 격리해야 합니다.
+- **[Alert 컬러와의 격리]**: `carbon_red_50_seq` (Red 50, `#fa4d56`) 등은 일반 범주 시각화에만 사용하며, 에러나 통과 실패 등 상태 경고(Alert)를 강조할 때는 이 범주색이 아닌 `status_error` (`#dc2626`) 또는 `spec_limit` (`#b91c1c`)과 같은 전용 상태 시맨틱 토큰을 사용해 기능적 의미를 완전히 격리해야 합니다.
 
 | Order | 토큰명 | 컬러 이름 | HEX 코드 | 주용도 |
 | :--- | :--- | :--- | :--- | :--- |
-| 01 | `carbon_categorical_1` | Purple 70 | `#6929c4` | 1순위 범주 그룹색 |
-| 02 | `carbon_categorical_2` | Cyan 50 | `#1192e8` | 2순위 범주 그룹색 |
-| 03 | `carbon_categorical_3` | Teal 70 | `#005d5d` | 3순위 범주 그룹색 |
-| 04 | `carbon_categorical_4` | Magenta 70 | `#9f1853` | 4순위 범주 그룹색 |
-| 05 | `carbon_categorical_5` | Red 50 | `#fa4d56` | 5순위 범주 그룹색 |
-| 06 | `carbon_categorical_6` | Red 90 | `#570408` | 6순위 범주 그룹색 |
-| 07 | `carbon_categorical_7` | Green 60 | `#198038` | 7순위 범주 그룹색 |
-| 08 | `carbon_categorical_8` | Blue 80 | `#002d9c` | 8순위 범주 그룹색 |
-| 09 | `carbon_categorical_9` | Magenta 50 | `#ee538b` | 9순위 범주 그룹색 |
-| 10 | `carbon_categorical_10`| Yellow 50 | `#b28600` | 10순위 범주 그룹색 |
-| 11 | `carbon_categorical_11`| Teal 50 | `#009d9a` | 11순위 범주 그룹색 |
-| 12 | `carbon_categorical_12`| Cyan 90 | `#012749` | 12순위 범주 그룹색 |
-| 13 | `carbon_categorical_13`| Orange 70 | `#8a3800` | 13순위 범주 그룹색 |
-| 14 | `carbon_categorical_14`| Purple 50 | `#a56eff` | 14순위 범주 그룹색 |
+| 01 | `carbon_purple_70` | Purple 70 | `#6929c4` | 1순위 범주 그룹색 |
+| 02 | `carbon_cyan_50` | Cyan 50 | `#1192e8` | 2순위 범주 그룹색 |
+| 03 | `carbon_teal_70_seq` | Teal 70 | `#005d5d` | 3순위 범주 그룹색 |
+| 04 | `carbon_magenta_70` | Magenta 70 | `#9f1853` | 4순위 범주 그룹색 |
+| 05 | `carbon_red_50_seq` | Red 50 | `#fa4d56` | 5순위 범주 그룹색 |
+| 06 | `carbon_red_90_seq` | Red 90 | `#570408` | 6순위 범주 그룹색 |
+| 07 | `carbon_green_60_seq` | Green 60 | `#198038` | 7순위 범주 그룹색 |
+| 08 | `carbon_blue_80_seq` | Blue 80 | `#002d9c` | 8순위 범주 그룹색 |
+| 09 | `carbon_magenta_50_seq` | Magenta 50 | `#ee538b` | 9순위 범주 그룹색 |
+| 10 | `carbon_yellow_50` | Yellow 50 | `#b28600` | 10순위 범주 그룹색 |
+| 11 | `carbon_teal_50_seq` | Teal 50 | `#009d9a` | 11순위 범주 그룹색 |
+| 12 | `carbon_cyan_90` | Cyan 90 | `#012749` | 12순위 범주 그룹색 |
+| 13 | `carbon_orange_70` | Orange 70 | `#8a3800` | 13순위 범주 그룹색 |
+| 14 | `carbon_purple_50` | Purple 50 | `#a56eff` | 14순위 범주 그룹색 |
