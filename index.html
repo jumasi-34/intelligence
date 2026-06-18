@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Intelligence Console - CQMS Intelligence Control Panel</title>
+    <!-- Google Web Fonts & Material Symbols -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@300;400;500;600;700;800&family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0&display=swap" rel="stylesheet">
+    <!-- Main Style Sheet -->
+    <link rel="stylesheet" href="assets/style.css">
+    <!-- Marked.js for rendering markdown dynamically -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <!-- Mermaid.js for rendering diagrams -->
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <script>
+        // Global JavaScript Error Boundary to display errors clearly
+        window.addEventListener('error', function(e) {
+            var banner = document.getElementById('debug-error-banner');
+            if (!banner) {
+                banner = document.createElement('div');
+                banner.id = 'debug-error-banner';
+                banner.style.position = 'fixed';
+                banner.style.bottom = '20px';
+                banner.style.right = '20px';
+                banner.style.width = '380px';
+                banner.style.backgroundColor = 'rgba(239, 68, 68, 0.95)';
+                banner.style.color = '#ffffff';
+                banner.style.padding = '16px';
+                banner.style.borderRadius = '8px';
+                banner.style.boxShadow = '0 10px 25px rgba(0,0,0,0.5)';
+                banner.style.zIndex = '99999';
+                banner.style.fontFamily = 'monospace';
+                banner.style.fontSize = '12px';
+                banner.style.lineHeight = '1.5';
+                banner.style.whiteSpace = 'pre-wrap';
+                banner.style.borderLeft = '4px solid #ffffff';
+                document.body.appendChild(banner);
+            }
+            banner.textContent = '⚠️ JS Error Detected:\n' + e.message + '\nFile: ' + e.filename.split('/').pop() + ':' + e.lineno + ':' + e.colno;
+        });
+    </script>
+</head>
+<body class="dark-theme">
+    <script>
+        // Immediately check and apply saved theme preference to prevent FOUC (Flash of Unstyled Content)
+        (function() {
+            const savedTheme = localStorage.getItem('theme') || 'dark';
+            if (savedTheme === 'light') {
+                document.body.classList.remove('dark-theme');
+                document.body.classList.add('light-theme');
+            }
+        })();
+    </script>
+    <div class="app-container">
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo-wrapper">
+                    <span class="material-symbols-outlined logo-icon">shield_with_heart</span>
+                    <div class="logo-text">
+                        <h1>Intelligence</h1>
+                        <span class="sub-logo">Console v1.0</span>
+                    </div>
+                </div>
+            </div>
+            
+            <nav class="sidebar-menu">
+                <a href="#overview" class="menu-item active" data-tab="overview">
+                    <span class="material-symbols-outlined">dashboard</span>
+                    <span class="menu-label">Overview</span>
+                </a>
+                <a href="#architecture" class="menu-item" data-tab="architecture">
+                    <span class="material-symbols-outlined">hub</span>
+                    <span class="menu-label">Architecture Map</span>
+                </a>
+                <a href="#agents" class="menu-item" data-tab="agents">
+                    <span class="material-symbols-outlined">smart_toy</span>
+                    <span class="menu-label">Agent Registry</span>
+                </a>
+                <a href="#domain" class="menu-item" data-tab="domain">
+                    <span class="material-symbols-outlined">menu_book</span>
+                    <span class="menu-label">Domain Knowledge</span>
+                </a>
+                <a href="#rules" class="menu-item" data-tab="rules">
+                    <span class="material-symbols-outlined">gavel</span>
+                    <span class="menu-label">Rules & Guardrails</span>
+                </a>
+                <a href="#runs" class="menu-item" data-tab="runs">
+                    <span class="material-symbols-outlined">history</span>
+                    <span class="menu-label">Runs & Hooks</span>
+                </a>
+            </nav>
+
+            <div class="sidebar-footer">
+                <div class="build-info">
+                    <span class="build-label">Last Build:</span>
+                    <span id="build-time" class="build-value">Loading...</span>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="main-content">
+            <!-- Header -->
+            <header class="content-header">
+                <div class="header-left">
+                    <h2 id="current-tab-title">Overview</h2>
+                    <p id="current-tab-desc" class="header-subtitle">시스템 종합 현황 및 주요 메트릭 지표</p>
+                </div>
+                <div class="header-right" style="display: flex; gap: 16px; align-items: center;">
+                    <button id="btn-theme-toggle" class="theme-toggle-btn" title="화면 테마 변경 (다크/라이트)">
+                        <span id="theme-toggle-icon" class="material-symbols-outlined">light_mode</span>
+                    </button>
+                    <button id="btn-rebuild" class="rebuild-btn">
+                        <span class="material-symbols-outlined">sync</span>
+                        <span>실시간 리빌드</span>
+                    </button>
+                    <div class="global-search-bar">
+                        <span class="material-symbols-outlined search-icon">search</span>
+                        <input type="text" id="global-search-input" placeholder="전체 문서 및 지식 검색...">
+                    </div>
+                </div>
+            </header>
+
+            <!-- Dynamic Tab Content Wrapper -->
+            <div class="tab-content-container">
+                
+                <!-- Tab 1: Overview -->
+                <section id="tab-overview" class="tab-section active">
+                    <!-- Metric Grid -->
+                    <div class="metrics-grid">
+                        <div class="metric-card neon-blue">
+                            <div class="metric-header">
+                                <span class="material-symbols-outlined metric-icon">description</span>
+                                <span class="metric-title">수집 문서 수</span>
+                            </div>
+                            <div class="metric-body">
+                                <span id="metric-docs" class="metric-value">-</span>
+                                <span class="metric-unit">개</span>
+                            </div>
+                        </div>
+                        <div class="metric-card neon-purple">
+                            <div class="metric-header">
+                                <span class="material-symbols-outlined metric-icon">support_agent</span>
+                                <span class="metric-title">활성 에이전트</span>
+                            </div>
+                            <div class="metric-body">
+                                <span id="metric-agents" class="metric-value">-</span>
+                                <span class="metric-unit">명</span>
+                            </div>
+                        </div>
+                        <div class="metric-card neon-amber">
+                            <div class="metric-header">
+                                <span class="material-symbols-outlined metric-icon">policy</span>
+                                <span class="metric-title">시스템 규칙</span>
+                            </div>
+                            <div class="metric-body">
+                                <span id="metric-rules" class="metric-value">-</span>
+                                <span class="metric-unit">개</span>
+                            </div>
+                        </div>
+                        <div class="metric-card neon-emerald">
+                            <div class="metric-header">
+                                <span class="material-symbols-outlined metric-icon">published_with_changes</span>
+                                <span class="metric-title">운영 실행 이력</span>
+                            </div>
+                            <div class="metric-body">
+                                <span id="metric-runs" class="metric-value">-</span>
+                                <span class="metric-unit">회</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="dashboard-row">
+                        <!-- Left: Recent Docs -->
+                        <div class="dashboard-col col-7">
+                            <div class="content-card">
+                                <div class="card-header">
+                                    <h3 class="card-title">
+                                        <span class="material-symbols-outlined header-icon">schedule</span>최근 업데이트 문서
+                                    </h3>
+                                </div>
+                                <div class="card-body">
+                                    <ul id="recent-docs-list" class="recent-docs-list">
+                                        <div class="loading-spinner"></div>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Right: Safety Panel (Fixed Static Information) -->
+                        <div class="dashboard-col col-5">
+                            <div class="content-card safety-panel">
+                                <div class="card-header">
+                                    <h3 class="card-title text-error">
+                                        <span class="material-symbols-outlined header-icon">gavel</span>Safety Guardrails (안전 수칙)
+                                    </h3>
+                                </div>
+                                <div class="card-body">
+                                    <div class="safety-item">
+                                        <span class="material-symbols-outlined safety-icon error-icon">lock</span>
+                                        <div class="safety-desc">
+                                            <strong>임의 코드 수정 제한 (Safety Lock)</strong>
+                                            <p>사용자의 직접적인 서면 동의 및 명시적 요청이 있을 때까지 기존 프로덕션 코드 수정을 금지합니다.</p>
+                                        </div>
+                                    </div>
+                                    <div class="safety-item">
+                                        <span class="material-symbols-outlined safety-icon error-icon">visibility_off</span>
+                                        <div class="safety-desc">
+                                            <strong>private note 접근 차단 (Exclusion)</strong>
+                                            <p>개인 메모가 저장된 `intelligence/note/` 영역은 에이전트의 조회, 파싱, 색인이 원천 금지됩니다.</p>
+                                        </div>
+                                    </div>
+                                    <div class="safety-item">
+                                        <span class="material-symbols-outlined safety-icon error-icon">cancel</span>
+                                        <div class="safety-desc">
+                                            <strong>코드 내 이모지 사용 전면 금지</strong>
+                                            <p>모든 UI, 페이지 및 주석 등에 유니코드 이모지 사용을 엄격히 제한하고 Material Symbols로 표준화합니다.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Tab 2: Architecture Map -->
+                <section id="tab-architecture" class="tab-section">
+                    <div class="architecture-grid" id="architecture-grid">
+                        <!-- Rendered by JS -->
+                    </div>
+                </section>
+
+                <!-- Tab 3: Agent Registry -->
+                <section id="tab-agents" class="tab-section">
+                    <!-- Sub Tab Navigation -->
+                    <div class="agent-sub-header">
+                        <div class="sub-tab-bar">
+                            <button class="sub-tab-btn active" data-subtab="list">
+                                <span class="material-symbols-outlined">assignment</span>
+                                <span>역할 명세서</span>
+                            </button>
+                            <button class="sub-tab-btn" data-subtab="mapping">
+                                <span class="material-symbols-outlined">hub</span>
+                                <span>코워크 협업 관계도</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Panel 1: Agent List & Details -->
+                    <div id="agent-list-panel" class="agents-container active">
+                        <div class="agents-sidebar" id="agents-sidebar">
+                            <!-- Rendered by JS: List of Agents -->
+                        </div>
+                        <div class="agent-detail-view" id="agent-detail-view">
+                            <div class="empty-state">
+                                <span class="material-symbols-outlined large-icon">smart_toy</span>
+                                <p>왼쪽 에이전트 목록을 선택하시면 상세 역할과 관계를 보실 수 있습니다.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Panel 2: Agent Corework Mapping Canvas -->
+                    <div id="agent-mapping-panel" class="agents-mapping-container">
+                        <div class="mapping-instructions">
+                            <span class="material-symbols-outlined">info</span>
+                            <span>에이전트 카드를 클릭하면 해당 에이전트의 구체적인 협업 동선(코워크 흐름)이 네온 하이라이트로 집중 조명됩니다.</span>
+                        </div>
+                        <div class="mapping-workspace">
+                            <div class="mapping-canvas" id="mapping-canvas">
+                                <!-- SVG Connector Lines Canvas -->
+                                <svg class="mapping-svg" id="mapping-svg">
+                                    <defs>
+                                        <marker id="arrow" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                                            <path d="M 0 1 L 10 5 L 0 9 z" fill="currentColor" />
+                                        </marker>
+                                    </defs>
+                                </svg>
+                                
+                                <!-- Columns of the flow -->
+                                <div class="mapping-column" data-stage="analysis">
+                                    <div class="stage-header">STAGE 1: 분석 및 표준 관리</div>
+                                    <div id="map-node-table-eda" class="map-node neon-blue" data-agent="table-eda">
+                                        <div class="node-title">Table EDA Analyst</div>
+                                        <div class="node-role">분석가 서브에이전트</div>
+                                    </div>
+                                    <div id="map-node-metadata-dictionary" class="map-node neon-blue" data-agent="metadata-dictionary">
+                                        <div class="node-title">Metadata Dictionary</div>
+                                        <div class="node-role">표준/사전 관리 검역</div>
+                                    </div>
+                                </div>
+                                
+                                <div class="mapping-column" data-stage="planning">
+                                    <div class="stage-header">STAGE 2: 요구사항 설계</div>
+                                    <div id="map-node-planner-orchestrator" class="map-node neon-purple" data-agent="planner-orchestrator">
+                                        <div class="node-title">Planner Orchestrator</div>
+                                        <div class="node-role">기획 컨트롤 타워</div>
+                                    </div>
+                                </div>
+                                
+                                <div class="mapping-column" data-stage="engineering">
+                                    <div class="stage-header">STAGE 3: 핵심 코드 개발</div>
+                                    <div id="map-node-query-preprocessor" class="map-node neon-amber" data-agent="query-preprocessor">
+                                        <div class="node-title">Query & Preprocessor</div>
+                                        <div class="node-role">SQL 및 전처리 빌더</div>
+                                    </div>
+                                    <div id="map-node-page-plot-builder" class="map-node neon-amber" data-agent="page-plot-builder">
+                                        <div class="node-title">Page & Plot Builder</div>
+                                        <div class="node-role">UI 및 시각화 빌더</div>
+                                    </div>
+                                </div>
+                                
+                                <div class="mapping-column" data-stage="polishing">
+                                    <div class="stage-header">STAGE 4: 시각적 리터칭</div>
+                                    <div id="map-node-ui-styler-polisher" class="map-node neon-emerald" data-agent="ui-styler-polisher">
+                                        <div class="node-title">UI Styler & Polisher</div>
+                                        <div class="node-role">디자인 표준화/정제</div>
+                                    </div>
+                                </div>
+                                
+                                <div class="mapping-column" data-stage="evaluation">
+                                    <div class="stage-header">STAGE 5: 품질 검증 & 피드백</div>
+                                    <div id="map-node-code-reviewer" class="map-node neon-red" data-agent="code-reviewer">
+                                        <div class="node-title">Code Reviewer</div>
+                                        <div class="node-role">코드 정적 검증</div>
+                                    </div>
+                                    <div id="map-node-quality-evaluator" class="map-node neon-red" data-agent="quality-evaluator">
+                                        <div class="node-title">Quality Evaluator</div>
+                                        <div class="node-role">하네스 구동/최종 통과</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Sidebar / Drawer inside the mapping to show selected node corework detail -->
+                            <div class="mapping-detail-sidebar" id="mapping-detail-sidebar">
+                                <div class="mapping-detail-empty" id="mapping-detail-empty">
+                                    <span class="material-symbols-outlined large-icon">hub</span>
+                                    <p>왼쪽 에이전트 노드를 클릭하면 해당 노드의 실시간 코워크(협업 관계 및 데이터 흐름) 명세가 여기에 노출됩니다.</p>
+                                </div>
+                                <div class="mapping-detail-content" id="mapping-detail-content" style="display: none;">
+                                    <h3 id="map-detail-title">Agent Name</h3>
+                                    <div class="detail-badge" id="map-detail-category">Planner Agent</div>
+                                    
+                                    <div class="mapping-info-group">
+                                        <div class="info-label">실행 트리거 (Trigger)</div>
+                                        <div class="info-value" id="map-detail-trigger">Trigger description</div>
+                                    </div>
+                                    
+                                    <div class="mapping-info-group">
+                                        <div class="info-label">참조 리소스 (Contexts)</div>
+                                        <div class="info-list" id="map-detail-contexts"></div>
+                                    </div>
+
+                                    <div class="mapping-info-group">
+                                        <div class="info-label">생성 산출물 (Outputs)</div>
+                                        <div class="info-list" id="map-detail-outputs"></div>
+                                    </div>
+
+                                    <div class="mapping-info-group">
+                                        <div class="info-label">코워크 협업 체인 (Co-work Flow)</div>
+                                        <div class="flow-chains">
+                                            <div class="flow-chain-incoming">
+                                                <div class="chain-label">참조 수집 대상 (Incoming)</div>
+                                                <div class="chain-items" id="map-detail-incoming"></div>
+                                            </div>
+                                            <div class="flow-chain-outgoing">
+                                                <div class="chain-label">협업 전파 대상 (Outgoing)</div>
+                                                <div class="chain-items" id="map-detail-outgoing"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Tab 4: Domain Knowledge -->
+                <section id="tab-domain" class="tab-section">
+                    <div class="domain-container">
+                        <div class="domain-tree" id="domain-tree">
+                            <!-- Rendered by JS: Knowledge Hierarchy Tree -->
+                        </div>
+                        <div class="domain-viewer" id="domain-viewer">
+                            <div class="empty-state" id="domain-empty-state">
+                                <span class="material-symbols-outlined large-icon">find_in_page</span>
+                                <p>왼쪽 도메인 지식 트리를 탐색하거나 검색하여 상세 문서를 열람하세요.</p>
+                            </div>
+                            <div class="document-render-area css-markdown-body" id="document-render-area" style="display: none;">
+                                <div class="doc-header">
+                                    <h2 id="doc-title">Document Title</h2>
+                                    <div class="doc-meta">
+                                        <span class="doc-badge" id="doc-category">Category</span>
+                                        <span class="doc-update"><span class="material-symbols-outlined">schedule</span> <span id="doc-mtime">-</span></span>
+                                    </div>
+                                </div>
+                                <hr class="doc-divider">
+                                <div class="doc-content-body" id="doc-content-body">
+                                    <!-- Rendered Markdown Content -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Tab 5: Rules & Guardrails -->
+                <section id="tab-rules" class="tab-section">
+                    <div class="rules-container">
+                        <div class="rules-matrix" id="rules-matrix">
+                            <!-- Rendered by JS: Cards showing different rules files -->
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Tab 6: Runs & Hooks -->
+                <section id="tab-runs" class="tab-section">
+                    <div class="runs-container">
+                        <div class="runs-left col-8">
+                            <div class="content-card">
+                                <div class="card-header">
+                                    <h3 class="card-title">
+                                        <span class="material-symbols-outlined header-icon">timeline</span>에이전트 실행 타임라인
+                                    </h3>
+                                </div>
+                                <div class="card-body">
+                                    <div class="timeline" id="runs-timeline">
+                                        <!-- Rendered by JS -->
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="runs-right col-4">
+                            <div class="content-card hook-card">
+                                <div class="card-header">
+                                    <h3 class="card-title">
+                                        <span class="material-symbols-outlined header-icon">sync_alt</span>System Hooks
+                                    </h3>
+                                </div>
+                                <div class="card-body">
+                                    <ul class="hook-list">
+                                        <li class="hook-item success">
+                                            <span class="material-symbols-outlined hook-status">check_circle</span>
+                                            <div class="hook-info">
+                                                <strong>Commit Msg Validator</strong>
+                                                <p>commit_msg_validator.py 연동 - 한국어 규칙 및 prefix 준정합성 검증</p>
+                                            </div>
+                                        </li>
+                                        <li class="hook-item success">
+                                            <span class="material-symbols-outlined hook-status">check_circle</span>
+                                            <div class="hook-info">
+                                                <strong>Verify Code Spec</strong>
+                                                <p>verify_code.py 연동 - 3-Layer 아키텍처 및 무결성 상시 검격</p>
+                                            </div>
+                                        </li>
+                                        <li class="hook-item success">
+                                            <span class="material-symbols-outlined hook-status">check_circle</span>
+                                            <div class="hook-info">
+                                                <strong>Emoji Strict Shield</strong>
+                                                <p>emoji_checker.py 연동 - 코드 및 마크다운 내 유니코드 이모지 원천 차단</p>
+                                            </div>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+                
+            </div>
+        </main>
+    </div>
+
+    <!-- Main JavaScript File -->
+    <script src="assets/app.js"></script>
+</body>
+</html>

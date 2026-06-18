@@ -1,0 +1,16 @@
+{
+  "last_build_time": "2026-06-18 05:04:23",
+  "total_documents": 56,
+  "categories_stats": {
+    "agent": 9,
+    "domain": 2,
+    "infra": 10,
+    "guide": 11,
+    "rules": 12,
+    "runs": 2,
+    "workflow": 2,
+    "skill": 1,
+    "checklist": 6,
+    "guardrail": 1
+  }
+}

@@ -1,0 +1,67 @@
+[
+  {
+    "name": "L2-architecture.md",
+    "path": "rules/L2-architecture.md",
+    "type": "md"
+  },
+  {
+    "name": "table_naming_convention.json",
+    "path": "rules/table_naming_convention.json",
+    "type": "json"
+  },
+  {
+    "name": "L3-query.md",
+    "path": "rules/L3-query.md",
+    "type": "md"
+  },
+  {
+    "name": "L2-context-readability.md",
+    "path": "rules/L2-context-readability.md",
+    "type": "md"
+  },
+  {
+    "name": "L1-git.md",
+    "path": "rules/L1-git.md",
+    "type": "md"
+  },
+  {
+    "name": "L3-service.md",
+    "path": "rules/L3-service.md",
+    "type": "md"
+  },
+  {
+    "name": "L2-color-system.md",
+    "path": "rules/L2-color-system.md",
+    "type": "md"
+  },
+  {
+    "name": "L2-sync-policy.md",
+    "path": "rules/L2-sync-policy.md",
+    "type": "md"
+  },
+  {
+    "name": "L2-business-constants.md",
+    "path": "rules/L2-business-constants.md",
+    "type": "md"
+  },
+  {
+    "name": "L3-plot.md",
+    "path": "rules/L3-plot.md",
+    "type": "md"
+  },
+  {
+    "name": "GEMINI.md",
+    "path": "rules/GEMINI.md",
+    "type": "md"
+  },
+  {
+    "name": "L3-dashboard.md",
+    "path": "rules/L3-dashboard.md",
+    "type": "md"
+  },
+  {
+    "name": "L2-naming-convention.md",
+    "path": "rules/L2-naming-convention.md",
+    "type": "md"
+  }
+]
